@@ -1,0 +1,87 @@
+{
+  "name": "felfire-electron",
+  "version": "0.0.1",
+  "description": "FelFire image sharing service.",
+  "main": "./app/build/app.js",
+  "scripts": {
+    "dev": "concurrently \"cross-env NODE_ENV=development webpack-dev-server --config webpack/dev.config.js\" \"cross-env NODE_ENV=development electron ./app/src/main/app.js\"",
+    "prod": "cross-env NODE_ENV=production webpack --progress --color --config webpack/prod.config.js",
+    "start": "npm run prod && electron app/build/app.js",
+    "robotjs": "npm rebuild --runtime=electron --target=1.1.3 --disturl=https://atom.io/download/atom-shell --abi=48",
+    "pack": "electron-builder --dir",
+    "dist": "npm run prod && npm run robotjs && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": "Joseph Ali",
+  "build": {
+    "productName": "FelFire",
+    "win": {
+      "target": "NSIS"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "AppImage"
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "directories": {
+      "output": "release"
+    }
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-minify-webpack-plugin": "^0.2.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "concurrently": "^3.5.0",
+    "copy-webpack-plugin": "^4.0.1",
+    "cross-env": "^5.0.5",
+    "css-loader": "^0.28.7",
+    "electron": "^1.7.6",
+    "electron-builder": "^19.27.7",
+    "electron-devtools-installer": "^2.2.0",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "node-sass": "^4.5.3",
+    "react-hot-loader": "^3.0.0-beta.6",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.5.6",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bootstrap": "^4.1.1",
+    "fs": "0.0.1-security",
+    "iohook": "^0.4.5",
+    "jimp": "^0.2.28",
+    "node-abi": "^2.8.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-electron-web-view": "^2.0.1",
+    "react-electron-webview": "^2.0.2",
+    "react-router-dom": "^5.1.2",
+    "react-spinners": "^0.3.2"
+  },
+  "iohook": {
+    "targets": [
+      "node-57",
+      "electron-54"
+    ],
+    "platforms": [
+      "win32",
+      "darwin",
+      "linux"
+    ],
+    "arches": [
+      "x64",
+      "ia32"
+    ]
+  }
+}
