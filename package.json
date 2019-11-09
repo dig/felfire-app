@@ -9,7 +9,7 @@
     "start": "npm run prod && electron app/build/app.js",
     "robotjs": "npm rebuild --runtime=electron --target=1.1.3 --disturl=https://atom.io/download/atom-shell --abi=48",
     "pack": "electron-builder --dir",
-    "dist": "npm run prod && npm run robotjs && electron-builder",
+    "dist": "npm run prod && electron-builder",
     "postinstall": "electron-builder install-app-deps"
   },
   "author": "Joseph Ali",
@@ -67,7 +67,8 @@
     "react-electron-web-view": "^2.0.1",
     "react-electron-webview": "^2.0.2",
     "react-router-dom": "^5.1.2",
-    "react-spinners": "^0.3.2"
+    "react-spinners": "^0.3.2",
+    "request": "^2.88.0"
   },
   "iohook": {
     "targets": [

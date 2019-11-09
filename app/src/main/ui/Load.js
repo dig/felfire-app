@@ -1,3 +1,5 @@
+const { ipcRenderer } = require('electron');
+
 import React from 'react';
 import Icon from '../assets/img/icon.png'; 
 
@@ -6,16 +8,27 @@ class Load extends React.Component {
     super();
 
     this.state = {
-      grayscale : 1
+      percent : 0
     };
+
+    ipcRenderer.on('load-state', (event, percent) => {
+      this.setState({ percent : percent });
+    });
+    ipcRenderer.send('load-init', {});
   }
 
   render() {
+    let grayscale = 1 - this.state.percent;
+
     return (
-      <div class="loading">
+      <div className="loading">
         <img style={{
-          filter: `grayscale(${this.state.grayscale})`
+          filter: `grayscale(${grayscale})`
         }} src={Icon} />
+
+        <div className="progress">
+          <div className="inner" style={{ width : `${this.state.percent * 100}%` }}></div>
+        </div>
       </div>
     )
   }

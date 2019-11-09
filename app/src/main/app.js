@@ -4,8 +4,34 @@ const BrowserWindow = electron.BrowserWindow;
 const ipc = electron.ipcMain;
 
 const path = require('path');
+const fs = require('fs');
 const url = require('url');
-const ioHook = require('iohook');
+const request = require('request');
+
+class Config {
+  constructor(opts) {
+    const userDataPath = (electron.app || electron.remote.app).getPath('userData');
+    this.path = path.join(userDataPath, opts.name + '.json');
+    this.data = parseDataFile(this.path, {}) || {};
+  }
+
+  get(key) {
+    return this.data[key];
+  }
+
+  set(key, val) {
+    this.data[key] = val;
+    fs.writeFileSync(this.path, JSON.stringify(this.data));
+  }
+}
+
+function parseDataFile(filePath, defaults) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath));
+  } catch(error) {
+    return defaults;
+  }
+}
 
 let mainWindow;
 function createMainWindow() {
@@ -63,22 +89,38 @@ app.on('activate', () => {
   }
 });
 
-app.on('before-quit', () => {
-  ioHook.unload();
-  ioHook.stop();
-});
 
-ioHook.on('mouseclick', event => {
-  mainWindow.webContents.send('mouse-click', {
-    x : event.x,
-    y : event.y
-  });
-});
+const userConfig = new Config({name: 'user'});
+function load() {
+  mainWindow.webContents.send('load-state', 0.3);
 
-ipc.on('mouse-listen', (event, arg) => {
-  if (arg) {
-    ioHook.start();
+  //--- If key doesn't exist
+  let key = userConfig.get('key');
+  if (key == null) {
+    mainWindow.webContents.send('load-state', 1);
+    mainWindow.webContents.send('change-page', "LOGIN");
+    return;
+  }
+
+
+}
+
+function login(userName, password) {
+  mainWindow.webContents.send('login-response', 0);
+}
+
+ipc.on('load-init', load);
+ipc.on('login-request', (userName, password) => login(userName, password));
+
+ipc.on('toolbar-minimize', () => mainWindow.minimize());
+ipc.on('toolbar-maximize', () => {
+  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+
+  if (mainWindow.getSize()[0] < width || mainWindow.getSize()[1] < height) {
+    mainWindow.maximize();
   } else {
-    ioHook.stop();
+    mainWindow.setSize(1200, 700, true);
+    mainWindow.center();
   }
 });
+ipc.on('toolbar-close', () => mainWindow.hide());
