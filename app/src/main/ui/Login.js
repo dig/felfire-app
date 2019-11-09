@@ -3,19 +3,31 @@ const { ipcRenderer } = require('electron');
 import React from 'react';
 
 class Login extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleRegister = this.handleRegister.bind(this);
+    this.handleForgottenPassword = this.handleForgottenPassword.bind(this);
   }
 
   handleSubmit(event) {
     event.preventDefault();
   }
 
+  handleRegister(event) {
+    event.preventDefault();
+    this.props.changePage('REGISTER');
+  }
+
+  handleForgottenPassword(event) {
+    event.preventDefault();
+    this.props.changePage('FORGOTPASSWORD');
+  }
+
   render() {
     return (
-      <div className="login animated slideInDown">
+      <div className="main-form animated slideInDown">
         <div className="container">
           <div className="header">
             <h2>Login</h2>
@@ -30,14 +42,15 @@ class Login extends React.Component {
 
             <div className="group">
               <label>Password</label>
-              <input type="text" placeholder="Enter password" title="Enter your password" required name="password"></input>
+              <input type="password" placeholder="Enter password" title="Enter your password" required name="password" maxLength="60"></input>
             </div>
 
             <div className="group">
              <input type="submit" value="Sign In"></input>
             </div>
 
-            <small>Don't have an account?</small>
+            <small onClick={this.handleRegister}>Don't have an account?</small>
+            <small onClick={this.handleForgottenPassword}>Forgotten password?</small>
           </form>
         </div>
       </div>

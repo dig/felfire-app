@@ -104,7 +104,6 @@ function load() {
   if (key == null) {
     mainWindow.webContents.send('load-setup', true);
     setTimeout(() => mainWindow.webContents.send('change-page', "LOGIN"), 6000);
-    // mainWindow.webContents.send('change-page', "LOGIN")
     return;
   }
 
