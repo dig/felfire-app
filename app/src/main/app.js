@@ -96,7 +96,7 @@ function load() {
   let key = userConfig.get('key');
   if (key == null) {
     mainWindow.webContents.send('load-setup', true);
-    setTimeout(() => mainWindow.webContents.send('change-page', "LOGIN"), 5000);
+    setTimeout(() => mainWindow.webContents.send('change-page', "LOGIN"), 6000);
     return;
   }
 
