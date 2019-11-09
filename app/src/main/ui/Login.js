@@ -15,11 +15,11 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div className="login">
+      <div className="login animated slideInDown">
         <div className="container">
           <div className="header">
-            <h3>Login</h3>
-            <small>Please enter your credentials to login.</small>
+            <h2>Login</h2>
+            <small>Please enter your credentials to login</small>
           </div>
 
           <form onSubmit={this.handleSubmit}>
@@ -32,6 +32,12 @@ class Login extends React.Component {
               <label>Password</label>
               <input type="text" placeholder="Enter password" title="Enter your password" required name="password"></input>
             </div>
+
+            <div className="group">
+             <input type="submit" value="Sign In"></input>
+            </div>
+
+            <small>Don't have an account?</small>
           </form>
         </div>
       </div>

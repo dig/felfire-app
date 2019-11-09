@@ -36,11 +36,13 @@ function parseDataFile(filePath, defaults) {
 let mainWindow;
 function createMainWindow() {
   mainWindow = new BrowserWindow({
+    title: "FelFire",
     height: 700,
     width: 1200,
     resizable : false,
     backgroundColor : "#202225",
-    frame : false
+    frame : false,
+    show : false
   });
 
   mainWindow.setMenu(null);
@@ -66,6 +68,11 @@ function createMainWindow() {
 
     mainWindow.webContents.openDevTools();
   }
+
+  mainWindow.once('ready-to-show', function() { 
+    mainWindow.show(); 
+    mainWindow.focus(); 
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -97,6 +104,7 @@ function load() {
   if (key == null) {
     mainWindow.webContents.send('load-setup', true);
     setTimeout(() => mainWindow.webContents.send('change-page', "LOGIN"), 6000);
+    // mainWindow.webContents.send('change-page', "LOGIN")
     return;
   }
 
