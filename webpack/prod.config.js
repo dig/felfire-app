@@ -53,7 +53,7 @@ module.exports = {
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new MinifyPlugin(),
-    new ExtractTextPlugin('css/main.css'),
+    new ExtractTextPlugin('app.bundle.css'),
     new CopyWebpackPlugin([
       {
         from: './src/main/app.js',

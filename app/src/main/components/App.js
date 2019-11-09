@@ -1,6 +1,7 @@
 const { ipcRenderer } = require('electron');
 
 import React from 'react';
+import Main from '../assets/style/main.scss';
 
 import Library from '../ui/Library';
 import Load from '../ui/Load';
