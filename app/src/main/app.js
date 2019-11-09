@@ -92,15 +92,15 @@ app.on('activate', () => {
 
 const userConfig = new Config({name: 'user'});
 function load() {
-  mainWindow.webContents.send('load-state', 0.3);
-
   //--- If key doesn't exist
   let key = userConfig.get('key');
   if (key == null) {
-    mainWindow.webContents.send('load-state', 1);
-    mainWindow.webContents.send('change-page', "LOGIN");
+    mainWindow.webContents.send('load-setup', true);
+    setTimeout(() => mainWindow.webContents.send('change-page', "LOGIN"), 5000);
     return;
   }
+
+  mainWindow.webContents.send('load-state', 0.3);
 
 
 }

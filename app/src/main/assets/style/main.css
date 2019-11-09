@@ -147,6 +147,14 @@ p, small, h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
+.toolbar > .toolset > .tool:hover {
+  background: rgba(255,255,255,.1);
+}
+
+.toolbar > .toolset > .tool.close:hover {
+	background: #e81123;
+}
+
 .toolbar > .toolset > .tool > svg path, 
 .toolbar > .toolset > .tool > svg rect, 
 .toolbar > .toolset > .tool > svg polygon {

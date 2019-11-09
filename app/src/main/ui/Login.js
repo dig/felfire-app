@@ -9,10 +9,12 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div className="login container">
-        <div className="header">
-          <h3>Login</h3>
-          <small>Please enter your credentials to login.</small>
+      <div className="login">
+        <div className="container">
+          <div className="header">
+            <h3>Login</h3>
+            <small>Please enter your credentials to login.</small>
+          </div>
         </div>
       </div>
     )

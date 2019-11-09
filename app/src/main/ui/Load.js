@@ -14,6 +14,18 @@ class Load extends React.Component {
     ipcRenderer.on('load-state', (event, percent) => {
       this.setState({ percent : percent });
     });
+    ipcRenderer.on('load-setup', (event, isFirstTime) => {
+      let intervalId = setInterval(() => {
+        let nextPct = Math.min(1, (this.state.percent + 0.02));
+        this.setState({ percent : nextPct });
+
+        if (nextPct >= 1) {
+          clearInterval(this.state.intervalId);
+        }
+      }, 100);
+
+      this.setState({ intervalId : intervalId });
+    });
     ipcRenderer.send('load-init', {});
   }
 
