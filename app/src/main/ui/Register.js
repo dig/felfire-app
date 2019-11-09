@@ -36,9 +36,10 @@ class Register extends React.Component {
   handlePasswordChange(event) {
     let value = event.target.value;
     this.setState({password : value});
+    this.updateStrengthMeter(value);
     
-    clearTimeout(this.timer);
-    this.timer = setTimeout(this.updateStrengthMeter, WAIT_INTERVAL);
+    // clearTimeout(this.timer);
+    // this.timer = setTimeout(this.updateStrengthMeter, WAIT_INTERVAL);
   }
 
   handleConfirmPasswordChange(event) {
@@ -46,9 +47,7 @@ class Register extends React.Component {
     this.setState({confirmPassword : value});
   }
 
-  updateStrengthMeter() {
-    let password = this.state.password;
-
+  updateStrengthMeter(password) {
     let strongRegex = new RegExp("^(?=.{20,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
     let mediumRegex = new RegExp("^(?=.{15,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
     let enoughRegex = new RegExp("(?=.{10,}).*", "g");
