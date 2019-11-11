@@ -3,35 +3,10 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const ipc = electron.ipcMain;
 
-const path = require('path');
-const fs = require('fs');
-const url = require('url');
-const request = require('request');
+const path = require('path'),
+    url = require('url');
 
-class Config {
-  constructor(opts) {
-    const userDataPath = (electron.app || electron.remote.app).getPath('userData');
-    this.path = path.join(userDataPath, opts.name + '.json');
-    this.data = parseDataFile(this.path, {}) || {};
-  }
-
-  get(key) {
-    return this.data[key];
-  }
-
-  set(key, val) {
-    this.data[key] = val;
-    fs.writeFileSync(this.path, JSON.stringify(this.data));
-  }
-}
-
-function parseDataFile(filePath, defaults) {
-  try {
-    return JSON.parse(fs.readFileSync(filePath));
-  } catch(error) {
-    return defaults;
-  }
-}
+console.log(app.getPath('userData'));
 
 let mainWindow;
 function createMainWindow() {
@@ -96,25 +71,6 @@ app.on('activate', () => {
   }
 });
 
-
-const userConfig = new Config({name: 'user'});
-function load() {
-  //--- If tokens don't exist
-  let accessToken = userConfig.get('accessToken');
-  let refreshToken = userConfig.get('refreshToken');
-
-  if (accessToken == null || refreshToken == null) {
-    mainWindow.webContents.send('load-setup', true);
-    setTimeout(() => mainWindow.webContents.send('change-page', "LOGIN"), 6000);
-    return;
-  }
-
-  mainWindow.webContents.send('load-state', 0.3);
-
-
-}
-
-
 //--- Toolbar
 ipc.on('toolbar-minimize', () => mainWindow.minimize());
 ipc.on('toolbar-maximize', () => {
@@ -128,5 +84,3 @@ ipc.on('toolbar-maximize', () => {
   }
 });
 ipc.on('toolbar-close', () => mainWindow.hide());
-
-ipc.on('load-init', load);

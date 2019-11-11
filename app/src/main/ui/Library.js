@@ -12,7 +12,7 @@ class Library extends React.Component {
 
   render() {
     return (
-      <h1>Library</h1>
+      <h3>Library - TODO</h3>
     )
   }
 }

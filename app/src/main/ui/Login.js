@@ -1,6 +1,7 @@
 const { ipcRenderer } = require('electron');
 
 import React from 'react';
+import User from '../utils/User';
 
 class Login extends React.Component {
   constructor(props) {
@@ -13,10 +14,14 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    ipcRenderer.send('login', {
-      email : event.target.email.value,
-      password : event.target.password.value
-    });
+    User.login(event.target.email.value, event.target.password.value).then((data) => {
+      if (data != null && data.refreshToken && data.accessToken) {
+        this.props.updateRefreshToken(data.refreshToken);
+        this.props.updateAccessToken(data.accessToken);
+        this.props.changePage('LIBRARY');
+      }
+    })
+    .catch(error => console.log(error));
   }
 
   handleRegister(event) {

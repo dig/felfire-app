@@ -147,6 +147,9 @@ input[type=submit]:hover {
 */
 .loading {
   height: 100%;
+  width: 100%;
+  background: #202225;
+  position: fixed;
   display: flex;
   align-items: center;
   justify-content: center;

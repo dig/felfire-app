@@ -1,8 +1,13 @@
-const { ipcRenderer } = require('electron');
-
 import React from 'react';
 
-const WAIT_INTERVAL = 500;
+import User from '../utils/User';
+
+const registerErrorParam = {
+  USERNAME: 'username',
+  EMAIL: 'email',
+  PASSWORD: 'password',
+  CONFIRMPASSWORD: 'confirmPassword'
+};
 
 class Register extends React.Component {
   constructor(props) {
@@ -26,6 +31,29 @@ class Register extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    let password = event.target.password.value;
+
+    if (this.state.confirmPassword === password) {
+      User.createUser(event.target.username.value, event.target.email.value, password).then(() => {
+        //--- TODO: Email verification page
+        this.props.changePage('LOGIN');
+      }).catch(errors => {
+        if (errors[0] && registerErrorParam[errors[0].param.toUpperCase()]) {
+          this.setState({
+            error : {
+              param : registerErrorParam[errors[0].param.toUpperCase()],
+              message : errors[0].msg
+            }
+          });
+        }
+      });
+    } else {
+      this.setState({
+        error : {
+          param : registerErrorParam.CONFIRMPASSWORD
+        }
+      });
+    }
   }
 
   handleLogin(event) {
@@ -37,9 +65,6 @@ class Register extends React.Component {
     let value = event.target.value;
     this.setState({password : value});
     this.updateStrengthMeter(value);
-    
-    // clearTimeout(this.timer);
-    // this.timer = setTimeout(this.updateStrengthMeter, WAIT_INTERVAL);
   }
 
   handleConfirmPasswordChange(event) {
@@ -50,7 +75,7 @@ class Register extends React.Component {
   updateStrengthMeter(password) {
     let strongRegex = new RegExp("^(?=.{20,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
     let mediumRegex = new RegExp("^(?=.{15,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
-    let enoughRegex = new RegExp("(?=.{10,}).*", "g");
+    let enoughRegex = new RegExp("(?=.{5,}).*", "g");
 
     let enough = enoughRegex.test(password);
     let medium = mediumRegex.test(password);
@@ -107,11 +132,19 @@ class Register extends React.Component {
             <div className="group">
               <label>Username</label>
               <input type="text" placeholder="Enter username" title="Enter a username" required name="username" maxLength="16" />
+
+              {(this.state.error && this.state.error.param == registerErrorParam.USERNAME) &&
+                <small>{this.state.error.message}</small>
+              }
             </div>
 
             <div className="group">
               <label>Email</label>
               <input type="text" placeholder="Enter email" title="Enter your email" required name="email" maxLength="48" />
+
+              {(this.state.error && this.state.error.param == registerErrorParam.EMAIL) &&
+                <small>{this.state.error.message}</small>
+              }
             </div>
 
             <div className="group">
@@ -127,13 +160,17 @@ class Register extends React.Component {
               {this.state.strength > 0 &&
                 <span className="meter-text" style={{ color : this.state.strengthColor }}>{this.state.strengthText}</span>
               }
+
+              {(this.state.error && this.state.error.param == registerErrorParam.PASSWORD) &&
+                <small>{this.state.error.message}</small>
+              }
             </div>
 
             <div className="group">
               <label>Confirm Password</label>
               <input type="password" placeholder="Enter password" title="Enter your password" required name="confirm-password" maxLength="60" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
               
-              {(this.state.confirmPassword != "" && this.state.password != this.state.confirmPassword) &&
+              {((this.state.confirmPassword != "" && this.state.password != this.state.confirmPassword) || (this.state.error && this.state.error.param == registerErrorParam.CONFIRMPASSWORD)) &&
                 <small>Passwords do not match.</small>
               }
             </div>
