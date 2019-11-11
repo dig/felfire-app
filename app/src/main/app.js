@@ -6,8 +6,6 @@ const ipc = electron.ipcMain;
 const path = require('path'),
     url = require('url');
 
-console.log(app.getPath('userData'));
-
 let mainWindow;
 function createMainWindow() {
   mainWindow = new BrowserWindow({
@@ -28,20 +26,24 @@ function createMainWindow() {
   }));
 
   if (process.env.NODE_ENV === 'development') {
+    global.apiURL = 'https://localhost:3000';
+
     const {
-        default: installExtension,
-        REACT_DEVELOPER_TOOLS,
-        REDUX_DEVTOOLS,
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS,
+      REDUX_DEVTOOLS,
     } = require('electron-devtools-installer');
     installExtension(REACT_DEVELOPER_TOOLS)
-        .then(name => console.log(`Added Extension:  ${name}`))
-        .catch(err => console.log('An error occurred: ', err));
+      .then(name => console.log(`Added Extension:  ${name}`))
+      .catch(err => console.log('An error occurred: ', err));
 
     installExtension(REDUX_DEVTOOLS)
-        .then(name => console.log(`Added Extension:  ${name}`))
-        .catch(err => console.log('An error occurred: ', err));
+      .then(name => console.log(`Added Extension:  ${name}`))
+      .catch(err => console.log('An error occurred: ', err));
 
     mainWindow.webContents.openDevTools();
+  } else {
+    global.apiURL = 'https://api.felfire.app';
   }
 
   mainWindow.once('ready-to-show', function() { 
@@ -52,6 +54,22 @@ function createMainWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+}
+
+//--- Only one instance
+let shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+  if (mainWindow) {
+    mainWindow.show();
+
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  }
+});
+
+//--- Prevent spawning of new instance
+if (shouldQuit) {
+  app.quit();
+  return;
 }
 
 app.on('ready', createMainWindow);

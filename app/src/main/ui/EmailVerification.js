@@ -39,7 +39,7 @@ class EmailVerification extends React.Component {
           <div className="header">
             <img className="bounceInDown" style={{ width: '60px' }} src={Mail} />
 
-            <h2>Email Verification</h2>
+            <h2>{this.props.pageData.title || 'Email Verification'}</h2>
             <p>An email has been sent to '<b>{this.props.pageData.email}</b>'.</p>
             <p>Please check your inbox.</p>
 

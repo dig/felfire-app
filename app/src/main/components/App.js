@@ -126,6 +126,8 @@ class App extends React.Component {
     }, 50);
 
     setTimeout(this.requestUserData, 1000);
+
+    //--- TODO: Check if accessToken has expired and refresh
   }
 
   componentWillUnmount() {

@@ -62,7 +62,7 @@ class Login extends React.Component {
               <label>Password</label>
               <input type="password" placeholder="Enter password" title="Enter your password" required name="password" maxLength="60"></input>
 
-              {(this.state.error) &&
+              {this.state.error &&
                 <small>Incorrect email or password.</small>
               }
             </div>

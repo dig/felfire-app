@@ -1,10 +1,13 @@
-const { ipcRenderer } = require('electron');
-
 import React from 'react';
+import User from '../utils/User';
 
 class ForgotPassword extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      error : false
+    };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
@@ -12,6 +15,12 @@ class ForgotPassword extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    let email = event.target.email.value;
+
+    User.requestPasswordReset(email).then(() => {
+      this.props.changePage('EMAILVERIFICATION', { title : 'Password Reset', email : email });
+    })
+    .catch(() => this.setState({error : true}));
   }
 
   handleLogin(event) {
@@ -30,8 +39,11 @@ class ForgotPassword extends React.Component {
 
           <form onSubmit={this.handleSubmit}>
             <div className="group">
-              <label>Email</label>
               <input type="text" placeholder="Enter email" title="Enter your email" required name="email"></input>
+
+              {this.state.error &&
+                <small>Email doesn't exist.</small>
+              }
             </div>
 
             <div className="group">

@@ -1,5 +1,5 @@
 {
-  "name": "felfire-electron",
+  "name": "FelFire",
   "version": "0.0.1",
   "description": "FelFire image sharing service.",
   "main": "./app/build/app.js",
@@ -13,9 +13,15 @@
   },
   "author": "Joseph Ali",
   "build": {
+    "appId": "felfire.app",
     "productName": "FelFire",
+    "copyright": "Copyright © 2019 ${author}",
     "win": {
-      "target": "NSIS"
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "build/icon.ico"
     },
     "linux": {
       "target": [
@@ -24,6 +30,7 @@
       ]
     },
     "mac": {
+      "icon": "build/icon.icns",
       "category": "public.app-category.developer-tools"
     },
     "directories": {
@@ -58,6 +65,7 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.1.1",
     "electron-json-storage": "^4.1.8",
+    "electron-updater": "^4.2.0",
     "fs": "0.0.1-security",
     "iohook": "^0.4.5",
     "jimp": "^0.2.28",
