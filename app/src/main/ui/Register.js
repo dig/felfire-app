@@ -169,7 +169,7 @@ class Register extends React.Component {
 
             <div className="group">
               <label>Confirm Password</label>
-              <input type="password" placeholder="Enter password" title="Enter your password" required name="confirm-password" maxLength="60" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
+              <input type="password" placeholder="Confirm password" title="Enter your password" required name="confirm-password" maxLength="60" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
               
               {((this.state.confirmPassword != "" && this.state.password != this.state.confirmPassword) || (this.state.error && this.state.error.param == registerErrorParam.CONFIRMPASSWORD)) &&
                 <small>Passwords do not match.</small>

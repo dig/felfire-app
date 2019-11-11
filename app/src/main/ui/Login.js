@@ -20,9 +20,10 @@ class Login extends React.Component {
     event.preventDefault();
     User.login(event.target.email.value, event.target.password.value).then((data) => {
       if (data != null && data.refreshToken && data.accessToken) {
-        this.props.updateRefreshToken(data.refreshToken);
-        this.props.updateAccessToken(data.accessToken);
-        this.props.changePage('LIBRARY');
+        this.props.updateRefreshToken(data.refreshToken).then(() => {
+          this.props.updateAccessToken(data.accessToken);
+          this.props.changePage('LIBRARY');
+        });
       }
     })
     .catch(() => this.setState({error : true}));
