@@ -1,7 +1,7 @@
 import React from 'react';
+
 import Mail from '../assets/img/mail.png'; 
 import LeftArrow from '../assets/img/left-arrow.png'; 
-import { cursorTo } from 'readline';
 
 class EmailVerification extends React.Component {
   constructor(props) {
@@ -23,12 +23,13 @@ class EmailVerification extends React.Component {
   componentDidMount() {
     this.timerID = setInterval(() => {
       this.setState({arrowWobble : true});
-      setTimeout(() => this.setState({arrowWobble : false}), 500);
+      this.timeoutID = setTimeout(() => this.setState({arrowWobble : false}), 500);
     }, 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+    clearTimeout(this.timeoutID);
   }
 
   render() {

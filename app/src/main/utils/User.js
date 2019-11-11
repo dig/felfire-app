@@ -30,10 +30,17 @@ exports.login = (email, password) => {
       if (error || response.statusCode != 201) {
         reject();
       } else {
-        resolve({
-          accessToken : body.accessToken,
-          refreshToken : body.refreshToken
-        });
+        if (body.accessToken) {
+          resolve({
+            accessToken : body.accessToken,
+            refreshToken : body.refreshToken
+          });
+        } else {
+          resolve({
+            email : body.email,
+            verified : body.verified
+          });
+        }
       }
     });
   });
