@@ -99,9 +99,11 @@ app.on('activate', () => {
 
 const userConfig = new Config({name: 'user'});
 function load() {
-  //--- If key doesn't exist
-  let key = userConfig.get('key');
-  if (key == null) {
+  //--- If tokens don't exist
+  let accessToken = userConfig.get('accessToken');
+  let refreshToken = userConfig.get('refreshToken');
+
+  if (accessToken == null || refreshToken == null) {
     mainWindow.webContents.send('load-setup', true);
     setTimeout(() => mainWindow.webContents.send('change-page', "LOGIN"), 6000);
     return;
@@ -112,13 +114,8 @@ function load() {
 
 }
 
-function login(userName, password) {
-  mainWindow.webContents.send('login-response', 0);
-}
 
-ipc.on('load-init', load);
-ipc.on('login-request', (userName, password) => login(userName, password));
-
+//--- Toolbar
 ipc.on('toolbar-minimize', () => mainWindow.minimize());
 ipc.on('toolbar-maximize', () => {
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -131,3 +128,5 @@ ipc.on('toolbar-maximize', () => {
   }
 });
 ipc.on('toolbar-close', () => mainWindow.hide());
+
+ipc.on('load-init', load);

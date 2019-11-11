@@ -13,6 +13,10 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    ipcRenderer.send('login', {
+      email : event.target.email.value,
+      password : event.target.password.value
+    });
   }
 
   handleRegister(event) {
