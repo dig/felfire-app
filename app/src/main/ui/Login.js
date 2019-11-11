@@ -7,6 +7,10 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      error : false
+    };
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
     this.handleForgottenPassword = this.handleForgottenPassword.bind(this);
@@ -21,7 +25,7 @@ class Login extends React.Component {
         this.props.changePage('LIBRARY');
       }
     })
-    .catch(error => console.log(error));
+    .catch(() => this.setState({error : true}));
   }
 
   handleRegister(event) {
@@ -52,6 +56,10 @@ class Login extends React.Component {
             <div className="group">
               <label>Password</label>
               <input type="password" placeholder="Enter password" title="Enter your password" required name="password" maxLength="60"></input>
+
+              {(this.state.error) &&
+                <small>Incorrect email or password.</small>
+              }
             </div>
 
             <div className="group">

@@ -31,12 +31,13 @@ class Register extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+
+    let email = event.target.email.value;
     let password = event.target.password.value;
 
     if (this.state.confirmPassword === password) {
       User.createUser(event.target.username.value, event.target.email.value, password).then(() => {
-        //--- TODO: Email verification page
-        this.props.changePage('LOGIN');
+        this.props.changePage('EMAILVERIFICATION', { email :  email});
       }).catch(errors => {
         if (errors[0] && registerErrorParam[errors[0].param.toUpperCase()]) {
           this.setState({

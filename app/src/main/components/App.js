@@ -2,9 +2,11 @@ const { ipcRenderer } = require('electron');
 const storage = require('electron-json-storage');
 
 import React from 'react';
+
 import Toolbar from './Toolbar';
 import Main from '../assets/style/main.scss';
 
+import EmailVerification from '../ui/EmailVerification';
 import ForgotPassword from '../ui/ForgotPassword';
 import Library from '../ui/Library';
 import Load from '../ui/Load';
@@ -17,6 +19,7 @@ const pages = {
   LOGIN: Login,
   REGISTER: Register,
   FORGOTPASSWORD: ForgotPassword,
+  EMAILVERIFICATION: EmailVerification,
   LIBRARY: Library
 };
 
@@ -28,9 +31,12 @@ class App extends React.Component {
       loaded : false,
       loadOverlay : true,
       loadPercent : 0,
+
       accessToken : '',
       refreshToken : '',
-      page : pages.LIBRARY
+
+      page : pages.LIBRARY,
+      pageData : {}
     };
 
     this.changePage = this.changePage.bind(this);
@@ -43,8 +49,11 @@ class App extends React.Component {
     this.requestUserData = this.requestUserData.bind(this);
   }
 
-  changePage(pageName) {
-    this.setState({page : pages[pageName]});
+  changePage(pageName, data) {
+    this.setState({
+      page : pages[pageName],
+      pageData : data || {}
+    });
   }
 
   setLoadOverlay(loadOverlay) {
@@ -134,7 +143,7 @@ class App extends React.Component {
           {this.state.loadOverlay &&
             <Load percent={this.state.loadPercent} />
           }
-          <Page changePage={this.changePage} setLoadOverlay={this.setLoadOverlay} updateAccessToken={this.updateAccessToken} updateRefreshToken={this.updateRefreshToken} />
+          <Page pageData={this.state.pageData} changePage={this.changePage} setLoadOverlay={this.setLoadOverlay} updateAccessToken={this.updateAccessToken} updateRefreshToken={this.updateRefreshToken} />
         </div>
       </div>
     );
