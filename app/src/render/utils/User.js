@@ -30,7 +30,7 @@ exports.requestPasswordReset = (email) => {
   return new Promise((resolve, reject) => {
     request.post({url: `${apiURL}/users/forgot/password`, form: {email: email}, json: true}, function(error, response, body) {
       if (error || response.statusCode != 201) {
-        reject(body.errors);
+        reject();
       } else {
         resolve();
       }
