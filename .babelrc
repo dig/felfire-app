@@ -1,8 +1,5 @@
 {
-	"presets": [
-    ["es2015", { "modules": false }],
-		"react",
-    "stage-1"
-	],
-	"plugins": ["emotion"]
+  "presets": [
+    "@babel/preset-react"
+  ]
 }

@@ -15,35 +15,39 @@ function createMainWindow() {
     resizable : false,
     backgroundColor : "#202225",
     frame : false,
-    show : false
+    show : false,
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   mainWindow.setMenu(null);
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
 
   if (process.env.NODE_ENV === 'development') {
     global.apiURL = 'https://localhost:3000';
+    mainWindow.loadURL(url.format({
+      protocol: 'http:',
+      host: 'localhost:8080',
+      pathname: 'index.html',
+      slashes: true
+    }));
 
     const {
       default: installExtension,
-      REACT_DEVELOPER_TOOLS,
-      REDUX_DEVTOOLS,
+      REACT_DEVELOPER_TOOLS
     } = require('electron-devtools-installer');
     installExtension(REACT_DEVELOPER_TOOLS)
-      .then(name => console.log(`Added Extension:  ${name}`))
-      .catch(err => console.log('An error occurred: ', err));
-
-    installExtension(REDUX_DEVTOOLS)
       .then(name => console.log(`Added Extension:  ${name}`))
       .catch(err => console.log('An error occurred: ', err));
 
     mainWindow.webContents.openDevTools();
   } else {
     global.apiURL = 'https://api.felfire.app';
+    mainWindow.loadURL(url.format({
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file:',
+      slashes: true
+    }));
   }
 
   mainWindow.once('ready-to-show', function() { 
@@ -56,21 +60,22 @@ function createMainWindow() {
   });
 }
 
-//--- Only one instance
-let shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-  if (mainWindow) {
-    mainWindow.show();
-
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.focus();
-  }
-});
-
-//--- Prevent spawning of new instance
-if (shouldQuit) {
+//--- Single instance application
+const appLock = app.requestSingleInstanceLock();
+if (!appLock) {
   app.quit();
   return;
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (mainWindow) {
+      mainWindow.show();
+
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
 }
+
 
 app.on('ready', createMainWindow);
 app.on('window-all-closed', () => {

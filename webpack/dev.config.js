@@ -1,63 +1,74 @@
 const webpack = require('webpack');
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { spawn } = require('child_process');
+const defaultInclude = path.resolve(__dirname, '../app/src/render');
 
 module.exports = {
-  target: 'electron',
-  context: path.join(__dirname, '../app'),
-  devtool: 'inline-source-map',
   entry: {
     app: [
-      'react-hot-loader/patch',
-      'webpack-dev-server/client?http://localhost:9000',
-      'webpack/hot/only-dev-server',
-      './src/main/index.js'
+      './app/src/render/index.js'
     ],
   },
   output: {
-    path: path.resolve(__dirname, './app/build'),
+    path: path.resolve(__dirname, '../app/build'),
     filename: 'app.bundle.js',
-    publicPath: 'http://localhost:9000/',
-  },
-  devServer: {
-    hot: true,
-    publicPath: 'http://localhost:9000/',
-    historyApiFallback: true,
-    port: 9000,
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
+    rules: [
+      {
+        test: /\.css$/,
+        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'postcss-loader' }],
+        include: defaultInclude
       },
-    },
-    {
-      test: /\.scss$/,
-      use: ['style-loader', 'css-loader', 'sass-loader'],
-    },
-    {
-      test: /\.(png|jpg|gif)$/,
-      use: [{
-        loader: 'file-loader',
-        options: {},
-      }],
-    },
-    ],
+      {
+        test: /\.jsx?$/,
+        use: [{ loader: 'babel-loader' }],
+        include: defaultInclude
+      },
+      {
+        test: /\.(jpe?g|png|gif)$/,
+        use: [{ loader: 'file-loader?name=img/[name]__[hash:base64:5].[ext]' }],
+        include: defaultInclude
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        use: [{ loader: 'file-loader?name=font/[name]__[hash:base64:5].[ext]' }],
+        include: defaultInclude
+      }
+    ]
   },
+  target: 'electron-renderer',
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(),
-    new CopyWebpackPlugin([{
-      from: './src/main/app.js',
-    },
-    {
-      from: './src/main/index.html',
-    },
+    new CopyWebpackPlugin([
+      {
+        from: './app/src/main/app.js',
+      },
+      {
+        from: './app/src/render/index.html',
+      },
     ]),
     new webpack.DefinePlugin({
-      $dirname: '__dirname',
-    }),
-  ]
-};
+      'process.env.NODE_ENV': JSON.stringify('development')
+    })
+  ],
+  devtool: 'cheap-source-map',
+  devServer: {
+    contentBase: path.resolve(__dirname, './app/build'),
+    stats: {
+      colors: true,
+      chunks: false,
+      children: false
+    },
+    before() {
+      spawn(
+        'electron',
+        ['.'],
+        { shell: true, env: process.env, stdio: 'inherit' }
+      )
+      .on('close', code => process.exit(0))
+      .on('error', spawnError => console.error(spawnError))
+    }
+  }
+}

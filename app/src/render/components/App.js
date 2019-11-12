@@ -4,7 +4,7 @@ const storage = require('electron-json-storage');
 import React from 'react';
 
 import Toolbar from './Toolbar';
-import Main from '../assets/style/main.scss';
+import Main from '../assets/style/main.css';
 
 import EmailVerification from '../ui/EmailVerification';
 import ForgotPassword from '../ui/ForgotPassword';

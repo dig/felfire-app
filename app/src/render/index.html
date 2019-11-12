@@ -14,12 +14,11 @@
   <script>
     if (process.env.NODE_ENV) {
       const bundle = document.createElement('script');
-      const port = 9000;
-      bundle.src = 'http://localhost:' + port + '/app.bundle.js';
+      bundle.src = 'http://localhost:8080/app.bundle.js';
       document.body.appendChild(bundle);
 
       const devServer = document.createElement('script');
-      devServer.src = 'http://localhost:' + port + '/webpack-dev-server.js';
+      devServer.src = 'http://localhost:8080/webpack-dev-server.js';
       document.body.appendChild(devServer);
     } else {
       let headHTML = document.getElementsByTagName('head')[0].innerHTML;

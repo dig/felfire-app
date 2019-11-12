@@ -1,16 +1,15 @@
 const webpack = require('webpack');
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const MinifyPlugin = require('babel-minify-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const BabiliPlugin = require('babili-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const defaultInclude = path.resolve(__dirname, '../app/src/render');
 
 module.exports = {
-  target: 'electron',
-  context: path.join(__dirname, '../app'),
-  devtool: 'source-map',
   entry: {
     app: [
-      './src/main/index.js'
+      './app/src/render/index.js'
     ],
   },
   output: {
@@ -18,54 +17,58 @@ module.exports = {
     filename: 'app.bundle.js',
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader'
+        ],
+        include: defaultInclude
       },
-    },
-    {
-      test: /\.scss$/,
-      use: ExtractTextPlugin.extract({
-        fallback: 'style-loader',
-        use: ['css-loader', 'sass-loader'],
-      }),
-    },
-    {
-      test: /\.(png|jpg|gif)$/,
-      use: [{
-        loader: 'file-loader',
-        options: {
-          outputPath: 'images/',
-        },
-      }],
-    },
-    ],
+      {
+        test: /\.jsx?$/,
+        use: [{ loader: 'babel-loader' }],
+        include: defaultInclude
+      },
+      {
+        test: /\.(jpe?g|png|gif)$/,
+        use: [{ loader: 'file-loader?name=img/[name]__[hash:base64:5].[ext]' }],
+        include: defaultInclude
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        use: [{ loader: 'file-loader?name=font/[name]__[hash:base64:5].[ext]' }],
+        include: defaultInclude
+      }
+    ]
   },
+  target: 'electron-renderer',
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production'),
-      },
+    new MiniCssExtractPlugin({
+      filename: 'app.bundle.css',
+      chunkFilename: '[id].css'
     }),
-    new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.optimize.AggressiveMergingPlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new MinifyPlugin(),
-    new ExtractTextPlugin('app.bundle.css'),
     new CopyWebpackPlugin([
       {
-        from: './src/main/app.js',
+        from: './app/src/main/app.js',
         to: path.join(__dirname, '../app/build'),
       },
       {
-        from: './src/main/index.html',
+        from: './app/src/render/index.html',
         to: path.join(__dirname, '../app/build'),
       },
     ]),
     new webpack.DefinePlugin({
-      $dirname: '__dirname',
+      'process.env.NODE_ENV': JSON.stringify('production')
     }),
+    new BabiliPlugin()
   ],
-};
+  stats: {
+    colors: true,
+    children: false,
+    chunks: false,
+    modules: false
+  }
+}
