@@ -4,3 +4,4 @@ yarn.lock
 release
 .idea
 app/build
+.DS_Store
