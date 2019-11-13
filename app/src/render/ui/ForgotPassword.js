@@ -1,4 +1,10 @@
 import React from 'react';
+
+import ForgotPasswordCSS from '../assets/style/forgotpassword.css';
+import Mail from '../assets/img/mail.png';
+import Square from '../assets/img/square.png';
+import Mark from '../assets/img/danger.png';
+
 import User from '../utils/User';
 
 class ForgotPassword extends React.Component {
@@ -6,7 +12,7 @@ class ForgotPassword extends React.Component {
     super(props);
 
     this.state = {
-      error : false
+      error : ''
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -20,7 +26,7 @@ class ForgotPassword extends React.Component {
     User.requestPasswordReset(email).then(() => {
       this.props.changePage('EMAILVERIFICATION', { title : 'Password Reset', email : email });
     })
-    .catch(() => this.setState({error : true}));
+    .catch((errors) => this.setState({error : errors[0].msg}));
   }
 
   handleLogin(event) {
@@ -30,27 +36,40 @@ class ForgotPassword extends React.Component {
 
   render() {
     return (
-      <div className="main-form animated slideInDown">
+      <div className="forgotpassword">
+        <img className="square" src={Square} />
+
         <div className="container">
           <div className="header">
-            <h2>Forgotten Password</h2>
-            <small>Please enter your email to recover your account</small>
+            <h3>Need help?</h3>
+            <small>Please enter your email to recover your account.</small>
           </div>
 
-          <form onSubmit={this.handleSubmit}>
-            <div className="group">
-              <input type="text" placeholder="Enter email" title="Enter your email" required name="email"></input>
+          <form className="content" onSubmit={this.handleSubmit}>
+            {this.state.error != '' &&
+              <div className="error">
+                <div className="content">
+                  <img src={Mark} />
+                  {this.state.error}
+                </div>
+              </div>
+            }
 
-              {this.state.error &&
-                <small>Email doesn't exist.</small>
-              }
+            <div className="group">
+              <input type="text" title="Enter your email" required name="email"></input>
             </div>
 
-            <div className="group">
-             <input type="submit" value="Recover"></input>
+            <div className="link">
+              <small onClick={this.handleLogin}>Remembered your password?</small>
             </div>
 
-            <small onClick={this.handleLogin}>Remember your password?</small>
+            <div className="submit">
+              <input type="submit" value="RECOVER" />
+
+              <div className="caption">
+                <img src={Mail} />
+              </div>
+            </div>
           </form>
         </div>
       </div>

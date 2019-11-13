@@ -52,8 +52,8 @@
   0% {
     -webkit-transform: scale(1.3);
     transform: scale(1.3);
-    -webkit-filter: blur(2px);
-    filter: blur(2px);
+    -webkit-filter: blur(1.5px);
+    filter: blur(1.5px);
     opacity: 0;
   }
   100% {
