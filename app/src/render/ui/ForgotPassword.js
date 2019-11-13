@@ -12,7 +12,8 @@ class ForgotPassword extends React.Component {
     super(props);
 
     this.state = {
-      error : ''
+      error : '',
+      shake : false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -26,12 +27,22 @@ class ForgotPassword extends React.Component {
     User.requestPasswordReset(email).then(() => {
       this.props.changePage('EMAILVERIFICATION', { title : 'Password Reset', email : email });
     })
-    .catch((errors) => this.setState({error : errors[0].msg}));
+    .catch((errors) => {
+      this.setState({
+        error : errors[0].msg,
+        shake : true
+      });
+      this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
+    });
   }
 
   handleLogin(event) {
     event.preventDefault();
     this.props.changePage('LOGIN');
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.shakeID);
   }
 
   render() {
@@ -60,10 +71,10 @@ class ForgotPassword extends React.Component {
             </div>
 
             <div className="link">
-              <small onClick={this.handleLogin}>Remembered your password?</small>
+              <small onClick={this.handleLogin}>Remember your password?</small>
             </div>
 
-            <div className="submit">
+            <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
               <input type="submit" value="RECOVER" />
 
               <div className="caption">

@@ -15,7 +15,8 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      error : false
+      error : false,
+      shake : false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,7 +38,17 @@ class Login extends React.Component {
         }
       }
     })
-    .catch(() => this.setState({error : true}));
+    .catch(() => {
+      this.setState({
+        error : true,
+        shake : true
+      });
+      this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
+    });
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.shakeID);
   }
 
   handleRegister(event) {
@@ -91,7 +102,7 @@ class Login extends React.Component {
                 <small onClick={this.handleRegister}>Need an account?</small>
               </div>
 
-              <div className="submit">
+              <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
                <input type="submit" value="LOGIN" />
 
                <div className="caption">

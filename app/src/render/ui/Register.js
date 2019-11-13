@@ -27,7 +27,8 @@ class Register extends React.Component {
       strengthColor : '',
       strengthText : '',
 
-      errorMessage : ''
+      errorMessage : '',
+      shake : false
     };
     
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,11 +49,19 @@ class Register extends React.Component {
         this.props.changePage('EMAILVERIFICATION', { email :  email});
       }).catch(errors => {
         if (errors[0] && registerErrorParam[errors[0].param.toUpperCase()]) {
-          this.setState({errorMessage : errors[0].msg});
+          this.setState({
+            errorMessage : errors[0].msg,
+            shake : true
+          });
+          this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
         }
       });
     } else {
-      this.setState({errorMessage : 'Passwords do not match.'});
+      this.setState({
+        errorMessage : 'Passwords do not match.',
+        shake : true
+      });
+      this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
     }
   }
 
@@ -119,6 +128,10 @@ class Register extends React.Component {
     };
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.shakeID);
+  }
+
   render() {
     return (
       <div className="register">
@@ -179,7 +192,7 @@ class Register extends React.Component {
                 <small onClick={this.handleLogin}>Have an account?</small>
               </div>
 
-              <div className="submit">
+              <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
                <input type="submit" value="SIGN UP" />
 
                <div className="caption">
