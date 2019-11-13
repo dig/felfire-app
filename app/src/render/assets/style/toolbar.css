@@ -1,0 +1,74 @@
+.toolbar {
+  height: 25px;
+  display: flex;
+  align-items: center; 
+}
+
+.toolbar.background {
+  background: #18191c;
+}
+
+.toolbar .drag {
+  height: 100%;
+  width: calc(100% - 90px);
+  -webkit-app-region: drag;
+  display: flex;
+  align-items: center;
+}
+
+.toolbar .icon {
+  position: relative;
+  height: 16px;
+  left: 5px;
+}
+
+.toolbar .text {
+  position: relative;
+  height: 12px;
+  left: 10px;
+  top: 1px;
+}
+
+.toolbar small {
+  position: relative;
+  left: 13px;
+  top: 3px;
+  font-size: x-small;
+}
+
+.toolbar > .toolset {
+  position: absolute;
+  right: 0;
+}
+
+.toolbar > .toolset > .tool {
+  float: left;
+  width: 30px;
+  height: 25px;
+	border: 0;
+	outline: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.toolbar > .toolset > .tool:hover {
+  background: rgba(255, 255, 255, .1);
+}
+
+.toolbar > .toolset > .tool.close:hover {
+	background: #e81123;
+}
+
+.toolbar > .toolset > .tool > svg path, 
+.toolbar > .toolset > .tool > svg rect, 
+.toolbar > .toolset > .tool > svg polygon {
+	fill: #fff;
+}
+.toolbar > .toolset > .tool > svg {
+  color: #fff;
+  width: 10px;
+  height: 10px;
+}

@@ -1,6 +1,13 @@
 const { ipcRenderer } = require('electron');
 
 import React from 'react';
+
+import LoginCSS from '../assets/style/login.css';
+import Picture from '../assets/img/login.svg'; 
+import Padlock from '../assets/img/padlock-unlock.png';
+import Square from '../assets/img/square.png';
+import Mark from '../assets/img/danger.png';
+
 import User from '../utils/User';
 
 class Login extends React.Component {
@@ -45,35 +52,54 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div className="main-form animated slideInDown">
-        <div className="container">
-          <div className="header">
-            <h2>Login</h2>
-            <small>Please enter your credentials to login</small>
-          </div>
+      <div className="login">
+        <img className="square" src={Square} />
 
-          <form onSubmit={this.handleSubmit}>
-            <div className="group">
-              <label>Email</label>
-              <input type="text" placeholder="Enter email" title="Enter your email" required name="email"></input>
+        <div className="left">
+          <img src={Picture} />
+        </div>
+
+        <div className="right">
+          <div className="container">
+            <div className="header">
+              <h3>Welcome Back!</h3>
+              <small>Please enter your credentials to login</small>
             </div>
 
-            <div className="group">
-              <label>Password</label>
-              <input type="password" placeholder="Enter password" title="Enter your password" required name="password" maxLength="60"></input>
-
+            <form className="content" onSubmit={this.handleSubmit}>
               {this.state.error &&
-                <small>Incorrect email or password.</small>
+                <div className="error">
+                  <div className="content">
+                    <img src={Mark} />
+                    Incorrect email or password.
+                  </div>
+                </div>
               }
-            </div>
 
-            <div className="group">
-             <input type="submit" value="Sign In"></input>
-            </div>
+              <div className="group">
+                <label>Email</label>
+                <input type="text" title="Enter your email" required name="email"></input>
+              </div>
 
-            <small onClick={this.handleRegister}>Don't have an account?</small>
-            <small onClick={this.handleForgottenPassword}>Forgotten password?</small>
-          </form>
+              <div className="group">
+                <label>Password</label>
+                <input type="password" title="Enter your password" required name="password"></input>
+              </div>
+
+              <div className="link">
+                <small onClick={this.handleForgottenPassword}>Forgot your password?</small>
+                <small onClick={this.handleRegister}>Need an account?</small>
+              </div>
+
+              <div className="submit">
+               <input type="submit" value="LOGIN" />
+
+               <div className="caption">
+                 <img src={Padlock} />
+               </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     )

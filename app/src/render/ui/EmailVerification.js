@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Mail from '../assets/img/mail.png'; 
+import MailNew from '../assets/img/mail-sent.svg';
 import LeftArrow from '../assets/img/left-arrow.png'; 
 
 class EmailVerification extends React.Component {
@@ -37,7 +38,7 @@ class EmailVerification extends React.Component {
       <div className="main-form">
         <div className="container">
           <div className="header">
-            <img className="bounceInDown" style={{ width: '60px' }} src={Mail} />
+            <img className="bounceInDown" style={{ width: '60px', marginBottom: '3px' }} src={MailNew} />
 
             <h2>{this.props.pageData.title || 'Email Verification'}</h2>
             <p>An email has been sent to '<b>{this.props.pageData.email}</b>'.</p>

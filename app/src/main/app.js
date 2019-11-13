@@ -12,7 +12,9 @@ function createMainWindow() {
     title: "FelFire",
     height: 700,
     width: 1200,
-    resizable : false,
+    minHeight : 400,
+    minWidth : 900,
+    resizable : true,
     backgroundColor : "#202225",
     frame : false,
     show : false,
@@ -99,7 +101,7 @@ ipc.on('toolbar-minimize', () => mainWindow.minimize());
 ipc.on('toolbar-maximize', () => {
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
 
-  if (mainWindow.getSize()[0] < width || mainWindow.getSize()[1] < height) {
+  if (!mainWindow.isMaximized()) {
     mainWindow.maximize();
   } else {
     mainWindow.setSize(1200, 700, true);

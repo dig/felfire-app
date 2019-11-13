@@ -1,0 +1,32 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing : border-box;
+}
+
+html, body, #root, .app {
+  width: 100%;
+  height: 100%;
+  background: #202225;
+  font-family: Roboto, sans-serif;
+}
+
+p, small, label, h1, h2, h3, h4, h5, h6 {
+  color: #fff;
+}
+
+.page {
+  height: calc(100% - 25px);
+}
+
+.progress {
+  height: 10px;
+  width: 60px;
+  color: #fff;
+  background: #18191c;
+}
+
+.progress .inner {
+  height: 10px;
+  background: #787676;
+}

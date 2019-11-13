@@ -1,6 +1,8 @@
 const { ipcRenderer } = require('electron');
 
 import React from 'react';
+import ToolbarCSS from '../assets/style/toolbar.css';
+
 import Icon from '../assets/img/icon.png'; 
 import Text from '../assets/img/text.png'; 
 
