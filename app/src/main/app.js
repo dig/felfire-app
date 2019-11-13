@@ -2,7 +2,7 @@ const electron = require('electron');
      app = electron.app,
      BrowserWindow = electron.BrowserWindow,
      ipc = electron.ipcMain,
-     { autoUpdater } = require("electron-updater"),
+     autoUpdater = electron.autoUpdater,
      log = require('electron-log');
 
 
@@ -10,9 +10,12 @@ const path = require('path'),
     url = require('url');
 
 //--- Setup logger
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
+
+//--- Setup automatic updates
+const server = 'https://api.felfire.app';
+const feed = `${server}/download/latest/${process.platform}`;
+autoUpdater.setFeedURL(feed);
 
 let mainWindow;
 function createMainWindow() {
@@ -59,9 +62,7 @@ function createMainWindow() {
       slashes: true
     }));
 
-    autoUpdater.checkForUpdates()
-      .then(() => log.info('success'))
-      .catch((error) => log.info('error ' + error));
+    autoUpdater.checkForUpdates();
   }
 
   mainWindow.once('ready-to-show', function() { 
@@ -121,20 +122,8 @@ ipc.on('toolbar-maximize', () => {
 ipc.on('toolbar-close', () => mainWindow.hide());
 
 //--- Auto updates
-autoUpdater.on('checking-for-update', () => {
-  log.info('checking-for-update');
-  mainWindow.webContents.send('checking-for-update');
-});
-autoUpdater.on('update-available', () => {
-  log.info('update-available');
-  mainWindow.webContents.send('update-available');
-});
-autoUpdater.on('update-not-available', () => {
-  log.info('update-not-available');
-  mainWindow.webContents.send('update-not-available');
-});
-autoUpdater.on('error', () => {
-  log.info('update-error');
-  mainWindow.webContents.send('update-error');
-});
+autoUpdater.on('checking-for-update', () => mainWindow.webContents.send('checking-for-update'));
+autoUpdater.on('update-available', () => mainWindow.webContents.send('update-available'));
+autoUpdater.on('update-not-available', () => mainWindow.webContents.send('update-not-available'));
+autoUpdater.on('error', () => mainWindow.webContents.send('update-error'));
 autoUpdater.on('update-downloaded', () => autoUpdater.quitAndInstall());
