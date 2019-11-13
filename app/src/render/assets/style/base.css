@@ -31,6 +31,10 @@ p, small, label, h1, h2, h3, h4, h5, h6 {
   background: #787676;
 }
 
+.noselect {
+  user-select: none;
+}
+
 .shake {
   animation: 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955) 0s 1 normal both running shake;
 }
@@ -76,5 +80,51 @@ p, small, label, h1, h2, h3, h4, h5, h6 {
   100% {
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
+  }
+}
+
+.spinning {
+  animation: 1.5s ease-in-out 0s infinite normal both running spinning;
+}
+
+@keyframes spinning {
+  0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.vibrate {
+  animation: 0.5s linear 0s infinite normal both running vibrate;
+}
+
+@keyframes vibrate {
+  0% {
+    -webkit-transform: translate(0);
+    transform: translate(0);
+  }
+  20% {
+    -webkit-transform: translate(-2px, 1px);
+    transform: translate(-2px, 1px);
+  }
+  40% {
+    -webkit-transform: translate(-2px, -1px);
+    transform: translate(-2px, -1px);
+  }
+  60% {
+    -webkit-transform: translate(2px, 1px);
+    transform: translate(2px, 1px);
+  }
+  80% {
+    -webkit-transform: translate(2px, -1px);
+    transform: translate(2px, -1px);
+  }
+  100% {
+    -webkit-transform: translate(0);
+    transform: translate(0);
   }
 }

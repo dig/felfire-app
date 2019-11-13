@@ -1,6 +1,6 @@
 {
   "name": "FelFire",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "FelFire image sharing service.",
   "homepage": "https://felfire.app",
   "engines": {
@@ -14,7 +14,7 @@
     "prod": "cross-env NODE_ENV=production webpack --mode production --config webpack/prod.config.js && electron --noDevServer ./app/build/app.js",
     "build": "webpack --config webpack/prod.config.js --mode production",
     "pack": "electron-builder --dir",
-    "dist": "npm run build && electron-builder",
+    "dist": "npm run build && electron-builder --win --x64",
     "postinstall": "electron-builder install-app-deps"
   },
   "author": "Joseph Ali",
@@ -27,7 +27,8 @@
       "icon": "build/icon.ico"
     },
     "nsis": {
-      "installerIcon": "build/icon.ico"
+      "installerIcon": "build/icon.ico",
+      "perMachine": true
     },
     "linux": {
       "target": [
@@ -41,10 +42,18 @@
     },
     "directories": {
       "output": "release"
-    }
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://localhost:3000"
+      }
+    ]
   },
   "dependencies": {
     "electron-json-storage": "^4.1.8",
+    "electron-updater": "^4.2.0",
+    "electron-log": "^3.0.9",
     "jwt-decode": "^2.2.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

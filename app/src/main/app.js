@@ -1,10 +1,18 @@
 const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-const ipc = electron.ipcMain;
+     app = electron.app,
+     BrowserWindow = electron.BrowserWindow,
+     ipc = electron.ipcMain,
+     { autoUpdater } = require("electron-updater"),
+     log = require('electron-log');
+
 
 const path = require('path'),
     url = require('url');
+
+//--- Setup logger
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 let mainWindow;
 function createMainWindow() {
@@ -50,6 +58,10 @@ function createMainWindow() {
       protocol: 'file:',
       slashes: true
     }));
+
+    autoUpdater.checkForUpdates()
+      .then(() => log.info('success'))
+      .catch((error) => log.info('error ' + error));
   }
 
   mainWindow.once('ready-to-show', function() { 
@@ -99,8 +111,6 @@ app.on('activate', () => {
 //--- Toolbar
 ipc.on('toolbar-minimize', () => mainWindow.minimize());
 ipc.on('toolbar-maximize', () => {
-  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
-
   if (!mainWindow.isMaximized()) {
     mainWindow.maximize();
   } else {
@@ -109,3 +119,22 @@ ipc.on('toolbar-maximize', () => {
   }
 });
 ipc.on('toolbar-close', () => mainWindow.hide());
+
+//--- Auto updates
+autoUpdater.on('checking-for-update', () => {
+  log.info('checking-for-update');
+  mainWindow.webContents.send('checking-for-update');
+});
+autoUpdater.on('update-available', () => {
+  log.info('update-available');
+  mainWindow.webContents.send('update-available');
+});
+autoUpdater.on('update-not-available', () => {
+  log.info('update-not-available');
+  mainWindow.webContents.send('update-not-available');
+});
+autoUpdater.on('error', () => {
+  log.info('update-error');
+  mainWindow.webContents.send('update-error');
+});
+autoUpdater.on('update-downloaded', () => autoUpdater.quitAndInstall());

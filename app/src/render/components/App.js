@@ -4,6 +4,7 @@ const storage = require('electron-json-storage');
 import React from 'react';
 
 import Toolbar from './Toolbar';
+import Version from './Version';
 import BaseCSS from '../assets/style/base.css';
 import LoadCSS from '../assets/style/load.css';
 
@@ -148,6 +149,7 @@ class App extends React.Component {
           }
           <Page pageData={this.state.pageData} changePage={this.changePage} setLoadOverlay={this.setLoadOverlay} updateAccessToken={this.updateAccessToken} updateRefreshToken={this.updateRefreshToken} />
         </div>
+        <Version />
       </div>
     );
   }
