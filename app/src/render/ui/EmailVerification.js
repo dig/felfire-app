@@ -1,8 +1,8 @@
 import React from 'react';
 
+import EmailVerificationCSS from '../assets/style/emailverification.css';
 import Mail from '../assets/img/mail.png'; 
-import MailNew from '../assets/img/mail-sent.svg';
-import LeftArrow from '../assets/img/left-arrow.png'; 
+import Tick from '../assets/img/done-tick.png';
 
 class EmailVerification extends React.Component {
   constructor(props) {
@@ -35,18 +35,23 @@ class EmailVerification extends React.Component {
 
   render() {
     return (
-      <div className="main-form">
+      <div className="email-verification slideInDown">
         <div className="container">
-          <div className="header">
-            <img className="bounceInDown" style={{ width: '60px', marginBottom: '3px' }} src={MailNew} />
+          <div className="title">
+            <img src={Mail} />
+            {this.props.pageData.title || 'Email Verification'}
+          </div>
 
-            <h2>{this.props.pageData.title || 'Email Verification'}</h2>
-            <p>An email has been sent to '<b>{this.props.pageData.email}</b>'.</p>
-            <p>Please check your inbox.</p>
+          <div className="body">
+            An email has been sent to <b>{this.props.pageData.email}</b><br />Please check your inbox to complete the account registration process.
+          </div>
 
-            {(this.state.arrow) &&
-              <img className={this.state.arrowWobble ? 'beat' : ''} style={{ width: '25px', marginTop: '7px', cursor: 'pointer' }} src={LeftArrow} onClick={this.handleLogin} />
-            }
+          <div className="submit">
+            <input type="submit" value="Done" onClick={this.handleLogin} />
+
+            <div className="caption">
+              <img src={Tick} />
+            </div>
           </div>
         </div>
       </div>

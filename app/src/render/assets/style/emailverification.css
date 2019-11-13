@@ -1,0 +1,63 @@
+.email-verification {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.email-verification > .container {
+  width: 420px;
+  background: #171717;
+  border-top: 5px solid #a33327;
+  color: #fff;
+  padding-bottom: 20px;
+}
+
+.email-verification > .container > .title {
+  display: flex;
+  padding: 30px 30px 0px;
+  font-weight: 600;
+}
+
+.email-verification > .container > .title > img {
+  width: 20px;
+  margin-right: 5px;
+}
+
+.email-verification > .container > .body {
+  padding: 3px 30px 13px 30px;
+  font-size: 0.9rem;
+}
+
+.email-verification > .container > .submit {
+  width: 160px;
+  padding: 0 0 0 30px;
+}
+
+.email-verification > .container > .submit > input[type=submit] {
+  position: relative;
+  width: calc(100% - 34px);
+  height: 34px;
+  background: #c7493a;
+  border: none;
+  color: #fff;
+  font-weight: 900;
+  outline: none;
+  float: left;
+  cursor: pointer;
+}
+
+.email-verification > .container > .submit > .caption {
+  position: relative;
+  width: 34px;
+  background: #a33327;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.email-verification > .container > .submit > .caption img {
+  width: 15px;
+}

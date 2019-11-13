@@ -73,7 +73,7 @@ class Login extends React.Component {
         <div className="right">
           <div className="container">
             <div className="header">
-              <h3>Welcome Back!</h3>
+              <h3>Welcome back!</h3>
               <small>Please enter your credentials to login.</small>
             </div>
 

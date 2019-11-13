@@ -189,7 +189,7 @@ class Register extends React.Component {
               </div>
 
               <div className="link">
-                <small onClick={this.handleLogin}>Have an account?</small>
+                <small onClick={this.handleLogin}>Already have an account?</small>
               </div>
 
               <div className={'submit ' + (this.state.shake ? 'shake' : '')}>

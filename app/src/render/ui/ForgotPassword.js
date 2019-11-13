@@ -47,7 +47,7 @@ class ForgotPassword extends React.Component {
 
   render() {
     return (
-      <div className="forgotpassword">
+      <div className="forgot-password">
         <img className="square" src={Square} />
 
         <div className="container">
