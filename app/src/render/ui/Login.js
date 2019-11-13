@@ -63,7 +63,7 @@ class Login extends React.Component {
           <div className="container">
             <div className="header">
               <h3>Welcome Back!</h3>
-              <small>Please enter your credentials to login</small>
+              <small>Please enter your credentials to login.</small>
             </div>
 
             <form className="content" onSubmit={this.handleSubmit}>

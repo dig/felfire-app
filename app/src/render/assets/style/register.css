@@ -1,11 +1,11 @@
-.login {
+.register {
   position: relative;
   display: flex;
   height: 100%;
   width: 100%;
 }
 
-.login > .square {
+.register > .square {
   position: fixed;
   left: 50%;
   top: 50%;
@@ -13,7 +13,7 @@
   height: 100%;
 }
 
-.login > .left {
+.register > .left {
   position: relative;
   height: 100%;
   flex: 0 0 50%;
@@ -21,13 +21,13 @@
   align-items: center;
 }
 
-.login > .left > img {
+.register > .left > img {
   position: absolute;
-  height: 320px;
+  height: 260px;
   right: 65px;
 }
 
-.login > .right {
+.register > .right {
   position: relative;
   height: 100%;
   flex: 1;
@@ -35,7 +35,7 @@
   align-items: center;
 }
 
-.login > .right > .container {
+.register > .right > .container {
   position: absolute;
   width: 340px;
   left: 0;
@@ -65,21 +65,21 @@
   }
 }
 
-.login > .right > .container > .header {
+.register > .right > .container > .header {
   padding: 25px 25px 15px 25px;
   display: flex;
   align-items: center;
   flex-direction: column;
 }
 
-.login > .right > .container > .header > .divider {
+.register > .right > .container > .header > .divider {
   height: 2px;
   width: 100px;
   background: #343434;
   margin-top: 2px;
 }
 
-.login .content input[type=text], .login .content input[type=password] {
+.register .content input[type=text], .register .content input[type=password] {
   background: #343434;
   outline: none;
   border: none;
@@ -94,45 +94,45 @@
   border: 1px solid #18191c;
 }
 
-.login .content input[type=text]:focus, .login .content input[type=password]:focus {
+.register .content input[type=text]:focus, .register .content input[type=password]:focus {
   border: 1px solid #c7493a;
 }
 
-.login .content label {
+.register .content label {
   font-size: 0.9rem;
 }
 
-.login .content .group, .login .content .link, .login .content .error {
+.register .content .group, .register .content .link, .register .content .error {
   padding: 0 20px;
 }
 
-.login .content .group:not(:first-child) {
+.register .content .group:not(:first-child) {
   margin-top: 10px;
 }
 
-.login .content .link {
+.register .content .link {
   position: relative;
   height: 16px;
   font-weight: 600;
   top: 10px;
 }
 
-.login .content .link small {
+.register .content .link small {
   cursor: pointer;
   float: left;
 }
 
-.login .content .link small:not(:first-child) {
+.register .content .link small:not(:first-child) {
   float: right;
 }
 
-.login .content > .submit {
+.register .content > .submit {
   position: relative;
   top: 20px;
   width: calc(100% - 40px);
 }
 
-.login .content input[type=submit] {
+.register .content input[type=submit] {
   position: relative;
   width: calc(100% - 34px);
   height: 34px;
@@ -146,7 +146,7 @@
   cursor: pointer;
 }
 
-.login .content > .submit > .caption {
+.register .content > .submit > .caption {
   position: relative;
   width: 34px;
   right: -20px;
@@ -157,11 +157,11 @@
   justify-content: center;
 }
 
-.login .content > .submit > .caption img {
+.register .content > .submit > .caption img {
   width: 15px;
 }
 
-.login .content > .error > .content {
+.register .content > .error > .content {
   background: rgba(244, 67, 54, 0.3);
   font-size: 0.8rem;
   color: #fff;
@@ -169,8 +169,19 @@
   border-left: 3px solid #a33327;
 }
 
-.login .content > .error > .content > img {
+.register .content > .error > .content > img {
   float: left;
   height: 0.9rem;
   margin-right: 4px;
+}
+
+.register .content .progress {
+  position: relative;
+  width: 100%;
+  height: 5px;
+  top: 3px;
+}
+
+.register .content .progress > .inner {
+  height: 5px;
 }

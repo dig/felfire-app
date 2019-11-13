@@ -1,5 +1,11 @@
 import React from 'react';
 
+import RegisterCSS from '../assets/style/register.css';
+import Picture from '../assets/img/register.svg'; 
+import Plus from '../assets/img/plus.png';
+import Square from '../assets/img/square.png';
+import Mark from '../assets/img/danger.png';
+
 import User from '../utils/User';
 
 const registerErrorParam = {
@@ -19,7 +25,9 @@ class Register extends React.Component {
 
       strength : 0,
       strengthColor : '',
-      strengthText : ''
+      strengthText : '',
+
+      errorMessage : ''
     };
     
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -40,20 +48,11 @@ class Register extends React.Component {
         this.props.changePage('EMAILVERIFICATION', { email :  email});
       }).catch(errors => {
         if (errors[0] && registerErrorParam[errors[0].param.toUpperCase()]) {
-          this.setState({
-            error : {
-              param : registerErrorParam[errors[0].param.toUpperCase()],
-              message : errors[0].msg
-            }
-          });
+          this.setState({errorMessage : errors[0].msg});
         }
       });
     } else {
-      this.setState({
-        error : {
-          param : registerErrorParam.CONFIRMPASSWORD
-        }
-      });
+      this.setState({errorMessage : 'Passwords do not match.'});
     }
   }
 
@@ -122,66 +121,73 @@ class Register extends React.Component {
 
   render() {
     return (
-      <div className="main-form animated slideInDown">
-        <div className="container">
-          <div className="header">
-            <h2>Register</h2>
-            <small>Please enter your credentials to register</small>
-          </div>
+      <div className="register">
+        <img className="square" src={Square} />
 
-          <form onSubmit={this.handleSubmit}>
-            <div className="group">
-              <label>Username</label>
-              <input type="text" placeholder="Enter username" title="Enter a username" required name="username" maxLength="16" />
+        <div className="left">
+          <img src={Picture} />
+        </div>
 
-              {(this.state.error && this.state.error.param == registerErrorParam.USERNAME) &&
-                <small>{this.state.error.message}</small>
-              }
+        <div className="right">
+          <div className="container">
+            <div className="header">
+              <h3>Howdy!</h3>
+              <small>Please enter your credentials to register.</small>
             </div>
 
-            <div className="group">
-              <label>Email</label>
-              <input type="text" placeholder="Enter email" title="Enter your email" required name="email" maxLength="48" />
-
-              {(this.state.error && this.state.error.param == registerErrorParam.EMAIL) &&
-                <small>{this.state.error.message}</small>
-              }
-            </div>
-
-            <div className="group">
-              <label>Password</label>
-              <input type="password" placeholder="Enter password" title="Enter your password" required name="password" maxLength="60" value={this.state.password} onChange={this.handlePasswordChange} />
-
-              {this.state.strength > 0 &&
-                <div className="progress">
-                  <div className="inner" style={{ background : this.state.strengthColor, width : `${this.state.strength * 100}%` }}></div>
+            <form className="content" onSubmit={this.handleSubmit}>
+              {this.state.errorMessage != '' &&
+                <div className="error">
+                  <div className="content">
+                    <img src={Mark} />
+                    {this.state.errorMessage}
+                  </div>
                 </div>
               }
 
-              {this.state.strength > 0 &&
-                <span className="meter-text" style={{ color : this.state.strengthColor }}>{this.state.strengthText}</span>
-              }
+              <div className="group">
+                <label>Username</label>
+                <input type="text" title="Enter your username" required name="username"></input>
+              </div>
 
-              {(this.state.error && this.state.error.param == registerErrorParam.PASSWORD) &&
-                <small>{this.state.error.message}</small>
-              }
-            </div>
+              <div className="group">
+                <label>Email</label>
+                <input type="text" title="Enter your email" required name="email"></input>
+              </div>
 
-            <div className="group">
-              <label>Confirm Password</label>
-              <input type="password" placeholder="Confirm password" title="Enter your password" required name="confirm-password" maxLength="60" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
-              
-              {((this.state.confirmPassword != "" && this.state.password != this.state.confirmPassword) || (this.state.error && this.state.error.param == registerErrorParam.CONFIRMPASSWORD)) &&
-                <small>Passwords do not match.</small>
-              }
-            </div>
+              <div className="group">
+                <label>Password</label>
+                <input type="password" title="Enter your password" required name="password" value={this.state.password} onChange={this.handlePasswordChange}></input>
+                
+                {this.state.strength > 0 &&
+                  <div className="progress">
+                    <div className="inner" style={{ background : this.state.strengthColor, width : `${this.state.strength * 100}%` }}></div>
+                  </div>
+                }
 
-            <div className="group">
-             <input type="submit" value="Sign Up"></input>
-            </div>
+                {this.state.strength > 0 &&
+                  <small style={{ color : this.state.strengthColor }}>{this.state.strengthText}</small>
+                }
+              </div>
 
-            <small onClick={this.handleLogin}>Have an account?</small>
-          </form>
+              <div className="group">
+                <label>Confirm Password</label>
+                <input type="password" title="Confirm your password" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange}></input>
+              </div>
+
+              <div className="link">
+                <small onClick={this.handleLogin}>Have an account?</small>
+              </div>
+
+              <div className="submit">
+               <input type="submit" value="SIGN UP" />
+
+               <div className="caption">
+                 <img src={Plus} />
+               </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     )
