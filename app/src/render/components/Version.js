@@ -27,7 +27,7 @@ class Version extends React.Component {
       });
     });
 
-    ipcRenderer.on('update-downloaded', () => {
+    ipcRenderer.on('update-available', () => {
       this.setState({
         checkingForUpdate : false,
         updateAvailable : true
@@ -48,8 +48,8 @@ class Version extends React.Component {
       });
     });
 
-
     this.handleUpdate = this.handleUpdate.bind(this);
+    ipcRenderer.send('update-check');
   }
 
   componentDidMount() {
@@ -66,7 +66,7 @@ class Version extends React.Component {
 
   handleUpdate(event) {
     event.preventDefault();
-    ipcRenderer.send('update-apply');
+    ipcRenderer.send('update-install');
   }
 
   render() {

@@ -2,18 +2,16 @@ const electron = require('electron');
      app = electron.app,
      BrowserWindow = electron.BrowserWindow,
      ipc = electron.ipcMain,
-     autoUpdater = electron.autoUpdater,
+     { autoUpdater } = require('electron-updater'),
      log = require('electron-log');
-
 
 const path = require('path'),
     url = require('url');
 
 //--- Setup logger
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
-
-//--- Setup automatic updates
-autoUpdater.setFeedURL(`https://api.felfire.app/update/download/${process.platform}`);
 
 let mainWindow;
 function createMainWindow() {
@@ -59,8 +57,6 @@ function createMainWindow() {
       protocol: 'file:',
       slashes: true
     }));
-
-    autoUpdater.checkForUpdates();
   }
 
   mainWindow.once('ready-to-show', function() { 
@@ -120,9 +116,23 @@ ipc.on('toolbar-maximize', () => {
 ipc.on('toolbar-close', () => mainWindow.hide());
 
 //--- Auto updates
-ipc.on('update-apply', () => autoUpdater.quitAndInstall());
-autoUpdater.on('checking-for-update', () => mainWindow.webContents.send('checking-for-update'));
-autoUpdater.on('update-available', () => mainWindow.webContents.send('update-available'));
-autoUpdater.on('update-not-available', () => mainWindow.webContents.send('update-not-available'));
-autoUpdater.on('error', () => mainWindow.webContents.send('update-error'));
-autoUpdater.on('update-downloaded', () => mainWindow.webContents.send('update-downloaded'));
+autoUpdater.autoDownload = false;
+autoUpdater.on('checking-for-update', () => {
+  log.info('checking-for-update');
+  mainWindow.webContents.send('checking-for-update');
+});
+autoUpdater.on('update-available', () => {
+  log.info('update-available');
+  mainWindow.webContents.send('update-available');
+});
+autoUpdater.on('update-not-available', () => {
+  log.info('update-not-available');
+  mainWindow.webContents.send('update-not-available');
+});
+autoUpdater.on('error', (error) => {
+  log.info(error);
+  mainWindow.webContents.send('update-error');
+});
+autoUpdater.on('update-downloaded', () => autoUpdater.quitAndInstall(true, true));
+ipc.on('update-check', () => autoUpdater.checkForUpdates());
+ipc.on('update-install', () => autoUpdater.downloadUpdate());
