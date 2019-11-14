@@ -35,3 +35,7 @@
   cursor: pointer;
   float: right;
 }
+
+.footer-version > .update-downloading .inner {
+  background: #259d58;
+}

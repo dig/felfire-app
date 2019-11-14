@@ -16,7 +16,8 @@ class Login extends React.Component {
 
     this.state = {
       error : false,
-      shake : false
+      shake : false,
+      formDisabled : false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -26,7 +27,11 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    this.setState({formDisabled : true});
+
+    //--- Request login
     User.login(event.target.email.value, event.target.password.value).then((data) => {
+      this.setState({formDisabled : false});
       if (data != null) {
         if (data.refreshToken && data.accessToken) {
           this.props.updateRefreshToken(data.refreshToken).then(() => {
@@ -41,7 +46,8 @@ class Login extends React.Component {
     .catch(() => {
       this.setState({
         error : true,
-        shake : true
+        shake : true,
+        formDisabled : false
       });
       this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
     });
@@ -103,7 +109,7 @@ class Login extends React.Component {
               </div>
 
               <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-               <input type="submit" value="LOGIN" />
+               <input type="submit" value="LOGIN" disabled={this.state.formDisabled} />
 
                <div className="caption">
                  <img src={Padlock} />

@@ -13,7 +13,8 @@ class ForgotPassword extends React.Component {
 
     this.state = {
       error : '',
-      shake : false
+      shake : false,
+      formDisabled : false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,15 +23,17 @@ class ForgotPassword extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    let email = event.target.email.value;
+    this.setState({formDisabled : true});
 
+    let email = event.target.email.value;
     User.requestPasswordReset(email).then(() => {
       this.props.changePage('EMAILVERIFICATION', { title : 'Password Reset', email : email });
     })
     .catch((errors) => {
       this.setState({
         error : errors[0].msg,
-        shake : true
+        shake : true,
+        formDisabled : false
       });
       this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
     });
@@ -75,7 +78,7 @@ class ForgotPassword extends React.Component {
             </div>
 
             <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-              <input type="submit" value="RECOVER" />
+              <input type="submit" value="RECOVER" disabled={this.state.formDisabled} />
 
               <div className="caption">
                 <img src={Mail} />

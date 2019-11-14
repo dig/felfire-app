@@ -133,6 +133,13 @@ autoUpdater.on('error', (error) => {
   log.info(error);
   mainWindow.webContents.send('update-error');
 });
+autoUpdater.on('download-progress', (progressObj) => {
+  log.info('progress: ' + progressObj);
+  mainWindow.webContents.send('update-progress', progressObj.percent)
+});
 autoUpdater.on('update-downloaded', () => autoUpdater.quitAndInstall(true, true));
-ipc.on('update-check', () => autoUpdater.checkForUpdates());
+ipc.on('update-check', () => {
+  autoUpdater.checkForUpdates();
+  setInterval(() => autoUpdater.checkForUpdates(), 1800 * 1000); //--- Every 30mins
+});
 ipc.on('update-install', () => autoUpdater.downloadUpdate());

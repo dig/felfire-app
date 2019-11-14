@@ -1,6 +1,6 @@
 {
   "name": "FelFire",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "FelFire image sharing service.",
   "homepage": "https://felfire.app",
   "engines": {
@@ -28,7 +28,8 @@
     },
     "nsis": {
       "installerIcon": "build/icon.ico",
-      "perMachine": true
+      "perMachine": true,
+      "artifactName": "${productName}Setup.${ext}"
     },
     "linux": {
       "target": [

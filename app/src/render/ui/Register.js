@@ -28,7 +28,8 @@ class Register extends React.Component {
       strengthText : '',
 
       errorMessage : '',
-      shake : false
+      shake : false,
+      formDisabled : false
     };
     
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -40,14 +41,17 @@ class Register extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-
+    
     let email = event.target.email.value;
     let password = event.target.password.value;
 
     if (this.state.confirmPassword === password) {
+      this.setState({formDisabled : true});
       User.createUser(event.target.username.value, event.target.email.value, password).then(() => {
         this.props.changePage('EMAILVERIFICATION', { email :  email});
       }).catch(errors => {
+        this.setState({formDisabled : false});
+        
         if (errors[0] && registerErrorParam[errors[0].param.toUpperCase()]) {
           this.setState({
             errorMessage : errors[0].msg,
@@ -193,7 +197,7 @@ class Register extends React.Component {
               </div>
 
               <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-               <input type="submit" value="SIGN UP" />
+               <input type="submit" value="SIGN UP" disabled={this.state.formDisabled} />
 
                <div className="caption">
                  <img src={Plus} />

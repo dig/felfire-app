@@ -7,6 +7,12 @@ import Reload from '../assets/img/reload.png';
 import { clearInterval } from 'timers';
 
 const BOUNCE_INTERVAL = 15000;
+const DOWNLOAD_STATE = {
+  LATEST_VERSION: 'LATEST_VERSION',
+  CHECKING_FOR_UPDATE: 'CHECKING_FOR_UPDATE',
+  UPDATE_AVAILABLE: 'UPDATE_AVAILABLE',
+  DOWNLOADING: 'DOWNLOADING'
+};
 
 class Version extends React.Component {
   constructor() {
@@ -14,39 +20,17 @@ class Version extends React.Component {
 
     this.state = {
       version : (process.env.NODE_ENV === 'development' ? 'Development Build' : `v${remote.app.getVersion()}`),
-      checkingForUpdate : !(process.env.NODE_ENV === 'development'),
-      updateAvailable : false,
+      status : (process.env.NODE_ENV === 'development' ? DOWNLOAD_STATE.LATEST_VERSION : DOWNLOAD_STATE.CHECKING_FOR_UPDATE),
+      percent : 0,
 
       vibrate : false
     };
 
-    ipcRenderer.on('checking-for-update', () => {
-      this.setState({
-        checkingForUpdate : true,
-        updateAvailable : false
-      });
-    });
-
-    ipcRenderer.on('update-available', () => {
-      this.setState({
-        checkingForUpdate : false,
-        updateAvailable : true
-      });
-    });
-
-    ipcRenderer.on('update-not-available', () => {
-      this.setState({
-        checkingForUpdate : false,
-        updateAvailable : false
-      });
-    });
-
-    ipcRenderer.on('update-error', () => {
-      this.setState({
-        checkingForUpdate : false,
-        updateAvailable : false
-      });
-    });
+    ipcRenderer.on('checking-for-update', () => this.setState({status : DOWNLOAD_STATE.CHECKING_FOR_UPDATE}));
+    ipcRenderer.on('update-available', () => this.setState({status : DOWNLOAD_STATE.UPDATE_AVAILABLE}));
+    ipcRenderer.on('update-not-available', () => this.setState({status : DOWNLOAD_STATE.LATEST_VERSION}));
+    ipcRenderer.on('update-error', () => this.setState({status : DOWNLOAD_STATE.LATEST_VERSION}));
+    ipcRenderer.on('update-progress', (channel, percent) => this.setState({pecent : (percent / 100)}));
 
     this.handleUpdate = this.handleUpdate.bind(this);
     ipcRenderer.send('update-check');
@@ -66,30 +50,41 @@ class Version extends React.Component {
 
   handleUpdate(event) {
     event.preventDefault();
+
+    this.setState({status : DOWNLOAD_STATE.DOWNLOADING});
     ipcRenderer.send('update-install');
   }
 
   render() {
     return (
       <div className="footer-version noselect">
-        {!this.state.checkingForUpdate && !this.state.updateAvailable &&
+        {this.state.status === DOWNLOAD_STATE.LATEST_VERSION &&
           <div>
             {this.state.version}{(process.env.NODE_ENV === 'development' ? '' : ':Latest')}
           </div>
         }
 
-        {this.state.checkingForUpdate && !this.state.updateAvailable &&
+        {this.state.status === DOWNLOAD_STATE.CHECKING_FOR_UPDATE &&
           <div className="update-check">
             {this.state.version}
             <img className="spinning" src={Reload} />
           </div>
         }
 
-        {!this.state.checkingForUpdate && this.state.updateAvailable &&
+        {this.state.status === DOWNLOAD_STATE.UPDATE_AVAILABLE &&
           <div className="update-available">
             {this.state.version}
             <div className={(this.state.vibrate ? 'vibrate' : '')} onClick={this.handleUpdate}>
               UPDATE
+            </div>
+          </div>
+        }
+
+        {this.state.status === DOWNLOAD_STATE.DOWNLOADING &&
+          <div className="update-downloading">
+            <div className="progress">
+              <div className="inner" style={{width : `${this.state.percent * 100}%`}}>
+              </div>
             </div>
           </div>
         }
