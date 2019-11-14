@@ -13,9 +13,7 @@ const path = require('path'),
 log.info('App starting...');
 
 //--- Setup automatic updates
-const server = 'https://api.felfire.app/update';
-const feed = `${server}/download/latest/${process.platform}`;
-autoUpdater.setFeedURL(feed);
+autoUpdater.setFeedURL(`https://api.felfire.app/update/download/${process.platform}`);
 
 let mainWindow;
 function createMainWindow() {
