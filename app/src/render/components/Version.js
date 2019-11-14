@@ -27,7 +27,7 @@ class Version extends React.Component {
       });
     });
 
-    ipcRenderer.on('update-available', () => {
+    ipcRenderer.on('update-downloaded', () => {
       this.setState({
         checkingForUpdate : false,
         updateAvailable : true
@@ -66,6 +66,7 @@ class Version extends React.Component {
 
   handleUpdate(event) {
     event.preventDefault();
+    ipcRenderer.send('update-apply');
   }
 
   render() {

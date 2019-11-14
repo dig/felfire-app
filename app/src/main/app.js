@@ -13,7 +13,7 @@ const path = require('path'),
 log.info('App starting...');
 
 //--- Setup automatic updates
-const server = 'https://api.felfire.app';
+const server = 'https://api.felfire.app/updater';
 const feed = `${server}/download/latest/${process.platform}`;
 autoUpdater.setFeedURL(feed);
 
@@ -122,8 +122,9 @@ ipc.on('toolbar-maximize', () => {
 ipc.on('toolbar-close', () => mainWindow.hide());
 
 //--- Auto updates
+ipc.on('update-apply', () => autoUpdater.quitAndInstall());
 autoUpdater.on('checking-for-update', () => mainWindow.webContents.send('checking-for-update'));
 autoUpdater.on('update-available', () => mainWindow.webContents.send('update-available'));
 autoUpdater.on('update-not-available', () => mainWindow.webContents.send('update-not-available'));
 autoUpdater.on('error', () => mainWindow.webContents.send('update-error'));
-autoUpdater.on('update-downloaded', () => autoUpdater.quitAndInstall());
+autoUpdater.on('update-downloaded', () => mainWindow.webContents.send('update-downloaded'));
