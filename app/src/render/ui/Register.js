@@ -5,6 +5,7 @@ import Picture from '../assets/img/register.svg';
 import Plus from '../assets/img/plus.png';
 import Square from '../assets/img/square.png';
 import Mark from '../assets/img/danger.png';
+import Reload from '../assets/img/spin.png';
 
 import User from '../utils/User';
 
@@ -152,7 +153,7 @@ class Register extends React.Component {
               <small>Please enter your credentials to register.</small>
             </div>
 
-            <form className="content" onSubmit={this.handleSubmit}>
+            <form className="content" onSubmit={this.handleSubmit} enctype="application/x-www-form-urlencoded">
               {this.state.errorMessage != '' &&
                 <div className="error">
                   <div className="content">
@@ -200,7 +201,7 @@ class Register extends React.Component {
                <input type="submit" value="SIGN UP" disabled={this.state.formDisabled} />
 
                <div className="caption">
-                 <img src={Plus} />
+                <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Plus)} />
                </div>
               </div>
             </form>

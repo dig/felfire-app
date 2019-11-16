@@ -117,26 +117,14 @@ ipc.on('toolbar-close', () => mainWindow.hide());
 
 //--- Auto updates
 autoUpdater.autoDownload = false;
-autoUpdater.on('checking-for-update', () => {
-  log.info('checking-for-update');
-  mainWindow.webContents.send('checking-for-update');
-});
-autoUpdater.on('update-available', () => {
-  log.info('update-available');
-  mainWindow.webContents.send('update-available');
-});
-autoUpdater.on('update-not-available', () => {
-  log.info('update-not-available');
-  mainWindow.webContents.send('update-not-available');
-});
+autoUpdater.on('checking-for-update', () => mainWindow.webContents.send('checking-for-update'));
+autoUpdater.on('update-available', () => mainWindow.webContents.send('update-available'));
+autoUpdater.on('update-not-available', () => mainWindow.webContents.send('update-not-available'));
 autoUpdater.on('error', (error) => {
-  log.info(error);
+  log.error(error);
   mainWindow.webContents.send('update-error');
 });
-autoUpdater.on('download-progress', (progressObj) => {
-  log.info('progress: ' + progressObj);
-  mainWindow.webContents.send('update-progress', progressObj.percent)
-});
+autoUpdater.on('download-progress', (progressObj) => mainWindow.webContents.send('update-progress', progressObj.percent));
 autoUpdater.on('update-downloaded', () => autoUpdater.quitAndInstall(true, true));
 ipc.on('update-check', () => {
   autoUpdater.checkForUpdates();

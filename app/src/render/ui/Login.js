@@ -7,6 +7,7 @@ import Picture from '../assets/img/login.svg';
 import Padlock from '../assets/img/padlock-unlock.png';
 import Square from '../assets/img/square.png';
 import Mark from '../assets/img/danger.png';
+import Reload from '../assets/img/spin.png';
 
 import User from '../utils/User';
 
@@ -83,7 +84,7 @@ class Login extends React.Component {
               <small>Please enter your credentials to login.</small>
             </div>
 
-            <form className="content" onSubmit={this.handleSubmit}>
+            <form className="content" onSubmit={this.handleSubmit} enctype="application/x-www-form-urlencoded">
               {this.state.error &&
                 <div className="error">
                   <div className="content">
@@ -112,7 +113,7 @@ class Login extends React.Component {
                <input type="submit" value="LOGIN" disabled={this.state.formDisabled} />
 
                <div className="caption">
-                 <img src={Padlock} />
+                 <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Padlock)} />
                </div>
               </div>
             </form>
