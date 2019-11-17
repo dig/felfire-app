@@ -102,7 +102,7 @@
   font-size: 0.9rem;
 }
 
-.register .content .group, .register .content .link, .register .content .error {
+.register .content .group, .register .content .link, .register .content .error, .register .content .captcha {
   padding: 0 20px;
 }
 
@@ -115,6 +115,7 @@
   height: 16px;
   font-weight: 600;
   top: 10px;
+  bottom: 10px;
 }
 
 .register .content .link small {
@@ -126,9 +127,14 @@
   float: right;
 }
 
+.register .content .captcha {
+  position: relative;
+  top: 15px;
+}
+
 .register .content > .submit {
   position: relative;
-  top: 20px;
+  top: 15px;
   width: calc(100% - 40px);
 }
 

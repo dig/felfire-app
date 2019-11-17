@@ -7,9 +7,7 @@ import Mark from '../assets/img/danger.png';
 import Reload from '../assets/img/spin.png';
 
 import User from '../utils/User';
-import { ReCaptcha } from 'react-recaptcha-v3';
-
-const RECAPTCHA_SITE_KEY = '6LeTIcMUAAAAABRMBLlMwV0rk3EheTnLh9SHsyOy';
+import CaptchaSlider from '../components/CaptchaSlider';
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -17,25 +15,25 @@ class ForgotPassword extends React.Component {
 
     this.state = {
       email : '',
-      recaptchaToken: '',
 
       errorMessage : '',
       shake : false,
-      formDisabled : false
+      formDisabled : false,
+      captcha: '',
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handleCaptchaChange = this.handleCaptchaChange.bind(this);
+    this.handleCaptchaComplete = this.handleCaptchaComplete.bind(this);
     this.handleShake = this.handleShake.bind(this);
   }
 
   handleSubmit(event) {
     event.preventDefault();
 
-    if (this.state.recaptchaToken != '') {
-      User.requestPasswordReset(this.state.email, this.state.recaptchaToken).then(() => {
+    if (this.state.captcha != '') {
+      User.requestPasswordReset(this.state.email, this.state.captcha).then(() => {
         this.props.changePage('EMAILVERIFICATION', { title : 'Password Reset', email : this.state.email });
       })
       .catch((errors) => {
@@ -46,14 +44,10 @@ class ForgotPassword extends React.Component {
         });
 
         this.handleShake();
-
-        //--- Refresh token after use
-        window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action : 'register' })
-          .then((token) => this.handleCaptchaChange(token));
       });
     } else {
       this.setState({
-        errorMessage : 'Recaptcha failed, please try again.',
+        errorMessage : 'Captcha failed, please try again.',
         shake : true
       });
 
@@ -71,8 +65,8 @@ class ForgotPassword extends React.Component {
     this.setState({email : value});
   }
 
-  handleCaptchaChange(recaptchaToken) {
-    this.setState({recaptchaToken: recaptchaToken});
+  handleCaptchaComplete(token) {
+    this.setState({captcha: token});
   }
 
   handleShake() {
@@ -87,12 +81,6 @@ class ForgotPassword extends React.Component {
     return (
       <div className="forgot-password">
         <img className="square" src={Square} />
-
-        <ReCaptcha
-          sitekey={RECAPTCHA_SITE_KEY}
-          action='forgotpassword'
-          verifyCallback={this.handleCaptchaChange}
-        />
 
         <div className="container">
           <div className="header">
@@ -118,13 +106,21 @@ class ForgotPassword extends React.Component {
               <small onClick={this.handleLogin}>Remember your password?</small>
             </div>
 
-            <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-              <input type="submit" value="RECOVER" disabled={this.state.formDisabled} />
-
-              <div className="caption">
-                <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Mail)} />
+            {this.state.captcha == '' &&
+              <div className="captcha">
+                <CaptchaSlider onComplete={this.handleCaptchaComplete} />
               </div>
-            </div>
+            }
+
+            {this.state.captcha != '' &&
+              <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
+                <input type="submit" value="RECOVER" disabled={this.state.formDisabled} />
+
+                <div className="caption">
+                  <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Mail)} />
+                </div>
+              </div>
+            }
           </form>
         </div>
       </div>

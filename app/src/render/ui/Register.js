@@ -2,15 +2,13 @@ import React from 'react';
 
 import RegisterCSS from '../assets/style/register.css';
 import Picture from '../assets/img/register.svg'; 
-import Plus from '../assets/img/plus.png';
+import Tick from '../assets/img/done-tick.png'; 
 import Square from '../assets/img/square.png';
 import Mark from '../assets/img/danger.png';
 import Reload from '../assets/img/spin.png';
 
 import User from '../utils/User';
-import { ReCaptcha } from 'react-recaptcha-v3';
-
-const RECAPTCHA_SITE_KEY = '6LeTIcMUAAAAABRMBLlMwV0rk3EheTnLh9SHsyOy';
+import CaptchaSlider from '../components/CaptchaSlider';
 
 class Register extends React.Component {
   constructor(props) {
@@ -21,7 +19,6 @@ class Register extends React.Component {
       email : '',
       password : '',
       confirmPassword : '',
-      recaptchaToken: '',
 
       strength : 0,
       strengthColor : '',
@@ -30,7 +27,7 @@ class Register extends React.Component {
       errorMessage : '',
       shake : false,
       formDisabled : false,
-      captcha : false
+      captcha : ''
     };
     
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -39,8 +36,8 @@ class Register extends React.Component {
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(this);
-    this.handleCaptchaChange = this.handleCaptchaChange.bind(this);
     this.handleShake = this.handleShake.bind(this);
+    this.handleCaptchaComplete = this.handleCaptchaComplete.bind(this);
 
     this.updateStrengthMeter = this.updateStrengthMeter.bind(this);
   }
@@ -49,11 +46,11 @@ class Register extends React.Component {
     event.preventDefault();
     let password = event.target.password.value;
 
-    if (this.state.confirmPassword === password || this.state.recaptchaToken != '') {
-      User.createUser(this.state.username, this.state.email, this.state.password, this.state.recaptchaToken).then(() => {
+    if (this.state.confirmPassword === password && this.state.captcha != '') {
+      User.createUser(this.state.username, this.state.email, this.state.password, this.state.captcha).then(() => {
         this.props.changePage('EMAILVERIFICATION', { email :  this.state.email});
       }).catch(errors => {
-        this.setState({formDisabled : false, captcha : false});
+        this.setState({formDisabled : false});
         
         if (typeof errors === 'string' || errors[0]) {
           this.setState({
@@ -63,14 +60,10 @@ class Register extends React.Component {
 
           this.handleShake();
         }
-
-        //--- Refresh token after use
-        window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action : 'register' })
-          .then((token) => this.handleCaptchaChange(token));
       });
     } else {
       this.setState({
-        errorMessage : (this.state.confirmPassword === password ? 'Passwords do not match.' : 'Recaptcha failed, please try again.'),
+        errorMessage : (this.state.captcha === '' ? 'Captcha failed, please try again.' : 'Passwords do not match.'),
         shake : true
       });
       
@@ -151,12 +144,12 @@ class Register extends React.Component {
     };
   }
 
-  handleCaptchaChange(recaptchaToken) {
-    this.setState({recaptchaToken: recaptchaToken});
-  }
-
   handleShake() {
     this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
+  }
+
+  handleCaptchaComplete(token) {
+    this.setState({captcha : token});
   }
 
   componentWillUnmount() {
@@ -167,12 +160,6 @@ class Register extends React.Component {
     return (
       <div className="register">
         <img className="square" src={Square} />
-
-        <ReCaptcha
-          sitekey={RECAPTCHA_SITE_KEY}
-          action='register'
-          verifyCallback={this.handleCaptchaChange}
-        />
 
         <div className="left">
           <img src={Picture} />
@@ -222,20 +209,24 @@ class Register extends React.Component {
 
               <div className="group">
                 <label>Confirm Password</label>
-                <input type="password" title="Confirm your password" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
+                <input type="password" title="Confirm your password 1" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
               </div>
 
-              <div className="link">
-                <small onClick={this.handleLogin}>Already have an account?</small>
-              </div>
+              {this.state.captcha === '' &&
+                <div className="captcha">
+                  <CaptchaSlider onComplete={this.handleCaptchaComplete} />
+                </div>
+              }
 
-              <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-              <input type="submit" value="SIGN UP" disabled={this.state.formDisabled} />
+              {this.state.captcha != '' &&
+                <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
+                  <input type="submit" value="SIGN UP" disabled={this.state.formDisabled} />
 
-              <div className="caption">
-                <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Plus)} />
-              </div>
-              </div>
+                  <div className="caption">
+                    <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Tick)} />
+                  </div>
+                </div>
+              }
             </form>
           </div>
         </div>

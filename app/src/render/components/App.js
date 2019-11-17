@@ -16,9 +16,7 @@ import Login from '../ui/Login';
 import Register from '../ui/Register';
 
 import User from '../utils/User';
-import { loadReCaptcha } from 'react-recaptcha-v3';
 
-const RECAPTCHA_SITE_KEY = '6LeTIcMUAAAAABRMBLlMwV0rk3EheTnLh9SHsyOy';
 const PAGES = {
   LOGIN: Login,
   REGISTER: Register,
@@ -59,17 +57,6 @@ class App extends React.Component {
       page : page,
       pageData : data || {}
     });
-
-    let googleCaptchaBadge = document.querySelector('.grecaptcha-badge');
-    switch (page) {
-      case PAGES.LOGIN:
-      case PAGES.REGISTER:
-      case PAGES.FORGOTPASSWORD:
-        googleCaptchaBadge.style.visibility = 'visible';
-        break;
-      default:
-        googleCaptchaBadge.style.visibility = 'hidden';
-    }
   }
 
   setLoadOverlay(loadOverlay) {
@@ -142,7 +129,6 @@ class App extends React.Component {
     }, 50);
 
     setTimeout(this.requestUserData, 1000);
-    loadReCaptcha(RECAPTCHA_SITE_KEY);
 
     //--- TODO: Check if accessToken has expired and refresh
   }
