@@ -24,10 +24,10 @@ exports.createUser = (username, email, password, captchaResponse) => {
       username: username, 
       email: email, 
       password: password, 
-      'g-recaptcha-response': captchaResponse
+      token: captchaResponse
     }, headers: headers, json: true}, function(error, response, body) {
       if (error || response.statusCode != 201) {
-        reject(body.errors || {});
+        reject(body.errors || body.error || {});
       } else {
         resolve();
       }
@@ -37,9 +37,9 @@ exports.createUser = (username, email, password, captchaResponse) => {
 
 exports.requestPasswordReset = (email, captchaResponse) => {
   return new Promise((resolve, reject) => {
-    request.post({url: `${apiURL}/users/forgot/password`, form: {email: email, 'g-recaptcha-response': captchaResponse}, headers: headers, json: true}, function(error, response, body) {
+    request.post({url: `${apiURL}/users/forgot/password`, form: {email: email, token: captchaResponse}, headers: headers, json: true}, function(error, response, body) {
       if (error || response.statusCode != 201) {
-        reject(body.errors || {});
+        reject(body.errors || body.error || {});
       } else {
         resolve();
       }

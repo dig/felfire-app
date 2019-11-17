@@ -7,7 +7,9 @@ import Mark from '../assets/img/danger.png';
 import Reload from '../assets/img/spin.png';
 
 import User from '../utils/User';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { ReCaptcha } from 'react-recaptcha-v3';
+
+const RECAPTCHA_SITE_KEY = '6LeTIcMUAAAAABRMBLlMwV0rk3EheTnLh9SHsyOy';
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -15,27 +17,48 @@ class ForgotPassword extends React.Component {
 
     this.state = {
       email : '',
+      recaptchaToken: '',
 
       errorMessage : '',
       shake : false,
-      formDisabled : false,
-      captcha : false
+      formDisabled : false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handleCaptchaChange = this.handleCaptchaChange.bind(this);
-    this.handleCaptchaExpired = this.handleCaptchaExpired.bind(this);
-    this.handleCaptchaErrored = this.handleCaptchaErrored.bind(this);
+    this.handleShake = this.handleShake.bind(this);
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    this.setState({
-      formDisabled : true,
-      captcha : true
-    });
+
+    if (this.state.recaptchaToken != '') {
+      User.requestPasswordReset(this.state.email, this.state.recaptchaToken).then(() => {
+        this.props.changePage('EMAILVERIFICATION', { title : 'Password Reset', email : this.state.email });
+      })
+      .catch((errors) => {
+        this.setState({
+          errorMessage : (typeof errors === 'string' ? errors : errors[0].msg),
+          shake : true,
+          formDisabled : false
+        });
+
+        this.handleShake();
+
+        //--- Refresh token after use
+        window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action : 'register' })
+          .then((token) => this.handleCaptchaChange(token));
+      });
+    } else {
+      this.setState({
+        errorMessage : 'Recaptcha failed, please try again.',
+        shake : true
+      });
+
+      this.handleShake();
+    }
   }
 
   handleLogin(event) {
@@ -48,34 +71,12 @@ class ForgotPassword extends React.Component {
     this.setState({email : value});
   }
 
-  handleCaptchaChange(value) {
-    User.requestPasswordReset(this.state.email, value).then(() => {
-      this.props.changePage('EMAILVERIFICATION', { title : 'Password Reset', email : this.state.email });
-    })
-    .catch((errors) => {
-      this.setState({
-        errorMessage : errors[0].msg,
-        shake : true,
-        formDisabled : false
-      });
-      this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
-    });
+  handleCaptchaChange(recaptchaToken) {
+    this.setState({recaptchaToken: recaptchaToken});
   }
 
-  handleCaptchaExpired() {
-    this.setState({
-      errorMessage : 'Captcha expired, please try again.',
-      captcha : false,
-      formDisabled : false
-    });
-  }
-
-  handleCaptchaErrored() {
-    this.setState({
-      errorMessage : 'Captcha errored, please try again.',
-      captcha : false,
-      formDisabled : false
-    });
+  handleShake() {
+    this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
   }
 
   componentWillUnmount() {
@@ -87,47 +88,45 @@ class ForgotPassword extends React.Component {
       <div className="forgot-password">
         <img className="square" src={Square} />
 
-        {this.state.captcha &&
-          <div className="container">
-            <ReCAPTCHA sitekey="6Ld4GMMUAAAAACeYZabYkfxujugsYQJ9fY-THCAt" theme="dark" onChange={this.handleCaptchaChange} onExpired={this.handleCaptchaExpired} onErrored={this.handleCaptchaErrored} />
-          </div>
-        }
+        <ReCaptcha
+          sitekey={RECAPTCHA_SITE_KEY}
+          action='forgotpassword'
+          verifyCallback={this.handleCaptchaChange}
+        />
 
-        {!this.state.captcha &&
-          <div className="container">
-            <div className="header">
-              <h3>Need help?</h3>
-              <small>Please enter your email to recover your account.</small>
+        <div className="container">
+          <div className="header">
+            <h3>Need help?</h3>
+            <small>Please enter your email to recover your account.</small>
+          </div>
+
+          <form className="content" onSubmit={this.handleSubmit}>
+            {this.state.errorMessage != '' &&
+              <div className="error">
+                <div className="content">
+                  <img src={Mark} />
+                  {this.state.errorMessage}
+                </div>
+              </div>
+            }
+
+            <div className="group">
+              <input type="text" title="Enter your email" required name="email" value={this.state.email} onChange={this.handleEmailChange} />
             </div>
 
-            <form className="content" onSubmit={this.handleSubmit}>
-              {this.state.errorMessage != '' &&
-                <div className="error">
-                  <div className="content">
-                    <img src={Mark} />
-                    {this.state.errorMessage}
-                  </div>
-                </div>
-              }
+            <div className="link">
+              <small onClick={this.handleLogin}>Remember your password?</small>
+            </div>
 
-              <div className="group">
-                <input type="text" title="Enter your email" required name="email" value={this.state.email} onChange={this.handleEmailChange} />
+            <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
+              <input type="submit" value="RECOVER" disabled={this.state.formDisabled} />
+
+              <div className="caption">
+                <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Mail)} />
               </div>
-
-              <div className="link">
-                <small onClick={this.handleLogin}>Remember your password?</small>
-              </div>
-
-              <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-                <input type="submit" value="RECOVER" disabled={this.state.formDisabled} />
-
-                <div className="caption">
-                  <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Mail)} />
-                </div>
-              </div>
-            </form>
-          </div>
-        }
+            </div>
+          </form>
+        </div>
       </div>
     )
   }

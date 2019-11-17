@@ -8,7 +8,9 @@ import Mark from '../assets/img/danger.png';
 import Reload from '../assets/img/spin.png';
 
 import User from '../utils/User';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { ReCaptcha } from 'react-recaptcha-v3';
+
+const RECAPTCHA_SITE_KEY = '6LeTIcMUAAAAABRMBLlMwV0rk3EheTnLh9SHsyOy';
 
 class Register extends React.Component {
   constructor(props) {
@@ -19,6 +21,7 @@ class Register extends React.Component {
       email : '',
       password : '',
       confirmPassword : '',
+      recaptchaToken: '',
 
       strength : 0,
       strengthColor : '',
@@ -37,8 +40,7 @@ class Register extends React.Component {
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(this);
     this.handleCaptchaChange = this.handleCaptchaChange.bind(this);
-    this.handleCaptchaExpired = this.handleCaptchaExpired.bind(this);
-    this.handleCaptchaErrored = this.handleCaptchaErrored.bind(this);
+    this.handleShake = this.handleShake.bind(this);
 
     this.updateStrengthMeter = this.updateStrengthMeter.bind(this);
   }
@@ -47,17 +49,32 @@ class Register extends React.Component {
     event.preventDefault();
     let password = event.target.password.value;
 
-    if (this.state.confirmPassword === password) {
-      this.setState({
-        captcha : true,
-        formDisabled : true
+    if (this.state.confirmPassword === password || this.state.recaptchaToken != '') {
+      User.createUser(this.state.username, this.state.email, this.state.password, this.state.recaptchaToken).then(() => {
+        this.props.changePage('EMAILVERIFICATION', { email :  this.state.email});
+      }).catch(errors => {
+        this.setState({formDisabled : false, captcha : false});
+        
+        if (typeof errors === 'string' || errors[0]) {
+          this.setState({
+            errorMessage : (typeof errors === 'string' ? errors : errors[0].msg),
+            shake : true
+          });
+
+          this.handleShake();
+        }
+
+        //--- Refresh token after use
+        window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action : 'register' })
+          .then((token) => this.handleCaptchaChange(token));
       });
     } else {
       this.setState({
-        errorMessage : 'Passwords do not match.',
+        errorMessage : (this.state.confirmPassword === password ? 'Passwords do not match.' : 'Recaptcha failed, please try again.'),
         shake : true
       });
-      this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
+      
+      this.handleShake();
     }
   }
 
@@ -134,36 +151,12 @@ class Register extends React.Component {
     };
   }
 
-  handleCaptchaChange(value) {
-    User.createUser(this.state.username, this.state.email, this.state.password, value).then(() => {
-      this.props.changePage('EMAILVERIFICATION', { email :  this.state.email});
-    }).catch(errors => {
-      this.setState({formDisabled : false, captcha : false});
-      
-      if (errors[0]) {
-        this.setState({
-          errorMessage : errors[0].msg,
-          shake : true
-        });
-        this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
-      }
-    });
+  handleCaptchaChange(recaptchaToken) {
+    this.setState({recaptchaToken: recaptchaToken});
   }
 
-  handleCaptchaExpired() {
-    this.setState({
-      errorMessage : 'Captcha expired, please try again.',
-      captcha : false,
-      formDisabled : false
-    });
-  }
-
-  handleCaptchaErrored() {
-    this.setState({
-      errorMessage : 'Captcha errored, please try again.',
-      captcha : false,
-      formDisabled : false
-    });
+  handleShake() {
+    this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
   }
 
   componentWillUnmount() {
@@ -175,78 +168,76 @@ class Register extends React.Component {
       <div className="register">
         <img className="square" src={Square} />
 
+        <ReCaptcha
+          sitekey={RECAPTCHA_SITE_KEY}
+          action='register'
+          verifyCallback={this.handleCaptchaChange}
+        />
+
         <div className="left">
           <img src={Picture} />
         </div>
 
         <div className="right">
-          {this.state.captcha &&
-            <div className="container">
-              <ReCAPTCHA sitekey="6Ld4GMMUAAAAACeYZabYkfxujugsYQJ9fY-THCAt" theme="dark" onChange={this.handleCaptchaChange} onExpired={this.handleCaptchaExpired} onErrored={this.handleCaptchaErrored} />
+          <div className="container">
+            <div className="header">
+              <h3>Howdy!</h3>
+              <small>Please enter your credentials to register.</small>
             </div>
-          }
 
-          {!this.state.captcha &&
-            <div className="container">
-              <div className="header">
-                <h3>Howdy!</h3>
-                <small>Please enter your credentials to register.1</small>
+            <form className="content" onSubmit={this.handleSubmit}>
+              {this.state.errorMessage != '' &&
+                <div className="error">
+                  <div className="content">
+                    <img src={Mark} />
+                    {this.state.errorMessage}
+                  </div>
+                </div>
+              }
+
+              <div className="group">
+                <label>Username</label>
+                <input type="text" title="Enter your username" required name="username" value={this.state.username} onChange={this.handleUsernameChange} />
               </div>
 
-              <form className="content" onSubmit={this.handleSubmit}>
-                {this.state.errorMessage != '' &&
-                  <div className="error">
-                    <div className="content">
-                      <img src={Mark} />
-                      {this.state.errorMessage}
-                    </div>
+              <div className="group">
+                <label>Email</label>
+                <input type="text" title="Enter your email" required name="email" value={this.state.email} onChange={this.handleEmailChange} />
+              </div>
+
+              <div className="group">
+                <label>Password</label>
+                <input type="password" title="Enter your password" required name="password" value={this.state.password} onChange={this.handlePasswordChange} />
+                
+                {this.state.strength > 0 &&
+                  <div className="progress">
+                    <div className="inner" style={{ background : this.state.strengthColor, width : `${this.state.strength * 100}%` }}></div>
                   </div>
                 }
 
-                <div className="group">
-                  <label>Username</label>
-                  <input type="text" title="Enter your username" required name="username" value={this.state.username} onChange={this.handleUsernameChange} />
-                </div>
+                {this.state.strength > 0 &&
+                  <small style={{ color : this.state.strengthColor }}>{this.state.strengthText}</small>
+                }
+              </div>
 
-                <div className="group">
-                  <label>Email</label>
-                  <input type="text" title="Enter your email" required name="email" value={this.state.email} onChange={this.handleEmailChange} />
-                </div>
+              <div className="group">
+                <label>Confirm Password</label>
+                <input type="password" title="Confirm your password" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
+              </div>
 
-                <div className="group">
-                  <label>Password</label>
-                  <input type="password" title="Enter your password" required name="password" value={this.state.password} onChange={this.handlePasswordChange} />
-                  
-                  {this.state.strength > 0 &&
-                    <div className="progress">
-                      <div className="inner" style={{ background : this.state.strengthColor, width : `${this.state.strength * 100}%` }}></div>
-                    </div>
-                  }
+              <div className="link">
+                <small onClick={this.handleLogin}>Already have an account?</small>
+              </div>
 
-                  {this.state.strength > 0 &&
-                    <small style={{ color : this.state.strengthColor }}>{this.state.strengthText}</small>
-                  }
-                </div>
+              <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
+              <input type="submit" value="SIGN UP" disabled={this.state.formDisabled} />
 
-                <div className="group">
-                  <label>Confirm Password</label>
-                  <input type="password" title="Confirm your password" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
-                </div>
-
-                <div className="link">
-                  <small onClick={this.handleLogin}>Already have an account?</small>
-                </div>
-
-                <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-                <input type="submit" value="SIGN UP" disabled={this.state.formDisabled} />
-
-                <div className="caption">
-                  <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Plus)} />
-                </div>
-                </div>
-              </form>
-            </div>
-          }
+              <div className="caption">
+                <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Plus)} />
+              </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     )

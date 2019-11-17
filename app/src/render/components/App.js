@@ -16,8 +16,10 @@ import Login from '../ui/Login';
 import Register from '../ui/Register';
 
 import User from '../utils/User';
+import { loadReCaptcha } from 'react-recaptcha-v3';
 
-const pages = {
+const RECAPTCHA_SITE_KEY = '6LeTIcMUAAAAABRMBLlMwV0rk3EheTnLh9SHsyOy';
+const PAGES = {
   LOGIN: Login,
   REGISTER: Register,
   FORGOTPASSWORD: ForgotPassword,
@@ -37,7 +39,7 @@ class App extends React.Component {
       accessToken : '',
       refreshToken : '',
 
-      page : pages.LIBRARY,
+      page : PAGES.LIBRARY,
       pageData : {}
     };
 
@@ -52,10 +54,22 @@ class App extends React.Component {
   }
 
   changePage(pageName, data) {
+    let page = PAGES[pageName];
     this.setState({
-      page : pages[pageName],
+      page : page,
       pageData : data || {}
     });
+
+    let googleCaptchaBadge = document.querySelector('.grecaptcha-badge');
+    switch (page) {
+      case PAGES.LOGIN:
+      case PAGES.REGISTER:
+      case PAGES.FORGOTPASSWORD:
+        googleCaptchaBadge.style.visibility = 'visible';
+        break;
+      default:
+        googleCaptchaBadge.style.visibility = 'hidden';
+    }
   }
 
   setLoadOverlay(loadOverlay) {
@@ -104,21 +118,21 @@ class App extends React.Component {
             this.setState({
               loaded : true,
               loadOverlay : false,
-              page : pages.LIBRARY,
+              page : PAGES.LIBRARY,
               accessToken : accessToken
             });
           })
           .catch((error) => {
             console.log(`Error with refreshing token: ${error}`);
-            this.setState({page : pages.LOGIN, loadOverlay : false});
+            this.setState({page : PAGES.LOGIN, loadOverlay : false});
           });
       } else {
         console.log(`refreshToken not inside config`);
-        this.setState({page : pages.LOGIN, loadOverlay : false});
+        this.setState({page : PAGES.LOGIN, loadOverlay : false});
       }
     }).catch((error) => {
       console.log(`Error with fetching tokenConfig: ${error}`);
-      this.setState({page : pages.LOGIN, loadOverlay : false});
+      this.setState({page : PAGES.LOGIN, loadOverlay : false});
     });
   }
 
@@ -128,6 +142,7 @@ class App extends React.Component {
     }, 50);
 
     setTimeout(this.requestUserData, 1000);
+    loadReCaptcha(RECAPTCHA_SITE_KEY);
 
     //--- TODO: Check if accessToken has expired and refresh
   }
