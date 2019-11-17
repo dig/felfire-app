@@ -65,14 +65,16 @@ class ForgotPassword extends React.Component {
   handleCaptchaExpired() {
     this.setState({
       errorMessage : 'Captcha expired, please try again.',
-      captcha : false
+      captcha : false,
+      formDisabled : false
     });
   }
 
   handleCaptchaErrored() {
     this.setState({
       errorMessage : 'Captcha errored, please try again.',
-      captcha : false
+      captcha : false,
+      formDisabled : false
     });
   }
 
