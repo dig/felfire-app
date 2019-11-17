@@ -33,7 +33,7 @@ function createMainWindow() {
   mainWindow.setMenu(null);
 
   if (process.env.NODE_ENV === 'development') {
-    global.apiURL = 'https://localhost:3000';
+    global.apiURL = 'https://localhost:3235';
     mainWindow.loadURL(url.format({
       protocol: 'http:',
       host: 'localhost:8080',

@@ -84,7 +84,7 @@ class Login extends React.Component {
               <small>Please enter your credentials to login.</small>
             </div>
 
-            <form className="content" onSubmit={this.handleSubmit} enctype="application/x-www-form-urlencoded">
+            <form className="content" onSubmit={this.handleSubmit}>
               {this.state.error &&
                 <div className="error">
                   <div className="content">

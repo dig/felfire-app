@@ -1,6 +1,6 @@
 {
   "name": "FelFire",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "FelFire image sharing service.",
   "homepage": "https://felfire.app",
   "engines": {
@@ -58,6 +58,7 @@
     "jwt-decode": "^2.2.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-google-recaptcha": "^2.0.1",
     "request": "^2.88.0"
   },
   "devDependencies": {
