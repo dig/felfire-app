@@ -14,14 +14,15 @@
   height: 100%;
   width: 100%;
   opacity: 0.7;
-  background: #202225;
+  background: #171717;
   position: fixed;
 }
 
 .changelog > .container {
-  height: 500px;
-  width: 360px;
-  background: #171717;
+  height: 400px;
+  width: 350px;
+  background: #202225;
+  /* #171717 */
   position: relative;
 }
 
@@ -30,6 +31,7 @@
   right: 5px;
   top: 2px;
   cursor: pointer;
+  z-index: 100;
 }
 
 .changelog > .container > .tool svg path, 
@@ -75,4 +77,69 @@
 
 .changelog > .container > .button .caption img {
   width: 15px;
+}
+
+.changelog > .container > .header {
+  position: relative;
+  width: 100%;
+  height: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+}
+
+.changelog > .container > .header > .outer {
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.changelog > .container > .header > .outer > .box {
+  background: #343434;
+  height: 7px;
+  width: 7px;
+  cursor: pointer;
+}
+
+.changelog > .container > .header > .outer > .box.active {
+  background: #828282;
+}
+
+.changelog > .container > .picture {
+  position: relative;
+  height: 35%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.changelog > .container > .picture > .circle {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  height: 130px;
+  width: 130px;
+  opacity: 0.12;
+}
+
+.changelog > .container > .content {
+  position: relative;
+  top: 25px;
+  height: 30%;
+  text-align: center;
+  padding: 0 25px;
+}
+
+.changelog > .container > .content p {
+  position: relative;
+  top: 15px;
+  font-size: 0.95rem;
+}
+
+.changelog > .container > .picture img {
+  position: absolute;
+  height: 60px;
 }

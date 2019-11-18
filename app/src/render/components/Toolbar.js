@@ -17,17 +17,17 @@ class Toolbar extends React.Component {
 
   handleMinimize(event) {
     event.preventDefault();
-    ipcRenderer.send('toolbar-minimize', {});
+    ipcRenderer.send('toolbar-minimize');
   }
 
   handleMaximize(event) {
     event.preventDefault();
-    ipcRenderer.send('toolbar-maximize', {});
+    ipcRenderer.send('toolbar-maximize');
   }
 
   handleClose(event) {
     event.preventDefault();
-    ipcRenderer.send('toolbar-close', {});
+    ipcRenderer.send('toolbar-close');
   }
 
   render() {
