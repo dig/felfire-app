@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ForgotPasswordCSS from '../assets/style/forgotpassword.css';
-import Mail from '../assets/img/mail.png';
+import Tick from '../assets/img/done-tick.png'; 
 import Square from '../assets/img/square.png';
 import Mark from '../assets/img/danger.png';
 import Reload from '../assets/img/spin.png';
@@ -102,10 +102,6 @@ class ForgotPassword extends React.Component {
               <input type="text" title="Enter your email" required name="email" value={this.state.email} onChange={this.handleEmailChange} />
             </div>
 
-            <div className="link">
-              <small onClick={this.handleLogin}>Remember your password?</small>
-            </div>
-
             {this.state.captcha == '' &&
               <div className="captcha">
                 <CaptchaSlider onComplete={this.handleCaptchaComplete} />
@@ -117,10 +113,16 @@ class ForgotPassword extends React.Component {
                 <input type="submit" value="RECOVER" disabled={this.state.formDisabled} />
 
                 <div className="caption">
-                  <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Mail)} />
+                  <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Tick)} />
                 </div>
               </div>
             }
+
+            <div className="link">
+              <div className="box" onClick={this.handleLogin}>
+                <small>Remembered your <b>Password</b>?</small>
+              </div>
+            </div>
           </form>
         </div>
       </div>

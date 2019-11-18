@@ -40,7 +40,7 @@ class Toolbar extends React.Component {
 
         <div className="toolset">
           <div className="tool" onClick={this.handleMinimize}>
-           <svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect x="0" y="50%" width="10.2" height="1" /></svg>
+            <svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect x="0" y="50%" width="10.2" height="1" /></svg>
           </div>
 
           <div className="tool" onClick={this.handleMaximize}>

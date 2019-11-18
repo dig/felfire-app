@@ -1,4 +1,6 @@
 import React from 'react';
+
+import LoadCSS from '../assets/style/load.css';
 import Icon from '../assets/img/icon.png'; 
 
 class Load extends React.Component {

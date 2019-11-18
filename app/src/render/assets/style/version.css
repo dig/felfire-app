@@ -6,6 +6,10 @@
   font-size: 0.7rem;
 }
 
+.footer-version > .latest {
+  cursor: pointer;
+}
+
 .footer-version > .update-check > img {
   position: relative;
   height: 8px;

@@ -6,8 +6,8 @@ import React from 'react';
 import Toolbar from './Toolbar';
 import Version from './Version';
 import BaseCSS from '../assets/style/base.css';
-import LoadCSS from '../assets/style/load.css';
 
+import Changelog from '../ui/Changelog';
 import EmailVerification from '../ui/EmailVerification';
 import ForgotPassword from '../ui/ForgotPassword';
 import Library from '../ui/Library';
@@ -34,6 +34,8 @@ class App extends React.Component {
       loadOverlay : true,
       loadPercent : 0,
 
+      changelogOverlay : false,
+
       accessToken : '',
       refreshToken : '',
 
@@ -44,6 +46,7 @@ class App extends React.Component {
     this.changePage = this.changePage.bind(this);
     this.setLoadOverlay = this.setLoadOverlay.bind(this);
     this.setLoadOverlayPercent = this.setLoadOverlayPercent.bind(this);
+    this.setChangelogOverlay = this.setChangelogOverlay.bind(this);
 
     this.getTokenConfig = this.getTokenConfig.bind(this);
     this.updateAccessToken = this.updateAccessToken.bind(this);
@@ -68,6 +71,11 @@ class App extends React.Component {
 
   setLoadOverlayPercent(loadPercent) {
     this.setState({loadPercent : loadPercent});
+  }
+
+  setChangelogOverlay(enabled) {
+    if (!this.state.loadOverlay)
+      this.setState({changelogOverlay : enabled});
   }
 
   getTokenConfig() {
@@ -144,13 +152,26 @@ class App extends React.Component {
     return (
       <div className="app">
         <Toolbar background={background} />
+
+        {this.state.changelogOverlay &&
+          <Changelog setChangelogOverlay={this.setChangelogOverlay} />
+        }
+
         <div className="page">
           {this.state.loadOverlay &&
             <Load percent={this.state.loadPercent} />
           }
-          <Page pageData={this.state.pageData} changePage={this.changePage} setLoadOverlay={this.setLoadOverlay} updateAccessToken={this.updateAccessToken} updateRefreshToken={this.updateRefreshToken} />
+
+          <Page 
+            pageData={this.state.pageData} 
+            changePage={this.changePage} 
+            setLoadOverlay={this.setLoadOverlay} 
+            updateAccessToken={this.updateAccessToken} 
+            updateRefreshToken={this.updateRefreshToken} 
+          />
         </div>
-        <Version />
+
+        <Version setChangelogOverlay={this.setChangelogOverlay} />
       </div>
     );
   }

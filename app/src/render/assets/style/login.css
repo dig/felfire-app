@@ -96,6 +96,21 @@
   font-size: 0.9rem;
 }
 
+.login .content .group {
+  position: relative;
+}
+
+.login .content .group .over {
+  position: absolute;
+  bottom: 7px;
+  right: 27px;
+  font-size: 0.8rem;
+  color: #828282;
+  cursor: pointer;
+  transition: 0.5s;
+  font-weight: 600;
+}
+
 .login .content .group, .login .content .link, .login .content .error {
   padding: 0 20px;
 }
@@ -106,23 +121,26 @@
 
 .login .content .link {
   position: relative;
-  height: 16px;
-  font-weight: 600;
+  width: 100%;
+  height: 28px;
   top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login .content .link .box {
+  cursor: pointer;
 }
 
 .login .content .link small {
   cursor: pointer;
-  float: left;
-}
-
-.login .content .link small:not(:first-child) {
-  float: right;
+  color: #828282;
 }
 
 .login .content > .submit {
   position: relative;
-  top: 20px;
+  top: 10px;
   width: calc(100% - 40px);
 }
 
@@ -134,7 +152,8 @@
   background: #c7493a;
   border: none;
   color: #fff;
-  font-weight: 900;
+  font-weight: 600;
+  font-size: 0.9rem;
   outline: none;
   float: left;
   cursor: pointer;

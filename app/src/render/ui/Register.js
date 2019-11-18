@@ -227,6 +227,12 @@ class Register extends React.Component {
                   </div>
                 </div>
               }
+
+              <div className="link">
+                <div className="box" onClick={this.handleLogin}>
+                  <small>Have an <b>account</b>?</small>
+                </div>
+              </div>
             </form>
           </div>
         </div>

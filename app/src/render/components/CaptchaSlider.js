@@ -13,6 +13,7 @@ class CaptchaSlider extends React.Component {
       left : 0,
       drag : false,
       start : 0,
+      startPos : 0,
       solved : false,
 
       hovered : false,
@@ -37,28 +38,28 @@ class CaptchaSlider extends React.Component {
     }
   }
 
-  handleMouseDown() {
+  handleMouseDown(event) {
     this.setState({
       drag : true,
       clicked : true
     });
 
     if (this.state.start <= 0)
-      this.setState({start : (new Date()).getTime()});
+      this.setState({start : (new Date()).getTime(), startPos : event.screenX});
   }
 
   handleMouseUp() {
     this.setState({drag : false});
   }
 
-  handleMouseLeave() {
+  handleMouseLeave(event) {
     this.setState({drag : false});
   }
 
   handleMouseMove(event) {
-    if (this.state.drag && event.movementX >= 1) {
-      let newValue = this.state.left + 1.05;
+    if (this.state.drag && event.movementX >= 1 && this.state.startPos > 0) {
       let maxValue = this.slider.current.offsetWidth - 34;
+      let newValue = (event.screenX - this.state.startPos) + 5;
 
       this.setState({
         left : Math.min(newValue, maxValue),
@@ -72,17 +73,16 @@ class CaptchaSlider extends React.Component {
   }
 
   handleSolved() {
-    if (this.props.onComplete) {
+    if (this.props.onComplete)
       this.timeoutID = setTimeout(() => this.props.onComplete(this.calculatePayload()), 1500);
-    }
   }
 
   calculatePayload() {
     let payload = {
       a : (new Date().getTime()) - this.state.start,
-      b : (new Date()).getTime(),
-      c : this.state.hovered,
-      d : this.state.clicked
+      bb : (new Date()).getTime(),
+      ccc : this.state.hovered,
+      dddd : this.state.clicked
     };
 
     return AES.encrypt(JSON.stringify(payload));
@@ -94,13 +94,13 @@ class CaptchaSlider extends React.Component {
 
   render() {
     return (
-      <div ref={this.slider} className="captcha-slider noselect" onMouseLeave={this.handleMouseLeave}>
-        <div className="thumb-area">
+      <div ref={this.slider} className="captcha-slider noselect">
+        <div className="thumb-area" onMouseMove={this.handleMouseMove}>
           <div className="thumb" style={{left : this.state.left}} onMouseLeave={this.handleMouseLeave} onMouseMove={this.handleMouseMove} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
             <img className={(this.state.solved ? 'rotate' : '')} src={(this.state.solved ? Tick : ArrowRight)} />
           </div>
         </div>
-        <label>Slide to solve captcha</label>
+        <label>{this.state.solved ? 'Complete!' : 'Slide to solve captcha'}</label>
       </div>
     )
   }

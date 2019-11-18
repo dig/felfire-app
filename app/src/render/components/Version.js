@@ -33,6 +33,7 @@ class Version extends React.Component {
     ipcRenderer.on('update-progress', (channel, percent) => this.setState({pecent : (percent / 100)}));
 
     this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleChangelogClick = this.handleChangelogClick.bind(this);
     ipcRenderer.send('update-check');
   }
 
@@ -55,11 +56,15 @@ class Version extends React.Component {
     ipcRenderer.send('update-install');
   }
 
+  handleChangelogClick() {
+    this.props.setChangelogOverlay(true);
+  }
+
   render() {
     return (
       <div className="footer-version noselect">
         {this.state.status === DOWNLOAD_STATE.LATEST_VERSION &&
-          <div>
+          <div className="latest" onClick={this.handleChangelogClick}>
             {this.state.version}{(process.env.NODE_ENV === 'development' ? '' : ':Latest')}
           </div>
         }

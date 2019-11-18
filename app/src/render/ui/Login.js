@@ -96,25 +96,27 @@ class Login extends React.Component {
 
               <div className="group">
                 <label>Email</label>
-                <input type="text" title="Enter your email" required name="email"></input>
+                <input type="text" title="Enter your email" required name="email" />
               </div>
 
               <div className="group">
                 <label>Password</label>
-                <input type="password" title="Enter your password" required name="password"></input>
-              </div>
-
-              <div className="link">
-                <small onClick={this.handleForgottenPassword}>Forgot your password?</small>
-                <small onClick={this.handleRegister}>Need an account?</small>
+                <label className="over" onClick={this.handleForgottenPassword}>Forgot?</label>
+                <input type="password" title="Enter your password" required name="password" />
               </div>
 
               <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-               <input type="submit" value="LOGIN" disabled={this.state.formDisabled} />
+                <input type="submit" value="LOGIN" disabled={this.state.formDisabled} />
 
-               <div className="caption">
-                 <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Padlock)} />
-               </div>
+                <div className="caption">
+                  <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Padlock)} />
+                </div>
+              </div>
+
+              <div className="link">
+                <div className="box" onClick={this.handleRegister}>
+                  <small>Don't have an account? <b>Get Started</b></small>
+                </div>
               </div>
             </form>
           </div>

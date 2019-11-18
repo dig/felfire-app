@@ -1,0 +1,78 @@
+.changelog {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.changelog > .background {
+  height: 100%;
+  width: 100%;
+  opacity: 0.7;
+  background: #202225;
+  position: fixed;
+}
+
+.changelog > .container {
+  height: 500px;
+  width: 360px;
+  background: #171717;
+  position: relative;
+}
+
+.changelog > .container > .tool {
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  cursor: pointer;
+}
+
+.changelog > .container > .tool svg path, 
+.changelog > .container > .tool svg rect, 
+.changelog > .container > .tool svg polygon {
+	fill: #fff;
+}
+.changelog > .container > .tool svg {
+  height: 12px;
+  width: 12px;
+  color: #fff;
+}
+
+.changelog > .container > .button {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+.changelog > .container > .button input[type=submit] {
+  position: relative;
+  width: calc(100% - 34px);
+  height: 34px;
+  background: #c7493a;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  outline: none;
+  float: left;
+  cursor: pointer;
+}
+
+.changelog > .container > .button .caption {
+  position: relative;
+  width: 34px;
+  background: #a33327;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.changelog > .container > .button .caption img {
+  width: 15px;
+}
