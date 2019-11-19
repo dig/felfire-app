@@ -16,6 +16,7 @@ import Login from '../ui/Login';
 import Register from '../ui/Register';
 
 import User from '../utils/User';
+import { remote } from 'electron';
 
 const PAGES = {
   LOGIN: Login,
@@ -52,6 +53,7 @@ class App extends React.Component {
     this.updateAccessToken = this.updateAccessToken.bind(this);
     this.updateRefreshToken = this.updateRefreshToken.bind(this);
     this.requestUserData = this.requestUserData.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   changePage(pageName, data) {
@@ -131,6 +133,11 @@ class App extends React.Component {
     });
   }
 
+  logout() {
+    this.updateRefreshToken('')
+      .then(() => this.changePage('LOGIN'));
+  }
+
   componentDidMount() {
     this.timerID = setInterval(() => {
       this.setState({loadPercent : Math.min(1, this.state.loadPercent + 0.05)});
@@ -139,19 +146,33 @@ class App extends React.Component {
     setTimeout(this.requestUserData, 1000);
 
     //--- TODO: Check if accessToken has expired and refresh
+
+    //--- Check if new version was downloaded
+    storage.get('version', (error, data) => {
+      if (data && remote.app.getVersion() != data) {
+        storage.set('version', remote.app.getVersion());
+
+        this.versionID = setInterval(() => {
+          if (!this.state.loadOverlay) {
+            this.setState({changelogOverlay : true});
+            clearInterval(this.versionID);
+          }
+        }, 100);
+      }
+    });
   }
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+    clearInterval(this.versionID);
   }
 
   render() {
     let Page = this.state.page;
-    let background = (this.state.loaded ? 'on' : '');
 
     return (
       <div className="app">
-        <Toolbar background={background} />
+        <Toolbar background={(this.state.loaded && this.state.refreshToken != '' && this.state.accessToken != '' ? 'on' : '')} />
 
         {this.state.changelogOverlay &&
           <Changelog setChangelogOverlay={this.setChangelogOverlay} />
@@ -168,6 +189,7 @@ class App extends React.Component {
             setLoadOverlay={this.setLoadOverlay} 
             updateAccessToken={this.updateAccessToken} 
             updateRefreshToken={this.updateRefreshToken} 
+            logout={this.logout}
           />
         </div>
 

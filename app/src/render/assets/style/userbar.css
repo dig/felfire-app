@@ -1,0 +1,110 @@
+.userbar {
+  position: relative;
+  background: #1d1e20;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  float: left;
+  flex: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.userbar > .search {
+  position: relative;
+  height: 100%;
+  width: calc(100% - 140px);
+  display: flex;
+  align-items: center;
+  padding: 0 7px;
+}
+
+.userbar > .search > input[type=text] {
+  background: #343434;
+  outline: none;
+  border: none;
+  color: #828282;
+  height: 25px;
+  width: 100%;
+  padding: 7px 25px;
+}
+
+.userbar > .search > input[type=text]:focus {
+  color: #fff;
+}
+
+.userbar > .search > .glass {
+  position: absolute;
+  width: 14px;
+  left: 13px;
+}
+
+.userbar > .search > .delete {
+  position: absolute;
+  width: 10px;
+  right: 13px;
+  cursor: pointer;
+}
+
+.userbar .glass.blur, .userbar .delete.blur {
+  opacity: 0.4;
+}
+
+.userbar > .controls {
+  width: 140px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.userbar > .controls > .box {
+  width: 33.333%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.userbar > .controls > .box:hover {
+  background: #252628;
+}
+
+.userbar > .controls > .box > img {
+  height: 16px;
+}
+
+.userbar > .controls > .box .profile-pic {
+  height: 26px;
+  width: 26px;
+  border-radius: 50%;
+  position: relative;
+  top: 2px;
+}
+
+.userbar > .controls > .box > .dropdown > .dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  width: 160px;
+  background: #252628;
+}
+
+.userbar > .controls > .box > .dropdown:hover > .dropdown-content {
+  display: block;
+}
+
+.userbar > .controls > .box > .dropdown > .dropdown-content > .tabs {
+  width: 100%;
+}
+
+.userbar > .controls > .box > .dropdown > .dropdown-content > .tabs > .tab {
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.userbar > .controls > .box > .dropdown > .dropdown-content > .tabs > .tab:hover {
+  background: #303134;
+}

@@ -92,6 +92,10 @@
   border: 1px solid #c7493a;
 }
 
+.login .content input[type=password] {
+  padding-right: 60px;
+}
+
 .login .content label {
   font-size: 0.9rem;
 }

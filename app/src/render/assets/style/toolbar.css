@@ -20,13 +20,13 @@
 .toolbar .icon {
   position: relative;
   height: 16px;
-  left: 5px;
+  left: 7px;
 }
 
 .toolbar .text {
   position: relative;
   height: 12px;
-  left: 10px;
+  left: 12px;
   top: 1px;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .toolbar > .toolset > .tool:hover {
-  background: rgba(255, 255, 255, .1);
+  background: #252628;
 }
 
 .toolbar > .toolset > .tool.close:hover {

@@ -1,0 +1,68 @@
+.navbar {
+  position: relative;
+  height: 100%;
+  width: 160px;
+  background: #18191c;
+  left: 0;
+  float: left;
+}
+
+.navbar .tabs {
+  position: absolute;
+  width: 100%;
+}
+
+.navbar .tabs .tab {
+  width: 100%;
+  height: 40px;
+  color: #828282;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.navbar .tabs .tab.selected .border {
+  display: block;
+  background: #c7493a;
+  width: 2px;
+  height: 20px;
+  position: absolute;
+  left: 0;
+}
+
+.navbar .tabs .tab .border {
+  display: none;
+}
+
+.navbar .tabs .tab:hover {
+  background: #252628;
+}
+
+.navbar .tabs .tab .icon {
+  flex: 35;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.navbar .tabs .tab .text {
+  flex: 75;
+}
+
+.navbar .tabs .tab.selected .text {
+  color: #fff;
+}
+
+.navbar .tabs .tab img {
+  width: 16px;
+  position: absolute;
+  right: 10px;
+  -webkit-filter: invert(50%);
+  filter: invert(50%);
+}
+
+.navbar .tabs .tab.selected img {
+  -webkit-filter: invert(0%);
+  filter: invert(0%);
+}
