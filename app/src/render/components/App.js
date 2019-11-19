@@ -41,13 +41,19 @@ class App extends React.Component {
       refreshToken : '',
 
       page : PAGES.LIBRARY,
-      pageData : {}
+      pageData : {},
+      
+      cache : {}
     };
 
     this.changePage = this.changePage.bind(this);
     this.setLoadOverlay = this.setLoadOverlay.bind(this);
     this.setLoadOverlayPercent = this.setLoadOverlayPercent.bind(this);
     this.setChangelogOverlay = this.setChangelogOverlay.bind(this);
+
+    this.setCache = this.setCache.bind(this);
+    this.getCache = this.getCache.bind(this);
+    this.clearCache = this.clearCache.bind(this);
 
     this.getTokenConfig = this.getTokenConfig.bind(this);
     this.updateAccessToken = this.updateAccessToken.bind(this);
@@ -78,6 +84,22 @@ class App extends React.Component {
   setChangelogOverlay(enabled) {
     if (!this.state.loadOverlay)
       this.setState({changelogOverlay : enabled});
+  }
+
+  setCache(key, value) {
+    let cache = this.state.cache;
+    cache[key] = value;
+    this.setState({cache : cache});
+  }
+
+  getCache(key, def) {
+    return this.state.cache[key] || def;
+  }
+
+  clearCache(key, value) {
+    let cache = this.state.cache;
+    delete cache[key];
+    this.setState({cache : cache});
   }
 
   getTokenConfig() {
@@ -187,6 +209,11 @@ class App extends React.Component {
             pageData={this.state.pageData} 
             changePage={this.changePage} 
             setLoadOverlay={this.setLoadOverlay} 
+
+            setCache={this.setCache}
+            getCache={this.getCache}
+            clearCache={this.clearCache}
+
             updateAccessToken={this.updateAccessToken} 
             updateRefreshToken={this.updateRefreshToken} 
             logout={this.logout}

@@ -87,6 +87,7 @@
   right: 0;
   width: 160px;
   background: #252628;
+  z-index: 100;
 }
 
 .userbar > .controls > .box > .dropdown:hover > .dropdown-content {

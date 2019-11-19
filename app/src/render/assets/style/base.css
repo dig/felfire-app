@@ -213,3 +213,24 @@ p, small, label, h1, h2, h3, h4, h5, h6 {
 input, button, textarea, :focus {
   outline: none;
 }
+
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #18191c;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #141417;
+}

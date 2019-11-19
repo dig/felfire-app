@@ -1,0 +1,66 @@
+.library {
+  width: calc(100% - 160px);
+  height: calc(100% - 40px);
+  position: absolute;
+  top: 40px;
+  left: 160px;
+  overflow-y: auto;
+}
+
+.library > .empty {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.library > .empty > img {
+  width: 42px;
+}
+
+.library > .empty > p, .library > .empty > h3 {
+  color: #828282;
+}
+
+.library > .empty > .arrow {
+  position: absolute;
+  top: 8px;
+  right: 103px;
+  width: 29px;
+}
+
+.library > .rows {
+  width: 100%;
+}
+
+.library > .rows > .row {
+  width: 100%;
+  padding: 10px 20px 0 20px;
+  overflow: hidden;
+}
+
+.library > .rows > .row > small {
+  color: #6a6a6a;
+}
+
+.library > .rows > .row:not(:first-child) {
+  padding-top: 0;
+}
+
+.library > .rows > .row > .grid {
+  position: relative;
+  top: 5px;
+}
+
+.library > .rows > .row > .grid > .cell {
+  float: left;
+  background: #18191c;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.library > .rows > .row > .grid > .cell:not(:last-child) {
+  margin-right: 20px;
+}
