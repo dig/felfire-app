@@ -46,7 +46,7 @@ class Changelog extends React.Component {
 
     return (
       <div className="changelog">
-        <div className="background"></div>
+        <div className="background" onClick={this.handleClose}></div>
 
         <div className="container slideInDown">
           <div className="tool" onClick={this.handleClose}>

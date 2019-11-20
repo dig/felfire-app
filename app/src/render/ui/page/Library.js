@@ -1,4 +1,6 @@
-const moment = require('moment');
+const { remote } = require('electron'),
+      userService = remote.require('./common/services/user.service'),
+      moment = require('moment');
 
 import React from 'react';
 
@@ -9,7 +11,8 @@ import Userbar from '../../components/Userbar';
 import Box from '../../assets/img/box.png';
 import BackArrow from '../../assets/img/back-arrow.png';
 
-import { IMAGE_HEIGHT_PX, IMAGE_WIDTH_PX } from '../../constants/library.constants';
+import { OVERLAY } from '../../constants/app.constants';
+import { IMAGE_HEIGHT_PX, IMAGE_WIDTH_PX, IMAGE_FETCH_AMOUNT } from '../../constants/library.constants';
 
 class Library extends React.Component {
   constructor(props) {
@@ -17,14 +20,22 @@ class Library extends React.Component {
 
     this.state = {
       images : [],
-      categories : []
+      categories : [],
+      page : 0
     };
     
+    this.getNextImages = this.getNextImages.bind(this);
     this.refreshCategories = this.refreshCategories.bind(this);
+    this.handleImageClick = this.handleImageClick.bind(this);
   }
 
-  getUserImages(month) {
-    
+  async getNextImages() {
+    try {
+      let images = await userService.fetchImages(this.state.page + 1, IMAGE_FETCH_AMOUNT);
+      this.setState({images : images, page : this.state.page + 1}, () => this.refreshCategories());
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   refreshCategories() {
@@ -38,8 +49,14 @@ class Library extends React.Component {
     this.setState({categories : categories});
   }
 
+  handleImageClick(url) {
+    this.props.setOverlay(true, OVERLAY.PICTURE, {
+      imageUrl : url
+    });
+  }
+
   componentDidMount() {
-    this.refreshCategories();
+    if (this.state.page <= 0) this.getNextImages();
   }
 
   render() {
@@ -71,7 +88,9 @@ class Library extends React.Component {
                       let monthYear = `${created.format('MMMM')} ${created.format('YYYY')}`;
 
                       if (value == monthYear) 
-                        return <div key={imageIndex} className="cell" style={{height : `${IMAGE_HEIGHT_PX}px`, width : `${IMAGE_WIDTH_PX}px`}}></div>
+                        return <div key={imageIndex} className="cell" style={{height : `${IMAGE_HEIGHT_PX}px`, width : `${IMAGE_WIDTH_PX}px`}}>
+                          <img className="thumbnail" src={(image.thumb_url ? image.thumb_url : image.cdn_url)} onClick={() => this.handleImageClick(image.cdn_url)} />
+                        </div>
                     })}
                   </div>
                 </div>

@@ -6,6 +6,7 @@ import Register from '../ui/page/Register';
 
 import Load from '../ui/overlay/Load';
 import Changelog from '../ui/overlay/Changelog';
+import Picture from '../ui/overlay/Picture';
 
 const PAGES = {
   LOGIN: Login,
@@ -17,7 +18,8 @@ const PAGES = {
 
 const OVERLAY = {
   LOAD: Load,
-  CHANGELOG: Changelog
+  CHANGELOG: Changelog,
+  PICTURE: Picture
 };
 
 export {
