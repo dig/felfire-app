@@ -1,3 +1,6 @@
+const { remote } = require('electron'),
+      userService = remote.require('./common/services/user.service');
+
 import React from 'react';
 
 import ForgotPasswordCSS from '../../assets/style/forgotpassword.css';
@@ -6,7 +9,6 @@ import Square from '../../assets/img/square.png';
 import Mark from '../../assets/img/danger.png';
 import Reload from '../../assets/img/spin.png';
 
-import User from '../../utils/User';
 import CaptchaSlider from '../../components/CaptchaSlider';
 
 import { PAGES } from '../../constants/app.constants';
@@ -31,22 +33,22 @@ class ForgotPassword extends React.Component {
     this.handleShake = this.handleShake.bind(this);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
 
     if (this.state.captcha != '') {
-      User.requestPasswordReset(this.state.email, this.state.captcha).then(() => {
+      try {
+        await userService.forgotPassword(this.state.email, this.state.captcha);
         this.props.changePage(PAGES.EMAILVERIFICATION, { title : 'Password Reset', email : this.state.email });
-      })
-      .catch((errors) => {
+      } catch (err) {
         this.setState({
-          errorMessage : (typeof errors === 'string' ? errors : errors[0].msg),
+          errorMessage : (typeof err === 'string' ? err : err[0].msg),
           shake : true,
           formDisabled : false
         });
 
         this.handleShake();
-      });
+      }
     } else {
       this.setState({
         errorMessage : 'Captcha failed, please try again.',

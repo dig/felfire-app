@@ -1,3 +1,6 @@
+const { remote } = require('electron'),
+      userService = remote.require('./common/services/user.service');
+
 import React from 'react';
 
 import RegisterCSS from '../../assets/style/register.css';
@@ -7,7 +10,6 @@ import Square from '../../assets/img/square.png';
 import Mark from '../../assets/img/danger.png';
 import Reload from '../../assets/img/spin.png';
 
-import User from '../../utils/User';
 import CaptchaSlider from '../../components/CaptchaSlider';
 
 import { PAGES } from '../../constants/app.constants';
@@ -44,25 +46,26 @@ class Register extends React.Component {
     this.updateStrengthMeter = this.updateStrengthMeter.bind(this);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
     let password = event.target.password.value;
 
     if (this.state.confirmPassword === password && this.state.captcha != '') {
-      User.createUser(this.state.username, this.state.email, this.state.password, this.state.captcha).then(() => {
+      try {
+        await userService.createUser(this.state.username, this.state.email, this.state.password, this.state.captcha);
         this.props.changePage(PAGES.EMAILVERIFICATION, { email :  this.state.email});
-      }).catch(errors => {
+      } catch (err) {
         this.setState({formDisabled : false});
         
-        if (typeof errors === 'string' || errors[0]) {
+        if (typeof err === 'string' || err[0]) {
           this.setState({
-            errorMessage : (typeof errors === 'string' ? errors : errors[0].msg),
+            errorMessage : (typeof err === 'string' ? err : err[0].msg),
             shake : true
           });
 
           this.handleShake();
         }
-      });
+      }
     } else {
       this.setState({
         errorMessage : (this.state.captcha === '' ? 'Captcha failed, please try again.' : 'Passwords do not match.'),
