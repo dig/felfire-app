@@ -1,3 +1,6 @@
+const { remote } = require('electron'),
+      authService = remote.require('./common/services/auth.service');
+
 import React from 'react';
 
 import UserbarCSS from '../assets/style/userbar.css';
@@ -6,6 +9,8 @@ import Add from '../assets/img/add.png';
 import Close from '../assets/img/close.png';
 import Notification from '../assets/img/notification.png';
 import TemplateProfile from '../assets/img/template-profile.png';
+
+import { PAGES } from '../constants/app.constants';
 
 class Userbar extends React.Component {
   constructor(props) {
@@ -19,7 +24,8 @@ class Userbar extends React.Component {
     this.handleInputFocus = this.handleInputFocus.bind(this);
     this.handleInputBlur = this.handleInputBlur.bind(this);
     this.handleSearchInput = this.handleSearchInput.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
+    this.handleSearchDelete = this.handleSearchDelete.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   handleInputFocus() {
@@ -34,8 +40,13 @@ class Userbar extends React.Component {
     this.setState({search : event.target.value});
   }
 
-  handleDelete() {
+  handleSearchDelete() {
     this.setState({search : ''});
+  }
+
+  handleLogout() {
+    authService.logout();
+    this.props.changePage(PAGES.LOGIN);
   }
 
   render() {
@@ -46,7 +57,7 @@ class Userbar extends React.Component {
           <img className={'glass ' + (!this.state.focus ? 'blur' : '')} src={Search} />
           
           {this.state.search != '' &&
-            <img className={'delete ' + (!this.state.focus ? 'blur' : '')} src={Close} onClick={this.handleDelete} />
+            <img className={'delete ' + (!this.state.focus ? 'blur' : '')} src={Close} onClick={this.handleSearchDelete} />
           }
         </div>
 
@@ -69,7 +80,7 @@ class Userbar extends React.Component {
                     Account
                   </div>
 
-                  <div className="tab" onClick={this.props.logout}>
+                  <div className="tab" onClick={this.handleLogout}>
                     Logout
                   </div>
                 </div>

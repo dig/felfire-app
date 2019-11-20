@@ -1,5 +1,6 @@
-const { ipcRenderer } = require('electron');
-const storage = require('electron-json-storage');
+const { remote } = require('electron'),
+      storage = require('electron-json-storage'),
+      authService = remote.require('./common/services/auth.service');
 
 import React from 'react';
 
@@ -7,38 +8,18 @@ import Toolbar from './Toolbar';
 import Version from './Version';
 import BaseCSS from '../assets/style/base.css';
 
-import Changelog from '../ui/Changelog';
-import EmailVerification from '../ui/EmailVerification';
-import ForgotPassword from '../ui/ForgotPassword';
-import Library from '../ui/Library';
-import Load from '../ui/Load';
-import Login from '../ui/Login';
-import Register from '../ui/Register';
-
-import User from '../utils/User';
-import { remote } from 'electron';
-
-const PAGES = {
-  LOGIN: Login,
-  REGISTER: Register,
-  FORGOTPASSWORD: ForgotPassword,
-  EMAILVERIFICATION: EmailVerification,
-  LIBRARY: Library
-};
+import { PAGES, OVERLAY } from '../constants/app.constants';
 
 class App extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      loaded : false,
-      loadOverlay : true,
-      loadPercent : 0,
-
-      changelogOverlay : false,
-
-      accessToken : '',
-      refreshToken : '',
+      overlayActive : true,
+      overlay : OVERLAY.LOAD,
+      overlayData : {
+        percent : 0
+      },
 
       page : PAGES.LIBRARY,
       pageData : {},
@@ -46,44 +27,29 @@ class App extends React.Component {
       cache : {}
     };
 
+    this.setOverlay = this.setOverlay.bind(this);
     this.changePage = this.changePage.bind(this);
-    this.setLoadOverlay = this.setLoadOverlay.bind(this);
-    this.setLoadOverlayPercent = this.setLoadOverlayPercent.bind(this);
-    this.setChangelogOverlay = this.setChangelogOverlay.bind(this);
 
     this.setCache = this.setCache.bind(this);
     this.getCache = this.getCache.bind(this);
     this.clearCache = this.clearCache.bind(this);
 
-    this.getTokenConfig = this.getTokenConfig.bind(this);
-    this.updateAccessToken = this.updateAccessToken.bind(this);
-    this.updateRefreshToken = this.updateRefreshToken.bind(this);
     this.requestUserData = this.requestUserData.bind(this);
-    this.logout = this.logout.bind(this);
   }
 
-  changePage(pageName, data) {
-    let page = PAGES[pageName];
+  setOverlay(enabled, overlay, data) {
+    this.setState({
+      overlayActive : enabled,
+      overlay : overlay,
+      overlayData : data || {}
+    });
+  }
+
+  changePage(page, data) {
     this.setState({
       page : page,
       pageData : data || {}
     });
-  }
-
-  setLoadOverlay(loadOverlay) {
-    this.setState({
-      loadOverlay : loadOverlay,
-      loadPercent : 0
-    });
-  }
-
-  setLoadOverlayPercent(loadPercent) {
-    this.setState({loadPercent : loadPercent});
-  }
-
-  setChangelogOverlay(enabled) {
-    if (!this.state.loadOverlay)
-      this.setState({changelogOverlay : enabled});
   }
 
   setCache(key, value) {
@@ -102,75 +68,35 @@ class App extends React.Component {
     this.setState({cache : cache});
   }
 
-  getTokenConfig() {
-    return new Promise((resolve, reject) => {
-      storage.get('token', function(error, data) {
-        if (error) throw reject();
-        resolve(data);
-      });
-    });
-  }
+  async requestUserData() {
+    let target;
 
-  updateAccessToken(accessToken) {
+    try {
+      await authService.refreshAccessToken();
+      target = PAGES.LIBRARY;
+    } catch (err) {
+      target = PAGES.LOGIN;
+    }
+
     this.setState({
-      loaded : true,
-      accessToken : accessToken
+      overlayActive : false,
+      page : target
     });
-  }
-
-  updateRefreshToken(refreshToken) {
-    return new Promise((resolve, reject) => {
-      storage.set('token', refreshToken, (error) => {
-        if (error) reject();
-        this.setState({refreshToken : refreshToken});
-        resolve(refreshToken);
-      });
-    });
-  }
-
-  requestUserData() {
-    this.getTokenConfig().then((refreshToken) => {
-      if (refreshToken) {
-        this.updateRefreshToken(refreshToken)
-          .then(() => User.refreshAccessToken(refreshToken))
-          .then((accessToken) => {
-            this.setState({
-              loaded : true,
-              loadOverlay : false,
-              page : PAGES.LIBRARY,
-              accessToken : accessToken
-            });
-          })
-          .catch((error) => {
-            console.log(`Error with refreshing token: ${error}`);
-            this.setState({page : PAGES.LOGIN, loadOverlay : false});
-          });
-      } else {
-        console.log(`refreshToken not inside config`);
-        this.setState({page : PAGES.LOGIN, loadOverlay : false});
-      }
-    }).catch((error) => {
-      console.log(`Error with fetching tokenConfig: ${error}`);
-      this.setState({page : PAGES.LOGIN, loadOverlay : false});
-    });
-  }
-
-  logout() {
-    this.updateRefreshToken('')
-      .then(() => this.changePage('LOGIN'));
   }
 
   componentDidMount() {
     this.timerID = setInterval(() => {
-      this.setState({loadPercent : Math.min(1, this.state.loadPercent + 0.05)});
-    }, 50);
+      this.setState({overlayData : {
+        percent : Math.min(1, this.state.overlayData.percent + 0.05)
+      }});
+    }, 25);
 
-    setTimeout(this.requestUserData, 1000);
+    setTimeout(this.requestUserData, 600);
 
     //--- TODO: Check if accessToken has expired and refresh
 
-    //--- Check if new version was downloaded
-    storage.get('version', (error, data) => {
+    //--- Check if new version was downloaded REFACTOR BADLY PLS
+    /* storage.get('version', (error, data) => {
       if (data && remote.app.getVersion() != data) {
         storage.set('version', remote.app.getVersion());
 
@@ -181,7 +107,7 @@ class App extends React.Component {
           }
         }, 100);
       }
-    });
+    }); */
   }
 
   componentWillUnmount() {
@@ -190,37 +116,30 @@ class App extends React.Component {
   }
 
   render() {
+    let Overlay = this.state.overlay;
     let Page = this.state.page;
 
     return (
       <div className="app">
-        <Toolbar background={(this.state.loaded && this.state.refreshToken != '' && this.state.accessToken != '' ? 'on' : '')} />
+        <Toolbar background={(authService.getAccessToken() != null ? 'on' : '')} />
 
-        {this.state.changelogOverlay &&
-          <Changelog setChangelogOverlay={this.setChangelogOverlay} />
+        {this.state.overlayActive &&
+          <Overlay overlayData={this.state.overlayData} setOverlay={this.setOverlay} />
         }
 
         <div className="page">
-          {this.state.loadOverlay &&
-            <Load percent={this.state.loadPercent} />
-          }
-
           <Page 
             pageData={this.state.pageData} 
             changePage={this.changePage} 
-            setLoadOverlay={this.setLoadOverlay} 
+            setOverlay={this.setOverlay} 
 
             setCache={this.setCache}
             getCache={this.getCache}
             clearCache={this.clearCache}
-
-            updateAccessToken={this.updateAccessToken} 
-            updateRefreshToken={this.updateRefreshToken} 
-            logout={this.logout}
           />
         </div>
 
-        <Version setChangelogOverlay={this.setChangelogOverlay} />
+        <Version setOverlay={this.setOverlay} />
       </div>
     );
   }

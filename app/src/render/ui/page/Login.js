@@ -1,15 +1,16 @@
-const { ipcRenderer } = require('electron');
+const { remote } = require('electron'),
+      authService = remote.require('./common/services/auth.service');
 
 import React from 'react';
 
-import LoginCSS from '../assets/style/login.css';
-import Picture from '../assets/img/login.svg'; 
-import Padlock from '../assets/img/padlock-unlock.png';
-import Square from '../assets/img/square.png';
-import Mark from '../assets/img/danger.png';
-import Reload from '../assets/img/spin.png';
+import LoginCSS from '../../assets/style/login.css';
+import Picture from '../../assets/img/login.svg'; 
+import Padlock from '../../assets/img/padlock-unlock.png';
+import Square from '../../assets/img/square.png';
+import Mark from '../../assets/img/danger.png';
+import Reload from '../../assets/img/spin.png';
 
-import User from '../utils/User';
+import { PAGES } from '../../constants/app.constants';
 
 class Login extends React.Component {
   constructor(props) {
@@ -26,32 +27,29 @@ class Login extends React.Component {
     this.handleForgottenPassword = this.handleForgottenPassword.bind(this);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
     this.setState({formDisabled : true});
 
-    //--- Request login
-    User.login(event.target.email.value, event.target.password.value).then((data) => {
-      this.setState({formDisabled : false});
-      if (data != null) {
-        if (data.refreshToken && data.accessToken) {
-          this.props.updateRefreshToken(data.refreshToken).then(() => {
-            this.props.updateAccessToken(data.accessToken);
-            this.props.changePage('LIBRARY');
-          });
-        } else {
-          this.props.changePage('EMAILVERIFICATION', { email : data.email });
-        }
+    try {
+      let response = await authService.login(event.target.email.value, event.target.password.value);
+
+      if (response && response.hasOwnProperty('verified')) {
+        this.props.changePage(PAGES.EMAILVERIFICATION, { email : response.email });
+      } else {
+        this.props.changePage(PAGES.LIBRARY);
       }
-    })
-    .catch(() => {
+    } catch (err) {
+      console.log(err);
+
       this.setState({
         error : true,
         shake : true,
         formDisabled : false
       });
+
       this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
-    });
+    }
   }
 
   componentWillUnmount() {
@@ -60,12 +58,12 @@ class Login extends React.Component {
 
   handleRegister(event) {
     event.preventDefault();
-    this.props.changePage('REGISTER');
+    this.props.changePage(PAGES.REGISTER);
   }
 
   handleForgottenPassword(event) {
     event.preventDefault();
-    this.props.changePage('FORGOTPASSWORD');
+    this.props.changePage(PAGES.FORGOTPASSWORD);
   }
 
   render() {

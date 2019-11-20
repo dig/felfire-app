@@ -1,7 +1,4 @@
-const electron = require('electron');
-     app = electron.app,
-     BrowserWindow = electron.BrowserWindow,
-     ipc = electron.ipcMain,
+const { app, BrowserWindow, ipcMain } = require('electron'),
      { autoUpdater } = require('electron-updater'),
      log = require('electron-log');
 
@@ -11,7 +8,6 @@ const path = require('path'),
 //--- Setup logger
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
-log.info('App starting...');
 
 let mainWindow;
 function createMainWindow() {
@@ -104,8 +100,8 @@ app.on('activate', () => {
 });
 
 //--- Toolbar
-ipc.on('toolbar-minimize', () => mainWindow.minimize());
-ipc.on('toolbar-maximize', () => {
+ipcMain.on('toolbar-minimize', () => mainWindow.minimize());
+ipcMain.on('toolbar-maximize', () => {
   if (!mainWindow.isMaximized()) {
     mainWindow.maximize();
   } else {
@@ -113,7 +109,7 @@ ipc.on('toolbar-maximize', () => {
     mainWindow.center();
   }
 });
-ipc.on('toolbar-close', () => mainWindow.hide());
+ipcMain.on('toolbar-close', () => mainWindow.hide());
 
 //--- Auto updates
 autoUpdater.autoDownload = false;
@@ -126,8 +122,8 @@ autoUpdater.on('error', (error) => {
 });
 autoUpdater.on('download-progress', (progressObj) => mainWindow.webContents.send('update-progress', progressObj.percent));
 autoUpdater.on('update-downloaded', () => autoUpdater.quitAndInstall(true, true));
-ipc.on('update-check', () => {
+ipcMain.on('update-check', () => {
   autoUpdater.checkForUpdates();
   setInterval(() => autoUpdater.checkForUpdates(), 1800 * 1000); //--- Every 30mins
 });
-ipc.on('update-install', () => autoUpdater.downloadUpdate());
+ipcMain.on('update-install', () => autoUpdater.downloadUpdate());

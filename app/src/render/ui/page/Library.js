@@ -2,12 +2,12 @@ const moment = require('moment');
 
 import React from 'react';
 
-import LibraryCSS from '../assets/style/library.css';
-import Navbar from '../components/Navbar';
-import Userbar from '../components/Userbar';
+import LibraryCSS from '../../assets/style/library.css';
+import Navbar from '../../components/Navbar';
+import Userbar from '../../components/Userbar';
 
-import Box from '../assets/img/box.png';
-import BackArrow from '../assets/img/back-arrow.png';
+import Box from '../../assets/img/box.png';
+import BackArrow from '../../assets/img/back-arrow.png';
 
 const IMAGE_HEIGHT_PX = 140;
 const IMAGE_WIDTH_PX = 140;
@@ -47,7 +47,7 @@ class Library extends React.Component {
     return (
       <div style={{height : '100%', width : '100%', display : 'flex'}}>
         <Navbar />
-        <Userbar logout={this.props.logout} />
+        <Userbar changePage={this.props.changePage} />
 
         <div className="library">
           {this.state.images.length <= 0 &&

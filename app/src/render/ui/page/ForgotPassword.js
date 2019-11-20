@@ -1,13 +1,15 @@
 import React from 'react';
 
-import ForgotPasswordCSS from '../assets/style/forgotpassword.css';
-import Tick from '../assets/img/done-tick.png'; 
-import Square from '../assets/img/square.png';
-import Mark from '../assets/img/danger.png';
-import Reload from '../assets/img/spin.png';
+import ForgotPasswordCSS from '../../assets/style/forgotpassword.css';
+import Tick from '../../assets/img/done-tick.png'; 
+import Square from '../../assets/img/square.png';
+import Mark from '../../assets/img/danger.png';
+import Reload from '../../assets/img/spin.png';
 
-import User from '../utils/User';
-import CaptchaSlider from '../components/CaptchaSlider';
+import User from '../../utils/User';
+import CaptchaSlider from '../../components/CaptchaSlider';
+
+import { PAGES } from '../../constants/app.constants';
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -34,7 +36,7 @@ class ForgotPassword extends React.Component {
 
     if (this.state.captcha != '') {
       User.requestPasswordReset(this.state.email, this.state.captcha).then(() => {
-        this.props.changePage('EMAILVERIFICATION', { title : 'Password Reset', email : this.state.email });
+        this.props.changePage(PAGES.EMAILVERIFICATION, { title : 'Password Reset', email : this.state.email });
       })
       .catch((errors) => {
         this.setState({
@@ -57,7 +59,7 @@ class ForgotPassword extends React.Component {
 
   handleLogin(event) {
     event.preventDefault();
-    this.props.changePage('LOGIN');
+    this.props.changePage(PAGES.LOGIN);
   }
 
   handleEmailChange(event) {

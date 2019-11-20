@@ -52,7 +52,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       {
-        from: './app/src/main/app.js',
+        from: './app/src/main',
         to: path.join(__dirname, '../app/build'),
       },
       {

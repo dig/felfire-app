@@ -4,19 +4,13 @@ import React from 'react';
 
 import VersionCSS from '../assets/style/version.css';
 import Reload from '../assets/img/reload.png';
-import { clearInterval } from 'timers';
 
-const BOUNCE_INTERVAL = 15000;
-const DOWNLOAD_STATE = {
-  LATEST_VERSION: 'LATEST_VERSION',
-  CHECKING_FOR_UPDATE: 'CHECKING_FOR_UPDATE',
-  UPDATE_AVAILABLE: 'UPDATE_AVAILABLE',
-  DOWNLOADING: 'DOWNLOADING'
-};
+import { OVERLAY } from '../constants/app.constants';
+import { BOUNCE_INTERVAL, DOWNLOAD_STATE } from '../constants/version.constants';
 
 class Version extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       version : (process.env.NODE_ENV === 'development' ? 'Development Build' : `v${remote.app.getVersion()}`),
@@ -57,7 +51,7 @@ class Version extends React.Component {
   }
 
   handleChangelogClick() {
-    this.props.setChangelogOverlay(true);
+    this.props.setOverlay(true, OVERLAY.CHANGELOG);
   }
 
   render() {

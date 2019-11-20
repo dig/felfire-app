@@ -43,10 +43,12 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       {
-        from: './app/src/main/app.js',
+        from: './app/src/main',
+        to: path.join(__dirname, '../app/build'),
       },
       {
         from: './app/src/render/index.html',
+        to: path.join(__dirname, '../app/build'),
       },
     ]),
     new webpack.DefinePlugin({

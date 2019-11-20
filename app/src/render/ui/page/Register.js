@@ -1,14 +1,16 @@
 import React from 'react';
 
-import RegisterCSS from '../assets/style/register.css';
-import Picture from '../assets/img/register.svg'; 
-import Tick from '../assets/img/done-tick.png'; 
-import Square from '../assets/img/square.png';
-import Mark from '../assets/img/danger.png';
-import Reload from '../assets/img/spin.png';
+import RegisterCSS from '../../assets/style/register.css';
+import Picture from '../../assets/img/register.svg'; 
+import Tick from '../../assets/img/done-tick.png'; 
+import Square from '../../assets/img/square.png';
+import Mark from '../../assets/img/danger.png';
+import Reload from '../../assets/img/spin.png';
 
-import User from '../utils/User';
-import CaptchaSlider from '../components/CaptchaSlider';
+import User from '../../utils/User';
+import CaptchaSlider from '../../components/CaptchaSlider';
+
+import { PAGES } from '../../constants/app.constants';
 
 class Register extends React.Component {
   constructor(props) {
@@ -48,7 +50,7 @@ class Register extends React.Component {
 
     if (this.state.confirmPassword === password && this.state.captcha != '') {
       User.createUser(this.state.username, this.state.email, this.state.password, this.state.captcha).then(() => {
-        this.props.changePage('EMAILVERIFICATION', { email :  this.state.email});
+        this.props.changePage(PAGES.EMAILVERIFICATION, { email :  this.state.email});
       }).catch(errors => {
         this.setState({formDisabled : false});
         
@@ -73,7 +75,7 @@ class Register extends React.Component {
 
   handleLogin(event) {
     event.preventDefault();
-    this.props.changePage('LOGIN');
+    this.props.changePage(PAGES.LOGIN);
   }
 
   handleUsernameChange(event) {
