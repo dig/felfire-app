@@ -1,0 +1,7 @@
+const IMAGE_HEIGHT_PX = 140;
+const IMAGE_WIDTH_PX = 140;
+
+export {
+  IMAGE_HEIGHT_PX,
+  IMAGE_WIDTH_PX
+};

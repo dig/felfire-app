@@ -1,22 +1,30 @@
 const { app, BrowserWindow, ipcMain } = require('electron'),
      { autoUpdater } = require('electron-updater'),
-     log = require('electron-log');
+     log = require('electron-log'),
+     storage = require('electron-json-storage');
 
 const path = require('path'),
     url = require('url');
+
+const { 
+  MAIN_WINDOW_MIN_WIDTH, 
+  MAIN_WINDOW_MIN_HEIGHT,
+  MAIN_WINDOW_DEFAULT_WIDTH,
+  MAIN_WINDOW_DEFAULT_HEIGHT
+} = require('./constants/app.constants');
 
 //--- Setup logger
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 
 let mainWindow;
-function createMainWindow() {
-  mainWindow = new BrowserWindow({
+function createMainWindow(x, y, width = MAIN_WINDOW_DEFAULT_WIDTH, height = MAIN_WINDOW_DEFAULT_HEIGHT, isMaximized = false, isMinimized = false) {
+  let windowOptions = {
     title: "FelFire",
-    height: 700,
-    width: 1200,
-    minHeight : 600,
-    minWidth : 1000,
+    width: Math.max(width, MAIN_WINDOW_MIN_WIDTH),
+    height: Math.max(height, MAIN_WINDOW_MIN_HEIGHT),
+    minWidth : MAIN_WINDOW_MIN_WIDTH,
+    minHeight : MAIN_WINDOW_MIN_HEIGHT,
     resizable : true,
     backgroundColor : "#202225",
     frame : false,
@@ -24,8 +32,14 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: true
     }
-  });
+  };
 
+  if (x && y) {
+    windowOptions.x = x;
+    windowOptions.y = y;
+  }
+
+  mainWindow = new BrowserWindow(windowOptions);
   mainWindow.setMenu(null);
 
   if (process.env.NODE_ENV === 'development') {
@@ -55,6 +69,9 @@ function createMainWindow() {
     }));
   }
 
+  if (isMaximized) mainWindow.maximize();
+  if (isMinimized) mainWindow.minimize();
+
   mainWindow.once('ready-to-show', function() { 
     mainWindow.show(); 
     mainWindow.focus(); 
@@ -62,6 +79,33 @@ function createMainWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+}
+
+function fetchWindowSettings() {
+  return new Promise((resolve, reject) => {
+    storage.get('settings', function(error, data) {
+      if (error) reject();
+      resolve(data);
+    });
+  });
+}
+
+function saveWindowSettings() {
+  return new Promise((resolve, reject) => {
+    let options = {
+      x : mainWindow.getPosition()[0],
+      y : mainWindow.getPosition()[1],
+      width : Math.max(mainWindow.getSize()[0], MAIN_WINDOW_MIN_WIDTH),
+      height : Math.max(mainWindow.getSize()[1], MAIN_WINDOW_MIN_HEIGHT),
+      isMaximized : mainWindow.isMaximized(),
+      isMinimized : mainWindow.isMinimized()
+    };
+
+    storage.set('settings', options, function(error) {
+      if (error) reject();
+      resolve();
+    });
   });
 }
 
@@ -82,20 +126,45 @@ if (!appLock) {
 }
 
 
-app.on('ready', createMainWindow);
-app.on('window-all-closed', () => {
+app.on('ready', async () => {
+  try {
+    let windowSettings = await fetchWindowSettings();
+    createMainWindow(
+      windowSettings.x, 
+      windowSettings.y, 
+      windowSettings.width, 
+      windowSettings.height, 
+      windowSettings.isMaximized, 
+      windowSettings.isMinimized
+    );
+  } catch (err) {
+    createMainWindow();
+  }
+});
+app.on('window-all-closed', async () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
+    try {
+      await saveWindowSettings();
+    } catch (err) {
+      log.error(err);
+    }
+
     app.quit();
   }
 });
 
-app.on('activate', () => {
+app.on('activate', async () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createMainWindow();
+    try {
+      let windowSettings = await fetchWindowSettings();
+      createMainWindow(windowSettings.x, windowSettings.y, windowSettings.height, windowSettings.width);
+    } catch (err) {
+      createMainWindow();
+    }
   }
 });
 
@@ -109,7 +178,10 @@ ipcMain.on('toolbar-maximize', () => {
     mainWindow.center();
   }
 });
-ipcMain.on('toolbar-close', () => mainWindow.hide());
+ipcMain.on('toolbar-close', async () => {
+  await saveWindowSettings();
+  mainWindow.hide();
+});
 
 //--- Auto updates
 autoUpdater.autoDownload = false;

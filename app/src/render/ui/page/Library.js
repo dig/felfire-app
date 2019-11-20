@@ -9,8 +9,7 @@ import Userbar from '../../components/Userbar';
 import Box from '../../assets/img/box.png';
 import BackArrow from '../../assets/img/back-arrow.png';
 
-const IMAGE_HEIGHT_PX = 140;
-const IMAGE_WIDTH_PX = 140;
+import { IMAGE_HEIGHT_PX, IMAGE_WIDTH_PX } from '../../constants/library.constants';
 
 class Library extends React.Component {
   constructor(props) {

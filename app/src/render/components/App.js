@@ -1,5 +1,4 @@
 const { remote } = require('electron'),
-      storage = require('electron-json-storage'),
       authService = remote.require('./common/services/auth.service');
 
 import React from 'react';
