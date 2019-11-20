@@ -32,7 +32,7 @@ class Toolbar extends React.Component {
 
   render() {
     return (
-      <div className={"toolbar noselect " + (this.props.background == "on" ? 'background' : '')}>
+      <div className={"toolbar " + (this.props.background == "on" ? 'background' : '')}>
         <div className="drag">
           <img className="icon" src={Icon} />
           <img className="text" src={Text} />

@@ -32,10 +32,6 @@ p, small, label, h1, h2, h3, h4, h5, h6 {
   background: #787676;
 }
 
-.noselect {
-  user-select: none;
-}
-
 .shake {
   animation: 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955) 0s 1 normal both running shake;
 }

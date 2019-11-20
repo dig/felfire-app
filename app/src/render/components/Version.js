@@ -56,7 +56,7 @@ class Version extends React.Component {
 
   render() {
     return (
-      <div className="footer-version noselect">
+      <div className="footer-version">
         {this.state.status === DOWNLOAD_STATE.LATEST_VERSION &&
           <div className="latest" onClick={this.handleChangelogClick}>
             {this.state.version}{(process.env.NODE_ENV === 'development' ? '' : ':Latest')}

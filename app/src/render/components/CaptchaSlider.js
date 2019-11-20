@@ -94,7 +94,7 @@ class CaptchaSlider extends React.Component {
 
   render() {
     return (
-      <div ref={this.slider} className="captcha-slider noselect">
+      <div ref={this.slider} className="captcha-slider">
         <div className="thumb-area" onMouseMove={this.handleMouseMove}>
           <div className="thumb" style={{left : this.state.left}} onMouseLeave={this.handleMouseLeave} onMouseMove={this.handleMouseMove} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
             <img className={(this.state.solved ? 'rotate' : '')} src={(this.state.solved ? Tick : ArrowRight)} />
