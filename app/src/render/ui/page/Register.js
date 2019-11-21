@@ -23,6 +23,7 @@ class Register extends React.Component {
       email : '',
       password : '',
       confirmPassword : '',
+      code : '',
 
       strength : 0,
       strengthColor : '',
@@ -42,6 +43,7 @@ class Register extends React.Component {
     this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(this);
     this.handleShake = this.handleShake.bind(this);
     this.handleCaptchaComplete = this.handleCaptchaComplete.bind(this);
+    this.handleCodeChange = this.handleCodeChange.bind(this);
 
     this.updateStrengthMeter = this.updateStrengthMeter.bind(this);
   }
@@ -52,7 +54,7 @@ class Register extends React.Component {
 
     if (this.state.confirmPassword === password && this.state.captcha != '') {
       try {
-        await userService.createUser(this.state.username, this.state.email, this.state.password, this.state.captcha);
+        await userService.createUser(this.state.username, this.state.email, this.state.password, this.state.captcha, this.state.code);
         this.props.changePage(PAGES.EMAILVERIFICATION, { email :  this.state.email});
       } catch (err) {
         this.setState({formDisabled : false});
@@ -157,6 +159,10 @@ class Register extends React.Component {
     this.setState({captcha : token});
   }
 
+  handleCodeChange(event) {
+    this.setState({code : event.target.value});
+  }
+
   componentWillUnmount() {
     clearTimeout(this.shakeID);
   }
@@ -214,7 +220,12 @@ class Register extends React.Component {
 
               <div className="group">
                 <label>Confirm Password</label>
-                <input type="password" title="Confirm your password 1" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
+                <input type="password" title="Confirm your password" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
+              </div>
+
+              <div className="group">
+                <label>Alpha Registration Code</label>
+                <input type="text" title="Enter code" required name="code" value={this.state.code} onChange={this.handleCodeChange} />
               </div>
 
               {this.state.captcha === '' &&

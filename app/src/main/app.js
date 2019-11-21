@@ -161,7 +161,14 @@ app.on('activate', async () => {
   if (mainWindow === null) {
     try {
       let windowSettings = await fetchWindowSettings();
-      createMainWindow(windowSettings.x, windowSettings.y, windowSettings.height, windowSettings.width);
+      createMainWindow(
+        windowSettings.x, 
+        windowSettings.y, 
+        windowSettings.width, 
+        windowSettings.height, 
+        windowSettings.isMaximized, 
+        windowSettings.isMinimized
+      );
     } catch (err) {
       createMainWindow();
     }

@@ -5,6 +5,7 @@ const { remote } = require('electron'),
       keytar = require('keytar'),
       os = require('os'),
       userService = require('./user.service'),
+      requestUtil = require('../utils/request.utils'),
       apiURL = global.apiURL || remote.getGlobal('apiURL');
 
 const keytarService = 'felfire-auth';
@@ -34,7 +35,7 @@ exports.refreshAccessToken = () => {
     request(refreshOptions, async function (error, response, body) {
       if (error || body.error || body.errors || response.statusCode != 201) {
         await exports.logout();
-        return reject(error || body.error || body.errors);
+        return reject(requestUtil.handleError(body, response.statusCode));
       }
 
       accessToken = body.accessToken;
@@ -60,7 +61,7 @@ exports.login = (email, password) => {
     request(options, async (error, response, body) => {
       if (error || body.error || response.statusCode != 201) {
         await exports.logout();
-        return reject(error || body.error);
+        return reject(requestUtil.handleError(body, response.statusCode));
       }
 
       if (body.refreshToken) {

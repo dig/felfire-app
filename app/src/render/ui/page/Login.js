@@ -40,8 +40,6 @@ class Login extends React.Component {
         this.props.changePage(PAGES.LIBRARY);
       }
     } catch (err) {
-      console.log(err);
-
       this.setState({
         error : true,
         shake : true,
