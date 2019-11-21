@@ -10,7 +10,7 @@ import Close from '../assets/img/close.png';
 import Notification from '../assets/img/notification.png';
 import TemplateProfile from '../assets/img/template-profile.png';
 
-import { PAGES } from '../constants/app.constants';
+import { PAGES, OVERLAY } from '../constants/app.constants';
 
 class Userbar extends React.Component {
   constructor(props) {
@@ -25,6 +25,7 @@ class Userbar extends React.Component {
     this.handleInputBlur = this.handleInputBlur.bind(this);
     this.handleSearchInput = this.handleSearchInput.bind(this);
     this.handleSearchDelete = this.handleSearchDelete.bind(this);
+    this.handleCapture = this.handleCapture.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
 
@@ -42,6 +43,10 @@ class Userbar extends React.Component {
 
   handleSearchDelete() {
     this.setState({search : ''});
+  }
+
+  handleCapture() {
+    this.props.setOverlay(true, OVERLAY.CAPTURE);
   }
 
   handleLogout() {
@@ -62,8 +67,8 @@ class Userbar extends React.Component {
         </div>
 
         <div className="controls">
-          <div className="box">
-            <img src={Add} />
+          <div className="box" onClick={this.handleCapture}>
+            <img src={Add} onClick={this.handleCapture} />
           </div>
 
           <div className="box">
@@ -71,7 +76,7 @@ class Userbar extends React.Component {
           </div>
 
           <div className="box">
-            <div className="dropdown">
+            <div className="profile-dropdown">
               <img className="profile-pic" src={TemplateProfile} />
 
               <div className="dropdown-content">

@@ -18,7 +18,6 @@ class Picture extends React.Component {
   }
   
   render() {
-    console.log(this.props.overlayData.imageUrl);
     return (
       <div className="picture">
         <div className="background" onClick={this.handleClose}></div>

@@ -69,7 +69,7 @@
   background: #252628;
 }
 
-.userbar > .controls > .box > img {
+.userbar > .controls > .box > img, .userbar > .controls > .box > .add-dropdown > img {
   height: 16px;
 }
 
@@ -81,7 +81,7 @@
   top: 2px;
 }
 
-.userbar > .controls > .box > .dropdown > .dropdown-content {
+.userbar > .controls > .box > .profile-dropdown > .dropdown-content {
   display: none;
   position: absolute;
   right: 0;
@@ -90,15 +90,15 @@
   z-index: 100;
 }
 
-.userbar > .controls > .box > .dropdown:hover > .dropdown-content {
+.userbar > .controls > .box > .profile-dropdown:hover > .dropdown-content {
   display: block;
 }
 
-.userbar > .controls > .box > .dropdown > .dropdown-content > .tabs {
+.userbar > .controls > .box > .profile-dropdown > .dropdown-content > .tabs {
   width: 100%;
 }
 
-.userbar > .controls > .box > .dropdown > .dropdown-content > .tabs > .tab {
+.userbar > .controls > .box > .profile-dropdown > .dropdown-content > .tabs > .tab {
   color: #fff;
   padding: 10px 15px;
   font-size: 0.9rem;
@@ -106,6 +106,35 @@
   align-items: center;
 }
 
-.userbar > .controls > .box > .dropdown > .dropdown-content > .tabs > .tab:hover {
+.userbar > .controls > .box > .profile-dropdown > .dropdown-content > .tabs > .tab:hover {
+  background: #303134;
+}
+
+.userbar > .controls > .box > .add-dropdown > .dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  width: 160px;
+  background: #252628;
+  z-index: 100;
+}
+
+.userbar > .controls > .box > .add-dropdown:hover > .dropdown-content {
+  display: block;
+}
+
+.userbar > .controls > .box > .add-dropdown > .dropdown-content > .tabs {
+  width: 100%;
+}
+
+.userbar > .controls > .box > .add-dropdown > .dropdown-content > .tabs > .tab {
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.userbar > .controls > .box > .add-dropdown > .dropdown-content > .tabs > .tab:hover {
   background: #303134;
 }

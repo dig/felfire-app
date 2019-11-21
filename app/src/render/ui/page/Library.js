@@ -30,9 +30,15 @@ class Library extends React.Component {
   }
 
   async getNextImages() {
+    this.props.setOverlay(true, OVERLAY.LOAD);
+
     try {
       let images = await userService.fetchImages(this.state.page + 1, IMAGE_FETCH_AMOUNT);
-      this.setState({images : images, page : this.state.page + 1}, () => this.refreshCategories());
+
+      this.setState({images : images, page : this.state.page + 1}, () => {
+        this.refreshCategories();
+        this.props.setOverlay(false);
+      });
     } catch (err) {
       console.log(err);
     }
@@ -63,7 +69,7 @@ class Library extends React.Component {
     return (
       <div style={{height : '100%', width : '100%', display : 'flex'}}>
         <Navbar />
-        <Userbar changePage={this.props.changePage} />
+        <Userbar changePage={this.props.changePage} setOverlay={this.props.setOverlay} />
 
         <div className="library">
           {this.state.images.length <= 0 &&

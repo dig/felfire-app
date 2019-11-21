@@ -16,8 +16,6 @@ exports.setUser = (email, username, clear = true) => {
     fetchedImages : (clear || user == null ? [] : user.fetchedImages)
   };
 
-  // if (!clear && user != null) replacement.fetchedImages = user.fetchedImages;
-
   user = replacement;
 };
 
