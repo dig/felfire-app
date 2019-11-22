@@ -8,7 +8,7 @@ import Toolbar from './Toolbar';
 import Version from './Version';
 import BaseCSS from '../assets/style/base.css';
 
-import { PAGES, OVERLAY } from '../constants/app.constants';
+import { PAGES, OVERLAY, CAPTURE } from '../constants/app.constants';
 
 class App extends React.Component {
   constructor() {
@@ -22,11 +22,15 @@ class App extends React.Component {
       },
 
       page : null,
-      pageData : {}
+      pageData : {},
+
+      captureActive : false,
+      capture : CAPTURE.REGION
     };
 
     this.setOverlay = this.setOverlay.bind(this);
     this.changePage = this.changePage.bind(this);
+    this.setCapture = this.setCapture.bind(this);
 
     this.requestUserData = this.requestUserData.bind(this);
   }
@@ -43,6 +47,13 @@ class App extends React.Component {
     this.setState({
       page : page,
       pageData : data || {}
+    });
+  }
+
+  setCapture(enabled, capture) {
+    this.setState({
+      captureActive : enabled,
+      capture : capture
     });
   }
 
@@ -96,13 +107,18 @@ class App extends React.Component {
   render() {
     let Overlay = this.state.overlay;
     let Page = this.state.page;
+    let Capture = this.state.capture;
 
     return (
       <div className="app">
         <Toolbar background={(authService.getAccessToken() != null ? 'on' : '')} />
 
         {this.state.overlayActive &&
-          <Overlay overlayData={this.state.overlayData} setOverlay={this.setOverlay} />
+          <Overlay 
+            overlayData={this.state.overlayData} 
+            setOverlay={this.setOverlay} 
+            setCapture={this.setCapture}
+          />
         }
 
         {this.state.page != null &&
@@ -111,8 +127,13 @@ class App extends React.Component {
               pageData={this.state.pageData} 
               changePage={this.changePage} 
               setOverlay={this.setOverlay}
+              setCapture={this.setCapture}
             />
           </div>
+        }
+
+        {this.state.captureActive &&
+          <Capture setCapture={this.setCapture} />
         }
 
         <Version setOverlay={this.setOverlay} />

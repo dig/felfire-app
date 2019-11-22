@@ -1,10 +1,11 @@
-const { app, BrowserWindow, ipcMain } = require('electron'),
+const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require('electron'),
      { autoUpdater } = require('electron-updater'),
      log = require('electron-log'),
      storage = require('electron-json-storage');
 
 const path = require('path'),
-    url = require('url');
+    url = require('url'),
+    ioHook = require('iohook');
 
 const { 
   MAIN_WINDOW_MIN_WIDTH, 
@@ -62,6 +63,8 @@ function createMainWindow(x, y, width = MAIN_WINDOW_DEFAULT_WIDTH, height = MAIN
     mainWindow.webContents.openDevTools();
   } else {
     global.apiURL = 'https://api.felfire.app';
+    global.dir = __dirname;
+
     mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, 'index.html'),
       protocol: 'file:',
@@ -200,3 +203,16 @@ ipcMain.on('update-check', () => {
   setInterval(() => autoUpdater.checkForUpdates(), 1800 * 1000); //--- Every 30mins
 });
 ipcMain.on('update-install', () => autoUpdater.downloadUpdate());
+
+//--- Mouse events registering
+let powerSaveID;
+ipcMain.on('mouse-register', () => {
+  powerSaveID = powerSaveBlocker.start('prevent-app-suspension');
+  ioHook.start();
+});
+ipcMain.on('mouse-unregister', () => {
+  powerSaveBlocker.stop(powerSaveID);
+  ioHook.stop();
+});
+ioHook.on('mouseclick', event => mainWindow.webContents.send('mouse-click', event));
+// ioHook.on('mousemove', event => mainWindow.webContents.send('mouse-move', event));

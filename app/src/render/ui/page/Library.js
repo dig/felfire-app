@@ -94,7 +94,7 @@ class Library extends React.Component {
                       let monthYear = `${created.format('MMMM')} ${created.format('YYYY')}`;
 
                       if (value == monthYear) 
-                        return <div key={imageIndex} className="cell" style={{height : `${IMAGE_HEIGHT_PX}px`, width : `${IMAGE_WIDTH_PX}px`}}>
+                        return <div key={imageIndex} className="cell" style={{height : `${IMAGE_HEIGHT_PX}px`, width : `${IMAGE_WIDTH_PX}px`}} onClick={() => this.handleImageClick(image.cdn_url)} >
                           <img className="thumbnail" src={(image.thumb_url ? image.thumb_url : image.cdn_url)} onClick={() => this.handleImageClick(image.cdn_url)} />
                         </div>
                     })}

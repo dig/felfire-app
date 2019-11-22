@@ -50,6 +50,14 @@ module.exports = {
         from: './app/src/render/index.html',
         to: path.join(__dirname, '../app/build'),
       },
+      {
+        from: './app/src/render/snip.html',
+        to: path.join(__dirname, '../app/build'),
+      },
+      {
+        from: './app/src/render/snip.js',
+        to: path.join(__dirname, '../app/build'),
+      },
     ]),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development')

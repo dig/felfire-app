@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <body style="background-color: rgba(32, 32, 32, .5); cursor: crosshair;">
+    <script>
+      if (process.env.NODE_ENV) {
+        const js = document.createElement('script');
+        js.src = 'http://localhost:8080/snip.js';
+        document.body.appendChild(js);
+      } else {
+        const js = document.createElement('script');
+        js.src = 'snip.js';
+        document.body.appendChild(js);
+      }
+    </script>
+  </body>
+
+</html>

@@ -7,15 +7,22 @@ import Screenshot from '../../assets/img/screenshot.png';
 import Fullscreen from '../../assets/img/fullscreen.png';
 import Upload from '../../assets/img/upload.png';
 
+import { CAPTURE } from '../../constants/app.constants';
+
 class Capture extends React.Component {
   constructor(props) {
     super(props);
 
     this.handleClose = this.handleClose.bind(this);
+    this.handleCaptureRegion = this.handleCaptureRegion.bind(this);
   }
 
   handleClose() {
     this.props.setOverlay(false);
+  }
+
+  handleCaptureRegion() {
+    this.props.setCapture(true, CAPTURE.REGION)
   }
 
   render() {
@@ -25,7 +32,7 @@ class Capture extends React.Component {
 
         <div className="container">
           <div className="top">
-            <div className="button">
+            <div className="button" onClick={this.handleCaptureRegion}>
               <img src={Screenshot} />
               <h4>Capture Region</h4>
             </div>

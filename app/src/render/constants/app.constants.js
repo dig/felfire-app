@@ -9,6 +9,8 @@ import Changelog from '../ui/overlay/Changelog';
 import Picture from '../ui/overlay/Picture';
 import Capture from '../ui/overlay/Capture';
 
+import Region from '../components/capture/Region';
+
 const PAGES = {
   LOGIN: Login,
   REGISTER: Register,
@@ -24,7 +26,12 @@ const OVERLAY = {
   CAPTURE: Capture
 };
 
+const CAPTURE = {
+  REGION: Region
+};
+
 export {
   PAGES,
-  OVERLAY
+  OVERLAY,
+  CAPTURE
 };

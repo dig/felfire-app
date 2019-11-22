@@ -62,6 +62,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  transition: 0.2s;
+}
+
+.library > .rows > .row > .grid > .cell:hover {
+  -webkit-filter: grayscale(0%);
+  filter: grayscale(0%);
 }
 
 .library > .rows > .row > .grid > .cell:not(:last-child) {
@@ -71,13 +80,5 @@
 .library > .rows > .row > .grid > .cell > .thumbnail {
   max-width: 130px;
   max-height: 130px;
-  -webkit-filter: grayscale(100%);
-  filter: grayscale(100%);
   cursor: pointer;
-  transition: 0.2s;
-}
-
-.library > .rows > .row > .grid > .cell > .thumbnail:hover {
-  -webkit-filter: grayscale(0%);
-  filter: grayscale(0%);
 }

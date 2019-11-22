@@ -15,7 +15,8 @@
     "build": "webpack --config webpack/prod.config.js --mode production",
     "pack": "electron-builder --dir",
     "dist": "npm run build && electron-builder --win --x64",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "rebuild": "./node_modules/.bin/electron-rebuild -f -w keytar"
   },
   "author": "Joseph Ali",
   "build": {
@@ -55,6 +56,7 @@
     "electron-json-storage": "^4.1.8",
     "electron-log": "^3.0.9",
     "electron-updater": "^4.2.0",
+    "iohook": "^0.6.1",
     "jwt-decode": "^2.2.0",
     "keytar": "^5.0.0",
     "moment": "^2.24.0",
@@ -77,6 +79,7 @@
     "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
+    "node-abi": "^2.12.0",
     "postcss-cssnext": "^3.1.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
@@ -86,5 +89,20 @@
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.0"
+  },
+  "iohook": {
+    "targets": [
+      "node-72",
+      "electron-73"
+    ],
+    "platforms": [
+      "win32",
+      "darwin",
+      "linux"
+    ],
+    "arches": [
+      "x64",
+      "ia32"
+    ]
   }
 }

@@ -50,8 +50,9 @@ class Register extends React.Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    let password = event.target.password.value;
+    this.setState({formDisabled : true});
 
+    let password = event.target.password.value;
     if (this.state.confirmPassword === password && this.state.captcha != '') {
       try {
         await userService.createUser(this.state.username, this.state.email, this.state.password, this.state.captcha, this.state.code);
@@ -224,8 +225,8 @@ class Register extends React.Component {
               </div>
 
               <div className="group">
-                <label>Alpha Registration Code</label>
-                <input type="text" title="Enter code" required name="code" value={this.state.code} onChange={this.handleCodeChange} />
+                <label>Invite Code</label>
+                <input type="text" title="Enter invite code" required name="code" value={this.state.code} onChange={this.handleCodeChange} />
               </div>
 
               {this.state.captcha === '' &&
