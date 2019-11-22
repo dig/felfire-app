@@ -89,8 +89,10 @@ class Capture extends React.Component {
     return new Promise((resolve, reject) => {
       desktopCapturer.getSources({types: ['screen']}).then(async sources => {
         let buffers = [];
-  
-        for (let source of sources) {
+
+        for (let display of screen.getAllDisplays()) {
+          let source = sources.find(source => source.display_id == display.id.toString());
+
           try {
             let stream = await navigator.mediaDevices.getUserMedia({
               audio: false,
