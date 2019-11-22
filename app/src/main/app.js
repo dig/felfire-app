@@ -214,5 +214,5 @@ ipcMain.on('mouse-unregister', () => {
   powerSaveBlocker.stop(powerSaveID);
   ioHook.stop();
 });
-ioHook.on('mouseclick', event => mainWindow.webContents.send('mouse-click', event));
+ioHook.on('mousedown', event => mainWindow.webContents.send('mouse-click', event));
 // ioHook.on('mousemove', event => mainWindow.webContents.send('mouse-move', event));
