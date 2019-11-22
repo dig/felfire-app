@@ -133,7 +133,10 @@ class App extends React.Component {
         }
 
         {this.state.captureActive &&
-          <Capture setCapture={this.setCapture} />
+          <Capture 
+            setOverlay={this.setOverlay} 
+            setCapture={this.setCapture} 
+          />
         }
 
         <Version setOverlay={this.setOverlay} />

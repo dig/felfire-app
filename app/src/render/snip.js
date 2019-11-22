@@ -33,45 +33,51 @@ function handleCursorUpdate() {
 
   let element = document.getElementById('selection');
   if (anchorOnDisplay || cursorOnDisplay) {
-    let x = anchorX;
-    let y = anchorY;
+    let localAnchorX = anchorX - displayPos.x;
+    let localAnchorY = anchorY - displayPos.y;
 
-    let width = cursorPos.x - anchorX;
-    let height = cursorPos.y - anchorY;
+    let localCursorX = cursorPos.x - displayPos.x;
+    let localCursorY = cursorPos.y - displayPos.y;
 
-    if (!anchorOnDisplay) {
+    let x = localAnchorX;
+    let y = localAnchorY;
+
+    let width = localCursorX - localAnchorX;
+    let height = localCursorY - localAnchorY;
+
+    if (localCursorX < localAnchorX) {
+      x = localCursorX;
+      width = localAnchorX - localCursorX;
+    }
+
+    if (localCursorY < localAnchorY) {
+      y = localCursorY;
+      height = localAnchorY - localCursorY;
+    }
+
+    if (!anchorOnDisplay && cursorOnDisplay) {
       switch (true) {
         //--- Left
         case (anchorX <= cursorPos.x && (anchorY >= displayPos.y && (anchorY <= (displayPos.y + displayPos.height)))): 
           x = 0; 
-          width = (cursorPos.x - (displayPos.width * Math.floor(cursorPos.x / displayPos.width)));
+          width = localCursorX;
           break;
         //--- Right
         case (anchorX >= cursorPos.x && (anchorY >= displayPos.y && (anchorY <= (displayPos.y + displayPos.height)))): 
-          x = displayPos.width; 
-          width = (cursorPos.x - (displayPos.width * Math.floor(cursorPos.x / displayPos.width)));
+          x = localCursorX; 
+          width = displayPos.width - localCursorX;
           break;
         //--- Top
         case (anchorY <= cursorPos.y && (anchorX >= displayPos.x && (anchorX <= (displayPos.x + displayPos.width)))): 
-          y = 0; 
-          height = (cursorPos.y - (displayPos.height * Math.floor(cursorPos.y / displayPos.height)));
+          y = 0;
+          height = localCursorY;
           break;
         //--- Bottom
         case (anchorY >= cursorPos.y && (anchorX >= displayPos.x && (anchorX <= (displayPos.x + displayPos.width)))): 
-          y = displayPos.height; 
-          height = (cursorPos.y - (displayPos.height * Math.floor(cursorPos.y / displayPos.height)));
+          y = localCursorY;
+          height = displayPos.height - localCursorY;
           break;
       }
-    }
-  
-    if (cursorPos.y < anchorY) {
-      y = cursorPos.y;
-      height = anchorY - cursorPos.y;
-    }
-  
-    if (cursorPos.x < anchorX) {
-      x = cursorPos.x;
-      width = anchorX - cursorPos.x;
     }
 
     //--- Positioning
