@@ -30,15 +30,10 @@ class Library extends React.Component {
   }
 
   async getNextImages() {
-    this.props.setOverlay(true, OVERLAY.LOAD);
-
     try {
       let images = await userService.fetchImages(this.state.page + 1, IMAGE_FETCH_AMOUNT);
 
-      this.setState({images : images, page : this.state.page + 1}, () => {
-        this.refreshCategories();
-        this.props.setOverlay(false);
-      });
+      this.setState({images : images, page : this.state.page + 1}, () => this.refreshCategories());
     } catch (err) {
       console.log(err);
     }
