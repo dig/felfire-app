@@ -216,3 +216,5 @@ ipcMain.on('mouse-unregister', () => {
 });
 ioHook.on('mousedown', event => mainWindow.webContents.send('mouse-click', event));
 // ioHook.on('mousemove', event => mainWindow.webContents.send('mouse-move', event));
+
+require('./tray.js');
