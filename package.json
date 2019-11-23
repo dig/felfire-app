@@ -18,7 +18,7 @@
     "postinstall": "electron-builder install-app-deps",
     "rebuild": "./node_modules/.bin/electron-rebuild -f -w keytar"
   },
-  "author": "Joseph Ali",
+  "author": "FelFire LTD",
   "build": {
     "appId": "felfire.app",
     "productName": "FelFire",
