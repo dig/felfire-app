@@ -28,6 +28,8 @@ class Version extends React.Component {
 
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleChangelogClick = this.handleChangelogClick.bind(this);
+    this.tick = this.tick.bind(this);
+
     ipcRenderer.send('update-check');
   }
 
@@ -36,11 +38,19 @@ class Version extends React.Component {
       this.setState({vibrate : true});
       this.vibrateTimeoutID = setTimeout(() => this.setState({vibrate : false}), 1000);
     }, BOUNCE_INTERVAL);
+
+    this.tickID = setInterval(() => this.tick(), 100);
   }
 
   componentWillUnmount() {
     clearInterval(this.vibrateIntervalID);
+    clearInterval(this.tickID);
     clearTimeout(this.vibrateTimeoutID);
+  }
+
+  tick() {
+    if (this.state.status === DOWNLOAD_STATE.DOWNLOADING)
+      this.setState({percent : (this.state.percent + 0.05 > 1 ? 0 : this.state.percent + 0.05)});
   }
 
   handleUpdate(event) {

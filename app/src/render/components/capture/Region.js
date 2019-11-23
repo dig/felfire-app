@@ -2,7 +2,7 @@ const { ipcRenderer, remote, desktopCapturer, nativeImage } = require('electron'
       { BrowserWindow, screen } = remote,
       path = require('path'),
       url = require('url'),
-      mergeImg = require('merge-img'),
+      Jimp = require('jimp'),
       dirname = remote.getGlobal('dir') || '/';
 
 import React from 'react';
@@ -32,6 +32,8 @@ class Capture extends React.Component {
 
     this.load = this.load.bind(this);
     this.crop = this.crop.bind(this);
+    this.processImage = this.processImage.bind(this);
+    this.createFullImage = this.createFullImage.bind(this);
 
     ipcRenderer.on('mouse-click', (event, args) => {
       if (this._isMounted) this.handleMouseClick(args);
@@ -88,7 +90,7 @@ class Capture extends React.Component {
 
     return new Promise((resolve, reject) => {
       desktopCapturer.getSources({types: ['screen']}).then(async sources => {
-        let buffers = [];
+        let images = [];
 
         for (let display of screen.getAllDisplays()) {
           let source = sources.find(source => source.display_id == display.id.toString());
@@ -109,13 +111,19 @@ class Capture extends React.Component {
             });
   
             let buffer = await this.handleStreamToBuffer(stream);
-            buffers.push(buffer);
+            let image = await this.processImage(buffer);
+
+            images.push({
+              jimp : image,
+              x : display.bounds.x,
+              y : display.bounds.y
+            });
           } catch (e) {
             reject(e);
           }
         }
   
-        this.setState({buffers : buffers}, () => resolve());
+        this.setState({images : images}, () => resolve());
       });
     });
   }
@@ -228,7 +236,7 @@ class Capture extends React.Component {
         maxY = Math.max(y, y2);
 
     try {
-      let image = await mergeImg(this.state.buffers);
+      let image = this.createFullImage(this.state.images);
       let crop = image.crop(minX, minY, maxX - minX, maxY - minY);
   
       crop.getBase64('image/png', (err, b64) => this.props.setOverlay(true, OVERLAY.PICTURE, {
@@ -237,6 +245,31 @@ class Capture extends React.Component {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  async processImage(buffer) {
+    return await Jimp.read(buffer);
+  }
+
+  createFullImage(images) {
+    let totalWidth = 0,
+        totalHeight = 0;
+
+    for (let image of images) {
+      //--- Total width
+      let width = image.x + image.jimp.bitmap.width;
+      if (width > totalWidth) totalWidth = width;
+
+      //--- Total height
+      let height = image.y + image.jimp.bitmap.height;
+      if (height > totalHeight) totalHeight = height;
+    } 
+
+    let baseImage = new Jimp(totalWidth, totalHeight, 0x00000000);
+    for (let image of images)
+      baseImage.composite(image.jimp, image.x, image.y);
+
+    return baseImage;
   }
 
   componentWillUnmount() {

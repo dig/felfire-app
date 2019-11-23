@@ -40,6 +40,10 @@
   float: right;
 }
 
+.footer-version > .update-downloading .progress {
+  background: #343434;
+}
+
 .footer-version > .update-downloading .inner {
   background: #259d58;
 }
