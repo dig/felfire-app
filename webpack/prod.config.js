@@ -16,6 +16,9 @@ module.exports = {
     path: path.resolve(__dirname, '../app/build'),
     filename: 'app.bundle.js',
   },
+  externals: [{ 
+    'electron-store': 'require("electron-store")' 
+  }],
   module: {
     rules: [
       {
