@@ -15,6 +15,9 @@ import Reload from '../../assets/img/spin.png';
 import Tick from '../../assets/img/done-tick.png';
 import ArrowRight from '../../assets/img/arrow-right.png';
 
+import Preview from '../../assets/img/preview.png';
+import Instant from '../../assets/img/instant.png';
+
 import { PAGES } from '../../constants/app.constants';
 import { LOGIN, MODE } from '../../constants/login.constants';
 
@@ -219,16 +222,22 @@ class Login extends React.Component {
 
         {this.state.state === LOGIN.MODE &&
           <div className="mode slide-right">
-            <h3>Pick mode</h3>
+            <h3>Mode Preference</h3>
             <small>Adjustable in settings</small>
 
             <div className="grid">
               <div className={'cell ' + (this.state.mode === MODE.PREVIEW ? 'active' : '')} onClick={() => this.handleModeClick(MODE.PREVIEW)}>
-                1
+                <p>Preview</p>
+                <small>Preview images after capturing.</small>
+
+                <img src={Preview} />
               </div>
 
-              <div className={'cell ' + (this.state.mode === MODE.EXPRESS ? 'active' : '')} onClick={() => this.handleModeClick(MODE.EXPRESS)}>
-                2
+              <div className={'cell ' + (this.state.mode === MODE.INSTANT ? 'active' : '')} onClick={() => this.handleModeClick(MODE.INSTANT)}>
+                <p>Instant</p>
+                <small>Instantly upload images after capturing.</small>
+
+                <img src={Instant} />
               </div>
             </div>
 

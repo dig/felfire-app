@@ -6,7 +6,7 @@ const LOGIN = {
 
 const MODE = {
   PREVIEW: 'PREVIEW',
-  EXPRESS: 'EXPRESS'
+  INSTANT: 'INSTANT'
 };
 
 export {

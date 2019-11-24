@@ -101,11 +101,21 @@
 }
 
 .login > .mode > .grid > .cell {
-  background: #202225;
+  /* background: #202225; */
+  position: relative;
   width: 250px;
-  height: 250px;
+  height: 150px;
   float: left;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.login > .mode > .grid > .cell:hover {
+  -webkit-filter: grayscale(0%);
+  filter: grayscale(0%);
 }
 
 .login > .mode > .grid > .cell.active {
@@ -114,6 +124,26 @@
 
 .login > .mode > .grid > .cell:first-child {
   margin-right: 25px;
+}
+
+.login > .mode > .grid > .cell > p {
+  z-index: 100;
+}
+
+.login > .mode > .grid > .cell > small {
+  width: 60%;
+  text-align: center;
+  z-index: 100;
+  font-size: 0.75rem;
+}
+
+.login > .mode > .grid > .cell > img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  -webkit-filter: grayscale(100%) blur(1px) brightness(70%);
+  filter: grayscale(100%) blur(1px) brightness(70%);
 }
 
 .login > .mode > .button {
