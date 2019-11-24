@@ -3,6 +3,7 @@ const { ipcRenderer, remote, desktopCapturer, nativeImage } = require('electron'
       path = require('path'),
       url = require('url'),
       Jimp = require('jimp'),
+      ImageUtil = require('../../utils/Image'),
       dirname = remote.getGlobal('dir') || '/';
 
 import React from 'react';
@@ -22,7 +23,10 @@ class Capture extends React.Component {
       state : REGION_STATE.SET,
 
       x : 0,
-      y : 0
+      y : 0,
+
+      minX : 0,
+      minY : 0
     };
 
     this.handleMouseClick = this.handleMouseClick.bind(this);
@@ -32,7 +36,6 @@ class Capture extends React.Component {
 
     this.load = this.load.bind(this);
     this.crop = this.crop.bind(this);
-    this.processImage = this.processImage.bind(this);
     this.createFullImage = this.createFullImage.bind(this);
 
     ipcRenderer.on('mouse-click', (event, args) => {
@@ -52,45 +55,12 @@ class Capture extends React.Component {
   }
 
   load() {
-    this.handleStreamToBuffer = (stream) => {
-      return new Promise((resolve, reject) => {
-        let video = document.createElement('video');
-        video.style.cssText = 'position:absolute;top:-10000px;left:-10000px;';
-
-        video.onloadedmetadata = () => {
-          video.style.height = `${video.videoHeight}px`;
-          video.style.width = `${video.videoWidth}px`;
-          video.play();
-
-          let canvas = document.createElement('canvas');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-
-          let ctx = canvas.getContext('2d');
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-          let b64 = canvas.toDataURL('image/png');
-
-          video.remove();
-          try {
-            stream.getTracks()[0].stop();
-          } catch (e) {
-            reject(e);
-          }
-
-          var data = b64.replace(/^data:image\/\w+;base64,/, "");
-          var buffer = new Buffer(data, 'base64');
-          resolve(buffer);
-        };
-        
-        video.srcObject = stream;
-        document.body.appendChild(video);
-      });
-    };
-
     return new Promise((resolve, reject) => {
       desktopCapturer.getSources({types: ['screen']}).then(async sources => {
         let images = [];
+
+        let minX = 0,
+            minY = 0;
 
         for (let display of screen.getAllDisplays()) {
           let source = sources.find(source => source.display_id == display.id.toString());
@@ -110,8 +80,11 @@ class Capture extends React.Component {
               }
             });
   
-            let buffer = await this.handleStreamToBuffer(stream);
-            let image = await this.processImage(buffer);
+            let buffer = await ImageUtil.getStreamToBuffer(stream);
+            let image = await ImageUtil.getBufferToJimp(buffer);
+
+            minX = Math.min(minX, display.bounds.x);
+            minY = Math.min(minY, display.bounds.y);
 
             images.push({
               jimp : image,
@@ -123,7 +96,11 @@ class Capture extends React.Component {
           }
         }
   
-        this.setState({images : images}, () => resolve());
+        this.setState({
+          images : images,
+          minX : minX,
+          minY : minY
+        }, () => resolve());
       });
     });
   }
@@ -237,7 +214,7 @@ class Capture extends React.Component {
 
     try {
       let image = this.createFullImage(this.state.images);
-      let crop = image.crop(minX, minY, maxX - minX, maxY - minY);
+      let crop = image.crop(minX - this.state.minX, minY - this.state.minY, maxX - minX, maxY - minY);
   
       crop.getBase64('image/png', (err, b64) => this.props.setOverlay(true, OVERLAY.PICTURE, {
         imageUrl : b64
@@ -247,27 +224,21 @@ class Capture extends React.Component {
     }
   }
 
-  async processImage(buffer) {
-    return await Jimp.read(buffer);
-  }
-
   createFullImage(images) {
     let totalWidth = 0,
         totalHeight = 0;
 
     for (let image of images) {
-      //--- Total width
       let width = image.x + image.jimp.bitmap.width;
       if (width > totalWidth) totalWidth = width;
 
-      //--- Total height
       let height = image.y + image.jimp.bitmap.height;
       if (height > totalHeight) totalHeight = height;
     } 
 
-    let baseImage = new Jimp(totalWidth, totalHeight, 0x00000000);
+    let baseImage = new Jimp(totalWidth - this.state.minX, totalHeight - this.state.minY, 0x00000000);
     for (let image of images)
-      baseImage.composite(image.jimp, image.x, image.y);
+      baseImage.composite(image.jimp, image.x - this.state.minX, image.y - this.state.minY);
 
     return baseImage;
   }

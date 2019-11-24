@@ -8,6 +8,8 @@ import Load from '../ui/overlay/Load';
 import Changelog from '../ui/overlay/Changelog';
 import Picture from '../ui/overlay/Picture';
 import Capture from '../ui/overlay/Capture';
+import Monitor from '../ui/overlay/Monitor';
+import Window from '../ui/overlay/Window';
 
 import Region from '../components/capture/Region';
 
@@ -23,7 +25,9 @@ const OVERLAY = {
   LOAD: Load,
   CHANGELOG: Changelog,
   PICTURE: Picture,
-  CAPTURE: Capture
+  CAPTURE: Capture,
+  MONITOR: Monitor,
+  WINDOW: Window
 };
 
 const CAPTURE = {

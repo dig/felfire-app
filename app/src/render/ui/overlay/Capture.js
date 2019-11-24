@@ -1,13 +1,12 @@
-const { remote } = require('electron');
-
 import React from 'react';
 
 import CaptureCSS from '../../assets/style/capture.css';
 import Screenshot from '../../assets/img/screenshot.png';
 import Fullscreen from '../../assets/img/fullscreen.png';
 import Upload from '../../assets/img/upload.png';
+import Window from '../../assets/img/window.png';
 
-import { CAPTURE } from '../../constants/app.constants';
+import { OVERLAY, CAPTURE } from '../../constants/app.constants';
 
 class Capture extends React.Component {
   constructor(props) {
@@ -15,6 +14,8 @@ class Capture extends React.Component {
 
     this.handleClose = this.handleClose.bind(this);
     this.handleCaptureRegion = this.handleCaptureRegion.bind(this);
+    this.handleCaptureMonitor = this.handleCaptureMonitor.bind(this);
+    this.handleCaptureWindow = this.handleCaptureWindow.bind(this);
   }
 
   handleClose() {
@@ -22,7 +23,15 @@ class Capture extends React.Component {
   }
 
   handleCaptureRegion() {
-    this.props.setCapture(true, CAPTURE.REGION)
+    this.props.setCapture(true, CAPTURE.REGION);
+  }
+
+  handleCaptureMonitor() {
+    this.props.setOverlay(true, OVERLAY.MONITOR);
+  }
+
+  handleCaptureWindow() {
+    this.props.setOverlay(true, OVERLAY.WINDOW);
   }
 
   render() {
@@ -37,9 +46,14 @@ class Capture extends React.Component {
               <h4>Capture Region</h4>
             </div>
           
-            <div className="button">
+            <div className="button" onClick={this.handleCaptureMonitor}>
               <img className="fullscreen" src={Fullscreen} />
               <h4>Capture Monitor</h4>
+            </div>
+
+            <div className="button" onClick={this.handleCaptureWindow}>
+              <img src={Window} />
+              <h4>Capture Window</h4>
             </div>
           </div>
 

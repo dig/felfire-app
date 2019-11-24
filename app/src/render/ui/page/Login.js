@@ -1,4 +1,4 @@
-const { remote } = require('electron'),
+const { ipcRenderer, remote } = require('electron'),
       authService = remote.require('./common/services/auth.service');
 
 import React from 'react';
@@ -37,6 +37,7 @@ class Login extends React.Component {
       if (response && response.hasOwnProperty('verified')) {
         this.props.changePage(PAGES.EMAILVERIFICATION, { email : response.email });
       } else {
+        ipcRenderer.send('login');
         this.props.changePage(PAGES.LIBRARY);
       }
     } catch (err) {

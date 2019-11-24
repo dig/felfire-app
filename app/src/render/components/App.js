@@ -1,4 +1,4 @@
-const { remote } = require('electron'),
+const { ipcRenderer, remote } = require('electron'),
       authService = remote.require('./common/services/auth.service'),
       storage = require('electron-json-storage');
 
@@ -33,6 +33,9 @@ class App extends React.Component {
     this.setCapture = this.setCapture.bind(this);
 
     this.requestUserData = this.requestUserData.bind(this);
+
+    ipcRenderer.on('set-overlay', (event, enabled, overlayName) => this.setOverlay(enabled, OVERLAY[overlayName]));
+    ipcRenderer.on('set-capture', (event, enabled, captureName) => this.setCapture(enabled, CAPTURE[captureName]));
   }
 
   setOverlay(enabled, overlay, data) {
@@ -63,6 +66,8 @@ class App extends React.Component {
     try {
       await authService.refreshAccessToken();
       target = PAGES.LIBRARY;
+
+      ipcRenderer.send('login');
     } catch (err) {
       target = PAGES.LOGIN;
     }

@@ -1,4 +1,4 @@
-const { remote } = require('electron'),
+const { ipcRenderer, remote } = require('electron'),
       authService = remote.require('./common/services/auth.service');
 
 import React from 'react';
@@ -51,6 +51,7 @@ class Userbar extends React.Component {
 
   handleLogout() {
     authService.logout();
+    ipcRenderer.send('logout');
     this.props.changePage(PAGES.LOGIN);
   }
 

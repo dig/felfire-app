@@ -20,7 +20,7 @@
 
 .capture > .container {
   height: 350px;
-  width: 550px;
+  width: 650px;
   background: #202225;
   position: relative;
 }
@@ -31,7 +31,7 @@
 }
 
 .capture > .container .button {
-  width: 50%;
+  width: 33.333333%;
   height: 100%;
   float: left;
   cursor: pointer;
@@ -42,7 +42,7 @@
   flex-direction: column;
 }
 
-.capture > .container .button:first-child {
+.capture > .container .button:not(:last-child) {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -57,10 +57,6 @@
 .capture > .container .button h4 {
   position: relative;
   top: 10px;
-}
-
-.capture > .container .button .fullscreen {
-  width: 35px;
 }
 
 .capture > .container > .bottom {
