@@ -3,6 +3,7 @@
   display: flex;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .login > .square {
@@ -13,7 +14,152 @@
   height: 100%;
 }
 
-.login > .left {
+.login > .form, .login > .tos, .login > .mode {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.login > .tos {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.login > .tos > .container {
+  background: #202225;
+  width: 450px;
+  height: 350px;
+  overflow-y: auto;
+  padding: 15px 15px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.login > .tos > .button {
+  width: 450px;
+}
+
+.login > .tos > .button input[type=submit] {
+  position: relative;
+  width: calc(100% - 34px);
+  height: 34px;
+  background: #c7493a;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  outline: none;
+  float: left;
+  cursor: pointer;
+}
+
+.login > .tos > .button .caption {
+  position: relative;
+  width: 34px;
+  background: #a33327;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login > .tos > .button .caption img {
+  width: 15px;
+}
+
+.login > .tos > .link {
+  position: relative;
+  right: 17px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login > .tos > .link .box {
+  cursor: pointer;
+}
+
+.login > .tos > .link small {
+  cursor: pointer;
+  color: #828282;
+}
+
+.login > .mode {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.login > .mode > .grid {
+  margin-top: 20px;
+}
+
+.login > .mode > .grid > .cell {
+  background: #202225;
+  width: 250px;
+  height: 250px;
+  float: left;
+  cursor: pointer;
+}
+
+.login > .mode > .grid > .cell.active {
+  border: 1px solid #c7493a;
+}
+
+.login > .mode > .grid > .cell:first-child {
+  margin-right: 25px;
+}
+
+.login > .mode > .button {
+  width: 200px;
+  position: relative;
+  top: 20px;
+}
+
+.login > .mode > .button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.login > .mode > .button input[type=submit] {
+  position: relative;
+  width: calc(100% - 34px);
+  height: 34px;
+  background: #c7493a;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  outline: none;
+  float: left;
+  cursor: pointer;
+}
+
+.login > .mode > .button.disabled input[type=submit] {
+  cursor: not-allowed;
+}
+
+.login > .mode > .button .caption {
+  position: relative;
+  width: 34px;
+  background: #a33327;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login > .mode > .button .caption img {
+  width: 15px;
+}
+
+.login > .form > .left {
   position: relative;
   height: 100%;
   flex: 0 0 50%;
@@ -21,13 +167,13 @@
   align-items: center;
 }
 
-.login > .left > img {
+.login > .form > .left > img {
   position: absolute;
   height: 320px;
   right: 65px;
 }
 
-.login > .right {
+.login > .form > .right {
   position: relative;
   height: 100%;
   flex: 1;
@@ -35,7 +181,7 @@
   align-items: center;
 }
 
-.login > .right > .container {
+.login > .form > .right > .container {
   position: absolute;
   width: 340px;
   left: 0;
@@ -59,14 +205,14 @@
   }
 }
 
-.login > .right > .container > .header {
+.login > .form > .right > .container > .header {
   padding: 25px 25px 15px 25px;
   display: flex;
   align-items: center;
   flex-direction: column;
 }
 
-.login > .right > .container > .header > .divider {
+.login > .form > .right > .container > .header > .divider {
   height: 2px;
   width: 100px;
   background: #343434;

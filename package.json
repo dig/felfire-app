@@ -56,6 +56,7 @@
     "electron-json-storage": "^4.1.8",
     "electron-log": "^3.0.9",
     "electron-main-window": "^1.0.4",
+    "electron-store": "^5.1.0",
     "electron-updater": "^4.2.0",
     "iohook": "^0.6.1",
     "jimp": "^0.8.5",

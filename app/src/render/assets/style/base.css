@@ -9,6 +9,7 @@ html, body, #root, .app {
   height: 100%;
   background: #202225;
   font-family: Roboto, sans-serif;
+  overflow: hidden;
 }
 
 p, small, label, h1, h2, h3, h4, h5, h6 {
@@ -18,6 +19,7 @@ p, small, label, h1, h2, h3, h4, h5, h6 {
 .page {
   position: relative;
   height: calc(100% - 25px);
+  overflow: hidden;
 }
 
 .progress {
@@ -138,6 +140,23 @@ p, small, label, h1, h2, h3, h4, h5, h6 {
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
+  }
+}
+
+.slide-right {
+  animation: 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s 1 normal both running slide-right;
+}
+
+@keyframes slide-right {
+  0% {
+    -webkit-transform: translateX(1000px);
+    transform: translateX(1000px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 

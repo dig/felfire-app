@@ -116,7 +116,7 @@ class App extends React.Component {
 
     return (
       <div className="app">
-        <Toolbar background={(authService.getAccessToken() != null ? 'on' : '')} />
+        <Toolbar background={(Page == PAGES.LIBRARY ? 'on' : '')} />
 
         {this.state.overlayActive &&
           <Overlay 

@@ -4,6 +4,7 @@
   bottom: 3px;
   color: #5f5e5e;
   font-size: 0.7rem;
+  z-index: 1000;
 }
 
 .footer-version > .latest {

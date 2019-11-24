@@ -172,6 +172,9 @@ app.on('activate', async () => {
   }
 });
 
+//--- General
+ipcMain.on('quit', () => app.quit());
+
 //--- Toolbar
 ipcMain.on('toolbar-minimize', () => mainWindow.minimize());
 ipcMain.on('toolbar-maximize', () => {
