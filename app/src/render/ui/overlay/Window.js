@@ -1,5 +1,6 @@
 const { desktopCapturer } = require('electron'),
-      ImageUtil = require('../../utils/Image');
+      log = require('electron-log'),
+      imageUtil = require('../../utils/Image');
 
 import React from 'react';
 
@@ -23,6 +24,9 @@ class Window extends React.Component {
   }
 
   async handleWindowClick(index) {
+    if (this.props.isUploading()) return;
+    this.props.setUpload(true);
+
     let monitor = this.state.windows[index];
 
     try {
@@ -40,14 +44,20 @@ class Window extends React.Component {
         }
       });
 
-      let buffer = await ImageUtil.getStreamToBuffer(stream);
-      let image = await ImageUtil.getBufferToJimp(buffer);
+      let buffer = await imageUtil.getStreamToBuffer(stream);
+      let image = await imageUtil.getBufferToJimp(buffer);
+      let response = await imageUtil.handleImageAfterCapture(image);
 
-      image.getBase64('image/png', (err, b64) => this.props.setOverlay(true, OVERLAY.PICTURE, {
-        imageUrl : b64
-      }));
-    } catch (e) {
-      console.log(e);
+      this.props.setUpload(false);
+      if (response.hasOwnProperty('upload')) { 
+        this.props.getPageRef().current.refreshImages();
+        this.props.setOverlay(false); 
+      } else {
+        this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : response.base64 });
+      }
+    } catch (err) {
+      log.error(err);
+      this.props.setUpload(false);
     }
   }
 

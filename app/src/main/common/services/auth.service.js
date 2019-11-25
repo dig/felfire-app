@@ -33,7 +33,8 @@ exports.refreshAccessToken = () => {
     };
 
     request(refreshOptions, async function (error, response, body) {
-      if (error || body.error || body.errors || response.statusCode != 201) {
+      if (error) return reject('Server error.');
+      if (body.error || body.errors || response.statusCode != 201) {
         await exports.logout();
         return reject(requestUtil.handleError(body, response.statusCode));
       }
@@ -59,7 +60,8 @@ exports.login = (email, password) => {
     };
 
     request(options, async (error, response, body) => {
-      if (error || body.error || response.statusCode != 201) {
+      if (error) return reject('Server error.');
+      if (body.error || response.statusCode != 201) {
         await exports.logout();
         return reject(requestUtil.handleError(body, response.statusCode));
       }

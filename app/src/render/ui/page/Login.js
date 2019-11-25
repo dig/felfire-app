@@ -178,30 +178,17 @@ class Login extends React.Component {
             <h3>Terms and Conditions</h3>
 
             <div className="container">
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
-              <p>TODO - Being made rn.</p>
+              <p>By clicking 'Agree', you agree to the following:</p>
+              <p>Service allows uploading, managing and sharing of images uploaded by the user.</p>
+              <p>User is responsible for security of their account.</p>
+              <p>User is responsible for the content they upload.</p>
+              <p>Under no circumstances will FelFire be liable for any content available by the service.</p>
+              <p>FelFire does not pre screen content.</p>
+              <p>FelFire preserves the right to remove any content uploaded by any user.</p>
+              <p>FelFire's sole discretion as what action is taken when the Terms of Service is broken.</p>
+              <p>User agrees to not upload, post, transmit or otherwise make available content that is unlawful, harmful, threatening, abusive or harassing.</p>
+              <p>User agrees to not use the service to forward users to another service.</p>
+              <b>New version of Terms of Service in progress.</b>
             </div>
 
             <div className="button">

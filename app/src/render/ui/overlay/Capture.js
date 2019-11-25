@@ -23,6 +23,7 @@ class Capture extends React.Component {
   }
 
   handleCaptureRegion() {
+    if (this.props.isUploading()) return;
     this.props.setCapture(true, CAPTURE.REGION);
   }
 

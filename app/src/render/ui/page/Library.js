@@ -24,19 +24,28 @@ class Library extends React.Component {
       page : 0
     };
     
+    this.getImages = this.getImages.bind(this);
     this.getNextImages = this.getNextImages.bind(this);
+    this.refreshImages = this.refreshImages.bind(this);
     this.refreshCategories = this.refreshCategories.bind(this);
     this.handleImageClick = this.handleImageClick.bind(this);
   }
 
-  async getNextImages() {
+  async getImages(page, cache = true) {
     try {
-      let images = await userService.fetchImages(this.state.page + 1, IMAGE_FETCH_AMOUNT);
-
-      this.setState({images : images, page : this.state.page + 1}, () => this.refreshCategories());
+      let images = await userService.fetchImages(page, IMAGE_FETCH_AMOUNT, cache);
+      this.setState({images : images, page : page}, () => this.refreshCategories());
     } catch (err) {
       console.log(err);
     }
+  }
+
+  getNextImages() {
+    this.getImages(this.state.page + 1);
+  }
+
+  refreshImages() {
+    this.getImages(1, false);
   }
 
   refreshCategories() {

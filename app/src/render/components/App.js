@@ -1,6 +1,9 @@
 const { ipcRenderer, remote } = require('electron'),
       authService = remote.require('./common/services/auth.service'),
-      storage = require('electron-json-storage');
+      storage = require('electron-json-storage'),
+      Store = require('electron-store');
+
+const store = new Store();
 
 import React from 'react';
 
@@ -9,6 +12,7 @@ import Version from './Version';
 import BaseCSS from '../assets/style/base.css';
 
 import { PAGES, OVERLAY, CAPTURE } from '../constants/app.constants';
+import { MODE } from '../constants/login.constants';
 
 class App extends React.Component {
   constructor() {
@@ -25,14 +29,23 @@ class App extends React.Component {
       pageData : {},
 
       captureActive : false,
-      capture : CAPTURE.REGION
+      capture : CAPTURE.REGION,
+
+      upload : false
     };
 
     this.setOverlay = this.setOverlay.bind(this);
+    this.getPageRef = this.getPageRef.bind(this);
     this.changePage = this.changePage.bind(this);
     this.setCapture = this.setCapture.bind(this);
 
     this.requestUserData = this.requestUserData.bind(this);
+    this.getUserMode = this.getUserMode.bind(this);
+
+    this.isUploading = this.isUploading.bind(this);
+    this.setUpload = this.setUpload.bind(this);
+
+    this.pageRef = React.createRef();
 
     ipcRenderer.on('set-overlay', (event, enabled, overlayName) => this.setOverlay(enabled, OVERLAY[overlayName]));
     ipcRenderer.on('set-capture', (event, enabled, captureName) => this.setCapture(enabled, CAPTURE[captureName]));
@@ -44,6 +57,10 @@ class App extends React.Component {
       overlay : overlay,
       overlayData : data || {}
     });
+  }
+
+  getPageRef() {
+    return this.pageRef;
   }
 
   changePage(page, data) {
@@ -76,6 +93,18 @@ class App extends React.Component {
       overlayActive : false,
       page : target
     });
+  }
+
+  getUserMode() {
+    return store.get('mode', MODE.PREVIEW);
+  }
+
+  isUploading() {
+    return this.state.upload;
+  }
+
+  setUpload(enabled) {
+    this.setState({upload : enabled});
   }
 
   componentDidMount() {
@@ -122,17 +151,25 @@ class App extends React.Component {
           <Overlay 
             overlayData={this.state.overlayData} 
             setOverlay={this.setOverlay} 
+            getPageRef={this.getPageRef}
             setCapture={this.setCapture}
+            getUserMode={this.getUserMode}
+            isUploading={this.isUploading}
+            setUpload={this.setUpload}
           />
         }
 
         {this.state.page != null &&
           <div className="page">
             <Page 
+              ref={this.pageRef}
               pageData={this.state.pageData} 
               changePage={this.changePage} 
               setOverlay={this.setOverlay}
               setCapture={this.setCapture}
+              getUserMode={this.getUserMode}
+              isUploading={this.isUploading}
+              setUpload={this.setUpload}
             />
           </div>
         }
@@ -140,7 +177,11 @@ class App extends React.Component {
         {this.state.captureActive &&
           <Capture 
             setOverlay={this.setOverlay} 
+            getPageRef={this.getPageRef}
             setCapture={this.setCapture} 
+            getUserMode={this.getUserMode}
+            isUploading={this.isUploading}
+            setUpload={this.setUpload}
           />
         }
 

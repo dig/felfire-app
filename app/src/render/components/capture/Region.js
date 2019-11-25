@@ -1,15 +1,17 @@
-const { ipcRenderer, remote, desktopCapturer, nativeImage } = require('electron'),
+const { ipcRenderer, remote, desktopCapturer } = require('electron'),
       { BrowserWindow, screen } = remote,
+      log = require('electron-log'),
       path = require('path'),
       url = require('url'),
       Jimp = require('jimp'),
-      ImageUtil = require('../../utils/Image'),
+      imageUtil = require('../../utils/Image'),
       dirname = remote.getGlobal('dir') || '/';
 
 import React from 'react';
 
 import { OVERLAY } from '../../constants/app.constants';
 import { REGION_STATE } from '../../constants/capture.constants';
+import { MODE } from '../../constants/login.constants';
 
 let snipWindows = [],
     mainWindow = null;
@@ -80,8 +82,8 @@ class Capture extends React.Component {
               }
             });
   
-            let buffer = await ImageUtil.getStreamToBuffer(stream);
-            let image = await ImageUtil.getBufferToJimp(buffer);
+            let buffer = await imageUtil.getStreamToBuffer(stream);
+            let image = await imageUtil.getBufferToJimp(buffer);
 
             minX = Math.min(minX, display.bounds.x);
             minY = Math.min(minY, display.bounds.y);
@@ -185,24 +187,37 @@ class Capture extends React.Component {
         break;
       case REGION_STATE.DRAG:
         ipcRenderer.send('mouse-unregister');
+
         this.destroySnipWindows();
+        this.props.setUpload(true);
 
         try {
           await this.load();
-          this.crop(event.x, event.y);
+          let response = await imageUtil.handleImageAfterCapture(this.crop(event.x, event.y));
+
+          this.props.setUpload(false);
+          if (response.hasOwnProperty('upload')) {
+            this.props.getPageRef().current.refreshImages();
+            this.props.setOverlay(false);
+          } else {
+            this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : response.base64 });
+          }
         } catch (err) {
-          console.log(err);
+          this.props.setUpload(false);
+          log.error(err);
         }
 
-        mainWindow.restore();
-        mainWindow.focus();
+        if (this.props.getUserMode() === MODE.PREVIEW) {
+          mainWindow.restore();
+          mainWindow.focus();
+        }
 
         this.props.setCapture(false);
         break;
     }
   }
 
-  async crop(x2, y2) {
+  crop(x2, y2) {
     let x = this.state.x,
         y = this.state.y;
 
@@ -212,16 +227,10 @@ class Capture extends React.Component {
     let maxX = Math.max(x, x2),
         maxY = Math.max(y, y2);
 
-    try {
-      let image = this.createFullImage(this.state.images);
-      let crop = image.crop(minX - this.state.minX, minY - this.state.minY, maxX - minX, maxY - minY);
-  
-      crop.getBase64('image/png', (err, b64) => this.props.setOverlay(true, OVERLAY.PICTURE, {
-        imageUrl : b64
-      }));
-    } catch (err) {
-      console.log(err);
-    }
+    let image = this.createFullImage(this.state.images);
+    let crop = image.crop(minX - this.state.minX, minY - this.state.minY, maxX - minX, maxY - minY);
+
+    return crop;
   }
 
   createFullImage(images) {

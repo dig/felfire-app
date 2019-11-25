@@ -1,5 +1,7 @@
 const { remote } = require('electron'),
+      log = require('electron-log'),
       request = require('request'),
+      fs = require('fs'),
       authService = require('./auth.service'),
       requestUtil = require('../utils/request.utils'),
       apiURL = global.apiURL || remote.getGlobal('apiURL');
@@ -36,7 +38,8 @@ exports.createUser = (username, email, password, captchaResponse, code) => {
     };
 
     request(options, (error, response, body) => {
-      if (error || response.statusCode != 201) {
+      if (error) return reject('Server error.');
+      if (response.statusCode != 201) {
         return reject(requestUtil.handleError(body, response.statusCode));
       }
 
@@ -58,7 +61,8 @@ exports.forgotPassword = (email, captchaResponse) => {
     };
 
     request(options, (error, response, body) => {
-      if (error || response.statusCode != 201) {
+      if (error) return reject('Server error.');
+      if (response.statusCode != 201) {
         return reject(requestUtil.handleError(body, response.statusCode));
       }
 
@@ -85,11 +89,42 @@ exports.fetchImages = (page, count, cache = true) => {
     };
 
     request(options, (error, response, body) => {
-      if (error || response.statusCode != 200) {
+      if (error) return reject('Server error.');
+      if (response.statusCode != 200) {
         return reject(requestUtil.handleError(body, response.statusCode));
       }
 
       if (cache) user.fetchedImages[page] = body;
+      resolve(body);
+    });
+  });
+};
+
+exports.upload = (imagePath) => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      method: 'POST',
+      url: `${apiURL}/upload`,
+      formData: {
+        'image': fs.createReadStream(imagePath)
+      },
+      headers: {
+        authorization: `Bearer ${authService.getAccessToken()}`
+      },
+      json: true,
+    };
+
+    request(options, (error, response, body) => {
+      if (error) {
+        log.error(error);
+        return reject('Server error.');
+      }
+
+      if (response.statusCode != 201) {
+        log.error(body);
+        return reject(requestUtil.handleError(body, response.statusCode));
+      }
+
       resolve(body);
     });
   });
