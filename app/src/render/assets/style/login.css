@@ -111,6 +111,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  border: 2px solid #202225;
 }
 
 .login > .mode > .grid > .cell:hover {
@@ -119,7 +120,7 @@
 }
 
 .login > .mode > .grid > .cell.active {
-  border: 1px solid #c7493a;
+  border: 2px solid #c7493a;
 }
 
 .login > .mode > .grid > .cell:first-child {
