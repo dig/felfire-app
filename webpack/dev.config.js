@@ -51,12 +51,20 @@ module.exports = {
         to: path.join(__dirname, '../app/build'),
       },
       {
-        from: './app/src/render/snip.html',
-        to: path.join(__dirname, '../app/build'),
+        from: './app/src/render/ui/capture/region/front.html',
+        to: path.join(__dirname, '../app/build/region.html'),
       },
       {
-        from: './app/src/render/snip.js',
-        to: path.join(__dirname, '../app/build'),
+        from: './app/src/render/ui/capture/region/front.js',
+        to: path.join(__dirname, '../app/build/region.js'),
+      },
+      {
+        from: './app/src/render/ui/capture/video/front.html',
+        to: path.join(__dirname, '../app/build/video.html'),
+      },
+      {
+        from: './app/src/render/ui/capture/video/front.js',
+        to: path.join(__dirname, '../app/build/video.js'),
       },
     ]),
     new webpack.DefinePlugin({

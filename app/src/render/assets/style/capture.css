@@ -42,11 +42,15 @@
   flex-direction: column;
 }
 
+.capture > .container > .bottom > .button {
+  border-bottom: none;
+}
+
 .capture > .container .button:not(:last-child) {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.capture > .container .button:hover, .capture > .container > .bottom:hover {
+.capture > .container .button:hover {
   background: #303134;
 }
 
@@ -59,26 +63,10 @@
   top: 10px;
 }
 
-.capture > .container > .bottom {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  cursor: not-allowed;
+.capture > .container .button.select {
+  width: 66.6666%;
 }
 
-.capture > .container > .bottom > button {
-  outline: none;
-  border: none;
-  background: #c7493a;
-  padding: 5px 10px;
-  position: relative;
-  top: 10px;
-  color: #fff;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.capture > .container > .bottom img {
-  width: 60px;
+.capture > .container .button.select img {
+  width: 50px;
 }

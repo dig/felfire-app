@@ -8,7 +8,7 @@
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "main": "./app/build/app.js",
+  "main": "./app/src/main/app.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development NODE_TLS_REJECT_UNAUTHORIZED=0 webpack-dev-server --hot --config=./webpack/dev.config.js --mode development",
     "prod": "cross-env NODE_ENV=production webpack --mode production --config webpack/prod.config.js && electron --noDevServer ./app/build/app.js",
@@ -23,9 +23,18 @@
     "appId": "felfire.app",
     "productName": "FelFire",
     "copyright": "Copyright © 2019 ${author}",
+    "files": [
+      "node_modules/ffmpeg-static-electron/bin/${os}/${arch}/ffmpeg",
+      "node_modules/ffmpeg-static-electron/index.js",
+      "node_modules/ffmpeg-static-electron/package.json"
+    ],
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "files": [
+        "!node_modules/ffmpeg-static-electron/bin/mac${/*}",
+        "!node_modules/ffmpeg-static-electron/bin/linux${/*}"
+      ]
     },
     "nsis": {
       "installerIcon": "build/icon.ico",
@@ -36,11 +45,19 @@
       "target": [
         "deb",
         "AppImage"
+      ],
+      "files": [
+        "!node_modules/ffmpeg-static-electron/bin/win${/*}",
+        "!node_modules/ffmpeg-static-electron/bin/mac${/*}"
       ]
     },
     "mac": {
       "icon": "build/icon.icns",
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.productivity",
+      "files": [
+        "!node_modules/ffmpeg-static-electron/bin/win${/*}",
+        "!node_modules/ffmpeg-static-electron/bin/linux${/*}"
+      ]
     },
     "directories": {
       "output": "release"
@@ -58,13 +75,17 @@
     "electron-main-window": "^1.0.4",
     "electron-store": "^5.1.0",
     "electron-updater": "^4.2.0",
+    "ffmpeg-static-electron": "^2.0.1",
+    "fluent-ffmpeg": "^2.1.2",
     "iohook": "^0.6.1",
     "jimp": "^0.8.5",
     "jwt-decode": "^2.2.0",
     "keytar": "^5.0.0",
+    "memory-stream": "^1.0.0",
     "moment": "^2.24.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "readable-stream": "^3.4.0",
     "request": "^2.88.0"
   },
   "devDependencies": {

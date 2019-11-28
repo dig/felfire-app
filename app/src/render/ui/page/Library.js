@@ -26,7 +26,7 @@ class Library extends React.Component {
     
     this.getImages = this.getImages.bind(this);
     this.getNextImages = this.getNextImages.bind(this);
-    this.refreshImages = this.refreshImages.bind(this);
+    this.refresh = this.refresh.bind(this);
     this.refreshCategories = this.refreshCategories.bind(this);
     this.handleImageClick = this.handleImageClick.bind(this);
   }
@@ -44,8 +44,8 @@ class Library extends React.Component {
     this.getImages(this.state.page + 1);
   }
 
-  refreshImages() {
-    this.getImages(1, false);
+  refresh() {
+    this.getImages(1);
   }
 
   refreshCategories() {

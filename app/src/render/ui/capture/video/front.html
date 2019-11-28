@@ -6,6 +6,7 @@
       *, html, body {
         overflow: none;
         cursor: crosshair;
+        border: none;
       }
 
       .selection {
@@ -21,11 +22,11 @@
     <script>
       if (process.env.NODE_ENV) {
         const js = document.createElement('script');
-        js.src = 'http://localhost:8080/snip.js';
+        js.src = 'http://localhost:8080/video.js';
         document.body.appendChild(js);
       } else {
         const js = document.createElement('script');
-        js.src = 'snip.js';
+        js.src = 'video.js';
         document.body.appendChild(js);
       }
     </script>

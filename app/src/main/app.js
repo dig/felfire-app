@@ -1,11 +1,8 @@
-const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require('electron'),
-     { autoUpdater } = require('electron-updater'),
-     log = require('electron-log'),
+const { app, BrowserWindow, ipcMain } = require('electron'),
      storage = require('electron-json-storage');
 
 const path = require('path'),
-    url = require('url'),
-    ioHook = require('iohook');
+    url = require('url');
 
 const { 
   MAIN_WINDOW_MIN_WIDTH, 
@@ -13,10 +10,6 @@ const {
   MAIN_WINDOW_DEFAULT_WIDTH,
   MAIN_WINDOW_DEFAULT_HEIGHT
 } = require('./constants/app.constants');
-
-//--- Setup logger
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
 
 let mainWindow;
 function createMainWindow(x, y, width = MAIN_WINDOW_DEFAULT_WIDTH, height = MAIN_WINDOW_DEFAULT_HEIGHT, isMaximized = false, isMinimized = false) {
@@ -128,7 +121,6 @@ if (!appLock) {
   });
 }
 
-
 app.on('ready', async () => {
   try {
     let windowSettings = await fetchWindowSettings();
@@ -144,6 +136,7 @@ app.on('ready', async () => {
     createMainWindow();
   }
 });
+
 app.on('window-all-closed', async () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
@@ -190,34 +183,13 @@ ipcMain.on('toolbar-close', async () => {
   mainWindow.hide();
 });
 
-//--- Auto updates
-autoUpdater.autoDownload = false;
-autoUpdater.on('checking-for-update', () => mainWindow.webContents.send('checking-for-update'));
-autoUpdater.on('update-available', () => mainWindow.webContents.send('update-available'));
-autoUpdater.on('update-not-available', () => mainWindow.webContents.send('update-not-available'));
-autoUpdater.on('error', (error) => {
-  log.error(error);
-  mainWindow.webContents.send('update-error');
-});
-autoUpdater.on('download-progress', (progressObj) => mainWindow.webContents.send('update-progress', progressObj.percent));
-autoUpdater.on('update-downloaded', () => autoUpdater.quitAndInstall(true, true));
-ipcMain.on('update-check', () => {
-  autoUpdater.checkForUpdates();
-  setInterval(() => autoUpdater.checkForUpdates(), 1800 * 1000); //--- Every 30mins
-});
-ipcMain.on('update-install', () => autoUpdater.downloadUpdate());
+//--- Exports
+exports.getMainWindow = () => mainWindow;
+exports.send = (channel, data = {}) => {
+  if (mainWindow) mainWindow.webContents.send(channel, data);
+};
 
-//--- Mouse events registering
-let powerSaveID;
-ipcMain.on('mouse-register', () => {
-  powerSaveID = powerSaveBlocker.start('prevent-app-suspension');
-  ioHook.start();
-});
-ipcMain.on('mouse-unregister', () => {
-  powerSaveBlocker.stop(powerSaveID);
-  ioHook.stop();
-});
-ioHook.on('mousedown', event => mainWindow.webContents.send('mouse-click', event));
-// ioHook.on('mousemove', event => mainWindow.webContents.send('mouse-move', event));
-
+require('./mouse.js');
+require('./record.js');
 require('./tray.js');
+require('./updater.js');

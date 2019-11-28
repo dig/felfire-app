@@ -4,14 +4,14 @@ const { ipcRenderer, remote, desktopCapturer } = require('electron'),
       path = require('path'),
       url = require('url'),
       Jimp = require('jimp'),
-      imageUtil = require('../../utils/Image'),
+      imageUtil = require('../../../utils/Image'),
       dirname = remote.getGlobal('dir') || '/';
 
 import React from 'react';
 
-import { OVERLAY } from '../../constants/app.constants';
-import { REGION_STATE } from '../../constants/capture.constants';
-import { MODE } from '../../constants/login.constants';
+import { OVERLAY } from '../../../constants/app.constants';
+import { REGION_STATE } from '../../../constants/capture.constants';
+import { MODE } from '../../../constants/login.constants';
 
 let snipWindows = [],
     mainWindow = null;
@@ -140,12 +140,12 @@ class Capture extends React.Component {
         window.loadURL(url.format({
           protocol: 'http:',
           host: 'localhost:8080',
-          pathname: 'snip.html',
+          pathname: 'region.html',
           slashes: true
         }));
       } else {
         window.loadURL(url.format({
-          pathname: path.join(dirname, 'snip.html'),
+          pathname: path.join(dirname, 'region.html'),
           protocol: 'file:',
           slashes: true
         }));
@@ -197,7 +197,7 @@ class Capture extends React.Component {
 
           this.props.setUpload(false);
           if (response.hasOwnProperty('upload')) {
-            this.props.getPageRef().current.refreshImages();
+            this.props.getPageRef().current.refresh();
             this.props.setOverlay(false);
           } else {
             this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : response.base64 });

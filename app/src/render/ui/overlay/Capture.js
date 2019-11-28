@@ -5,6 +5,7 @@ import Screenshot from '../../assets/img/screenshot.png';
 import Fullscreen from '../../assets/img/fullscreen.png';
 import Upload from '../../assets/img/upload.png';
 import Window from '../../assets/img/window.png';
+import Play from '../../assets/img/play.png';
 
 import { OVERLAY, CAPTURE } from '../../constants/app.constants';
 
@@ -16,6 +17,7 @@ class Capture extends React.Component {
     this.handleCaptureRegion = this.handleCaptureRegion.bind(this);
     this.handleCaptureMonitor = this.handleCaptureMonitor.bind(this);
     this.handleCaptureWindow = this.handleCaptureWindow.bind(this);
+    this.handleCaptureVideo = this.handleCaptureVideo.bind(this);
   }
 
   handleClose() {
@@ -33,6 +35,11 @@ class Capture extends React.Component {
 
   handleCaptureWindow() {
     this.props.setOverlay(true, OVERLAY.WINDOW);
+  }
+
+  handleCaptureVideo() {
+    if (this.props.isUploading()) return;
+    this.props.setCapture(true, CAPTURE.VIDEO);
   }
 
   render() {
@@ -59,8 +66,15 @@ class Capture extends React.Component {
           </div>
 
           <div className="bottom">
-            <img src={Upload} />
-            <h4>Select images to upload</h4>
+            <div className="button select">
+              <img src={Upload} />
+              <h4>Select images to upload</h4>
+            </div>
+
+            <div className="button" onClick={this.handleCaptureVideo}>
+              <img src={Play} />
+              <h4>Capture Video</h4>
+            </div>
           </div>
         </div>
       </div>

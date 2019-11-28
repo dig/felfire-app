@@ -125,6 +125,7 @@ exports.upload = (imagePath) => {
         return reject(requestUtil.handleError(body, response.statusCode));
       }
 
+      if (user.fetchedImages[1]) user.fetchedImages[1].unshift(body);
       resolve(body);
     });
   });

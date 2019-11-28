@@ -19,7 +19,7 @@ ipcRenderer.on('snip-start', (event, args) => {
   }
 });
 
-function handleCursorUpdate() {
+function tick() {
   if (!enabled) return;
 
   let displayPos = display.getBounds();
@@ -91,4 +91,4 @@ function handleCursorUpdate() {
   }
 }
 
-setInterval(() => handleCursorUpdate(), 10);
+setInterval(() => tick(), 10);

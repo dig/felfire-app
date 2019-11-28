@@ -11,7 +11,8 @@ import Capture from '../ui/overlay/Capture';
 import Monitor from '../ui/overlay/Monitor';
 import Window from '../ui/overlay/Window';
 
-import Region from '../components/capture/Region';
+import Region from '../ui/capture/region/Region';
+import Video from '../ui/capture/video/Video';
 
 const PAGES = {
   LOGIN: Login,
@@ -31,7 +32,8 @@ const OVERLAY = {
 };
 
 const CAPTURE = {
-  REGION: Region
+  REGION: Region,
+  VIDEO: Video
 };
 
 export {

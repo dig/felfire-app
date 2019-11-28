@@ -68,11 +68,11 @@ exports.handleImageAfterCapture = (image) => {
 };
 
 exports.handleUpload = (base64) => {
-  log.info(`exports.handleUpload(${base64})`);
+  log.info(`exports.handleUpload()`);
   return new Promise((resolve, reject) => {
-    let imagePath = `${app.getPath('userData')}/upload/${new Date().getTime()}.png`;
+    let imagePath = `${app.getPath('temp')}/felfire/${new Date().getTime()}.png`;
 
-    fs.ensureDir(`${app.getPath('userData')}/upload/`)
+    fs.ensureDir(`${app.getPath('temp')}/felfire/`)
       .then(() => new Promise((resolve, reject) => {
         fs.writeFile(imagePath, base64.replace(/^data:image\/\w+;base64,/, ""), 'base64', (err) => {
           if (err) return reject(err);
@@ -91,7 +91,7 @@ exports.handleUpload = (base64) => {
 };
 
 exports.handleImageOnUpload = (uploadData) => {
-  log.info(`exports.handleImageOnUpload(${uploadData})`);
+  log.info(`exports.handleImageOnUpload()`);
   return new Promise((resolve, reject) => {
     new Notification('Upload complete!', {
       body: uploadData.url,
