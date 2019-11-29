@@ -1,7 +1,8 @@
 const { ipcMain } = require('electron'),
       ffmpegPath = require('ffmpeg-static-electron').path,
       ffmpeg = require('fluent-ffmpeg');
-ffmpeg.setFfmpegPath(ffmpegPath);
+      
+ffmpeg.setFfmpegPath(ffmpegPath.replace('app.asar', 'app.asar.unpacked'));
 
 const MemoryStream = require('memory-stream'),
       fs = require('fs'),
