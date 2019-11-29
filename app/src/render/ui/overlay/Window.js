@@ -1,11 +1,13 @@
-const { desktopCapturer } = require('electron'),
+const { desktopCapturer, remote, ipcRenderer } = require('electron'),
+      { app, screen } = remote,
       log = require('electron-log'),
       imageUtil = require('../../utils/Image');
 
 import React from 'react';
-
 import WindowCSS from '../../assets/style/window.css';
+
 import { OVERLAY } from '../../constants/app.constants';
+import { MODE } from '../../constants/login.constants';
 
 class Window extends React.Component {
   constructor(props) {
@@ -17,6 +19,7 @@ class Window extends React.Component {
 
     this.handleClose = this.handleClose.bind(this);
     this.handleWindowClick = this.handleWindowClick.bind(this);
+    this.screenshot = this.screenshot.bind(this);
   }
 
   handleClose() {
@@ -24,41 +27,35 @@ class Window extends React.Component {
   }
 
   async handleWindowClick(index) {
-    if (this.props.isUploading()) return;
-    this.props.setUpload(true);
+    let window = this.state.windows[index];
 
-    let monitor = this.state.windows[index];
-
-    try {
-      let stream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-           mandatory: {
-            chromeMediaSource: 'desktop',
-            chromeMediaSourceId: monitor.id,
-            minWidth: 1280,
-            maxWidth: 4000,
-            minHeight: 720,
-            maxHeight: 4000
-          }
+    if (window != null) {
+      try {
+        let imagePath = await this.screenshot(window);
+        await imageUtil.handleUpload(imagePath);
+  
+        //--- Refresh library
+        this.props.getPageRef().current.refresh();
+        
+        if (this.props.getUserMode() === MODE.INSTANT) {
+          this.props.setOverlay(false);
+        } else {
+          this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : imagePath });
         }
-      });
-
-      let buffer = await imageUtil.getStreamToBuffer(stream);
-      let image = await imageUtil.getBufferToJimp(buffer);
-      let response = await imageUtil.handleImageAfterCapture(image);
-
-      this.props.setUpload(false);
-      if (response.hasOwnProperty('upload')) { 
-        this.props.getPageRef().current.refreshImages();
-        this.props.setOverlay(false); 
-      } else {
-        this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : response.base64 });
+      } catch (err) {
+        log.error(err);
       }
-    } catch (err) {
-      log.error(err);
-      this.props.setUpload(false);
     }
+  }
+
+  screenshot(window) {
+    return new Promise((resolve, reject) => {
+      let key = new Date().getTime();
+      let path = `${app.getPath('temp')}/${key}.png`;
+
+      ipcRenderer.once('screenshot-response', (event, key, err) => (err ? reject() : resolve(path)));
+      ipcRenderer.send('screenshot-window', key, window.name, path);
+    });
   }
 
   componentDidMount() {

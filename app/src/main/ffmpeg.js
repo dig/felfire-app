@@ -5,7 +5,8 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 const MemoryStream = require('memory-stream'),
       fs = require('fs'),
-      main = require('./app');
+      main = require('./app'),
+      log = require('electron-log');
 
 let record = {};
 
@@ -25,8 +26,8 @@ ipcMain.on('record-start', (event, key, x, y, width, height, output = true, leng
         '-crf 0',
         '-preset ultrafast'
       ])
-      .on('end', () => main.send('record-end', key))
-      .on('error', () => main.send('record-error', key))
+      .on('end', () => main.send('record-response', key, false))
+      .on('error', () => main.send('record-response', key, true))
       .duration(length)
       .format('avi')
       .pipe(stream, { end: true });
@@ -42,8 +43,11 @@ ipcMain.on('record-start', (event, key, x, y, width, height, output = true, leng
         '-crf 0',
         '-preset ultrafast'
       ])
-      .on('end', () => delete record[key])
-      .on('error', () => main.send('record-error', key))
+      .on('end', () => {
+        delete record[key];
+        main.send('record-response', key, true);
+      })
+      .on('error', () => main.send('record-response', key, true))
       .duration(length)
       .format('avi')
       .output(stream);
@@ -58,3 +62,36 @@ ipcMain.on('record-start', (event, key, x, y, width, height, output = true, leng
 ipcMain.on('record-pause', (event, key) => record[key].ffmpeg.kill('SIGSTOP'));
 ipcMain.on('record-resume', (event, key) => record[key].ffmpeg.kill('SIGCONT'));
 ipcMain.on('record-kill', (event, key) => record[key].ffmpeg.kill());
+
+ipcMain.on('screenshot', (event, key, x, y, width, height, path) => {
+  ffmpeg()
+    .fps(1)
+    .videoFilters(`crop=${width}:${height}:${x}:${y}`)
+    .input('desktop')
+    .inputFormat('gdigrab')
+    .outputOptions([
+      '-vframes 1'
+    ])
+    .on('end', () => main.send('screenshot-response', key, false))
+    .on('error', (err) => {
+      log.error(err);
+      main.send('screenshot-response', key, true);
+    })
+    .save(path);
+});
+
+ipcMain.on('screenshot-window', (event, key, windowName, path) => {
+  ffmpeg()
+    .fps(1)
+    .input(`title=${windowName}`)
+    .inputFormat('gdigrab')
+    .outputOptions([
+      '-vframes 1'
+    ])
+    .on('end', () => main.send('screenshot-response', key, false))
+    .on('error', (err) => {
+      log.error(err);
+      main.send('screenshot-response', key, true);
+    })
+    .save(path);
+});

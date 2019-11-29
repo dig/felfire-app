@@ -190,6 +190,6 @@ exports.send = (channel, data = {}) => {
 };
 
 require('./mouse.js');
-require('./record.js');
+require('./ffmpeg.js');
 require('./tray.js');
 require('./updater.js');

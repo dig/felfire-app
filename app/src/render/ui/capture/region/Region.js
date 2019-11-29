@@ -1,5 +1,5 @@
 const { ipcRenderer, remote, desktopCapturer } = require('electron'),
-      { BrowserWindow, screen } = remote,
+      { BrowserWindow, screen, app } = remote,
       log = require('electron-log'),
       path = require('path'),
       url = require('url'),
@@ -35,10 +35,7 @@ class Capture extends React.Component {
     this.createSnipWindows = this.createSnipWindows.bind(this);
     this.destroySnipWindows = this.destroySnipWindows.bind(this);
     this.sendToAllSnipWindows = this.sendToAllSnipWindows.bind(this);
-
-    this.load = this.load.bind(this);
-    this.crop = this.crop.bind(this);
-    this.createFullImage = this.createFullImage.bind(this);
+    this.screenshot = this.screenshot.bind(this);
 
     ipcRenderer.on('mouse-click', (event, args) => {
       if (this._isMounted) this.handleMouseClick(args);
@@ -55,58 +52,6 @@ class Capture extends React.Component {
     ipcRenderer.send('mouse-register');
     this.setState({registered : true});
   }
-
-  load() {
-    return new Promise((resolve, reject) => {
-      desktopCapturer.getSources({types: ['screen']}).then(async sources => {
-        let images = [];
-
-        let minX = 0,
-            minY = 0;
-
-        for (let display of screen.getAllDisplays()) {
-          let source = sources.find(source => source.display_id == display.id.toString());
-
-          try {
-            let stream = await navigator.mediaDevices.getUserMedia({
-              audio: false,
-              video: {
-                 mandatory: {
-                  chromeMediaSource: 'desktop',
-                  chromeMediaSourceId: source.id,
-                  minWidth: 1280,
-                  maxWidth: 4000,
-                  minHeight: 720,
-                  maxHeight: 4000
-                }
-              }
-            });
-  
-            let buffer = await imageUtil.getStreamToBuffer(stream);
-            let image = await imageUtil.getBufferToJimp(buffer);
-
-            minX = Math.min(minX, display.bounds.x);
-            minY = Math.min(minY, display.bounds.y);
-
-            images.push({
-              jimp : image,
-              x : display.bounds.x,
-              y : display.bounds.y
-            });
-          } catch (e) {
-            reject(e);
-          }
-        }
-  
-        this.setState({
-          images : images,
-          minX : minX,
-          minY : minY
-        }, () => resolve());
-      });
-    });
-  }
-
 
   createSnipWindows() {
     let displays = screen.getAllDisplays();
@@ -187,23 +132,21 @@ class Capture extends React.Component {
         break;
       case REGION_STATE.DRAG:
         ipcRenderer.send('mouse-unregister');
-
         this.destroySnipWindows();
-        this.props.setUpload(true);
 
         try {
-          await this.load();
-          let response = await imageUtil.handleImageAfterCapture(this.crop(event.x, event.y));
+          let imagePath = await this.screenshot(this.state.x, this.state.y, event.x, event.y);
+          await imageUtil.handleUpload(imagePath);
 
-          this.props.setUpload(false);
-          if (response.hasOwnProperty('upload')) {
-            this.props.getPageRef().current.refresh();
+          //--- Refresh library
+          this.props.getPageRef().current.refresh();
+          
+          if (this.props.getUserMode() === MODE.INSTANT) {
             this.props.setOverlay(false);
           } else {
-            this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : response.base64 });
+            this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : imagePath });
           }
         } catch (err) {
-          this.props.setUpload(false);
           log.error(err);
         }
 
@@ -217,39 +160,14 @@ class Capture extends React.Component {
     }
   }
 
-  crop(x2, y2) {
-    let x = this.state.x,
-        y = this.state.y;
+  screenshot(x, y, x2, y2) {
+    return new Promise((resolve, reject) => {
+      let key = new Date().getTime();
+      let path = `${app.getPath('temp')}/${key}.png`;
 
-    let minX = Math.min(x, x2),
-        minY = Math.min(y, y2);
-
-    let maxX = Math.max(x, x2),
-        maxY = Math.max(y, y2);
-
-    let image = this.createFullImage(this.state.images);
-    let crop = image.crop(minX - this.state.minX, minY - this.state.minY, maxX - minX, maxY - minY);
-
-    return crop;
-  }
-
-  createFullImage(images) {
-    let totalWidth = 0,
-        totalHeight = 0;
-
-    for (let image of images) {
-      let width = image.x + image.jimp.bitmap.width;
-      if (width > totalWidth) totalWidth = width;
-
-      let height = image.y + image.jimp.bitmap.height;
-      if (height > totalHeight) totalHeight = height;
-    } 
-
-    let baseImage = new Jimp(totalWidth - this.state.minX, totalHeight - this.state.minY, 0x00000000);
-    for (let image of images)
-      baseImage.composite(image.jimp, image.x - this.state.minX, image.y - this.state.minY);
-
-    return baseImage;
+      ipcRenderer.once('screenshot-response', (event, key, err) => (err ? reject() : resolve(path)));
+      ipcRenderer.send('screenshot', key, Math.min(x, x2), Math.min(y, y2), Math.max(x, x2) - Math.min(x, x2), Math.max(y, y2) - Math.min(y, y2), path);
+    });
   }
 
   componentWillUnmount() {

@@ -29,9 +29,7 @@ class App extends React.Component {
       pageData : {},
 
       captureActive : false,
-      capture : CAPTURE.REGION,
-
-      upload : false
+      capture : CAPTURE.REGION
     };
 
     this.setOverlay = this.setOverlay.bind(this);
@@ -41,9 +39,6 @@ class App extends React.Component {
 
     this.requestUserData = this.requestUserData.bind(this);
     this.getUserMode = this.getUserMode.bind(this);
-
-    this.isUploading = this.isUploading.bind(this);
-    this.setUpload = this.setUpload.bind(this);
 
     this.pageRef = React.createRef();
 
@@ -99,14 +94,6 @@ class App extends React.Component {
     return store.get('mode', MODE.PREVIEW);
   }
 
-  isUploading() {
-    return this.state.upload;
-  }
-
-  setUpload(enabled) {
-    this.setState({upload : enabled});
-  }
-
   componentDidMount() {
     this.timerID = setInterval(() => {
       this.setState({overlayData : {
@@ -154,8 +141,6 @@ class App extends React.Component {
             getPageRef={this.getPageRef}
             setCapture={this.setCapture}
             getUserMode={this.getUserMode}
-            isUploading={this.isUploading}
-            setUpload={this.setUpload}
           />
         }
 
@@ -168,8 +153,6 @@ class App extends React.Component {
               setOverlay={this.setOverlay}
               setCapture={this.setCapture}
               getUserMode={this.getUserMode}
-              isUploading={this.isUploading}
-              setUpload={this.setUpload}
             />
           </div>
         }
@@ -180,8 +163,6 @@ class App extends React.Component {
             getPageRef={this.getPageRef}
             setCapture={this.setCapture} 
             getUserMode={this.getUserMode}
-            isUploading={this.isUploading}
-            setUpload={this.setUpload}
           />
         }
 
