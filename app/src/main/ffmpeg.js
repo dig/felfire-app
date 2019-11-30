@@ -70,6 +70,7 @@ ipcMain.on('screenshot', (event, key, x, y, width, height, path) => {
     .videoFilters(`crop=${width}:${height}:${x}:${y}`)
     .input('desktop')
     .inputFormat('gdigrab')
+    .inputOptions('-draw_mouse 0')
     .outputOptions([
       '-vframes 1'
     ])
@@ -86,6 +87,7 @@ ipcMain.on('screenshot-window', (event, key, windowName, path) => {
     .fps(1)
     .input(`title=${windowName}`)
     .inputFormat('gdigrab')
+    .inputOptions('-draw_mouse 0')
     .outputOptions([
       '-vframes 1'
     ])
