@@ -74,7 +74,8 @@ class Capture extends React.Component {
         titleBarStyle : 'hidden',
         resizable : false,
         webPreferences : {
-          nodeIntegration : true
+          nodeIntegration : true,
+          zoomFactor : 1
         }
       });
   

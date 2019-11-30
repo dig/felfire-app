@@ -1,8 +1,11 @@
 const { app, BrowserWindow, ipcMain } = require('electron'),
-     storage = require('electron-json-storage');
+     storage = require('electron-json-storage'),
+     log = require('electron-log'),
+     Store = require('electron-store');
 
 const path = require('path'),
-    url = require('url');
+    url = require('url'),
+    store = new Store();
 
 const { 
   MAIN_WINDOW_MIN_WIDTH, 
@@ -10,6 +13,15 @@ const {
   MAIN_WINDOW_DEFAULT_WIDTH,
   MAIN_WINDOW_DEFAULT_HEIGHT
 } = require('./constants/app.constants');
+
+
+//--- Windows scaling issue: https://github.com/electron/electron/issues/10659
+if (process.platform === 'win32') {
+  app.commandLine.appendSwitch('high-dpi-support', 'true');
+
+  if (store.get('scaleFactor', 1) !== 1)
+    app.commandLine.appendSwitch('force-device-scale-factor', '1');
+}
 
 let mainWindow;
 function createMainWindow(x, y, width = MAIN_WINDOW_DEFAULT_WIDTH, height = MAIN_WINDOW_DEFAULT_HEIGHT, isMaximized = false, isMinimized = false) {
@@ -24,7 +36,8 @@ function createMainWindow(x, y, width = MAIN_WINDOW_DEFAULT_WIDTH, height = MAIN
     frame : false,
     show : false,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      zoomFactor: store.get('scaleFactor', 1) //--- Related to windows DPI issue
     }
   };
 
@@ -122,6 +135,15 @@ if (!appLock) {
 }
 
 app.on('ready', async () => {
+  //--- Related to windows DPI issue
+  let display = require('electron').screen.getPrimaryDisplay();
+  if (process.platform === 'win32' && display.scaleFactor !== 1 && display.scaleFactor !== store.get('scaleFactor', 1)) {
+    store.set('scaleFactor', display.scaleFactor);
+    app.relaunch();
+    app.exit(0);
+    return;
+  }
+
   try {
     let windowSettings = await fetchWindowSettings();
     createMainWindow(
