@@ -33,16 +33,16 @@ class Monitor extends React.Component {
     if (monitor != null) {
       try {
         let imagePath = await this.screenshot(monitor);
-        await imageUtil.handleUpload(imagePath);
-  
-        //--- Refresh library
-        this.props.getPageRef().current.refresh();
         
         if (this.props.getUserMode() === MODE.INSTANT) {
+          await imageUtil.handleUpload(imagePath);
           this.props.setOverlay(false);
         } else {
           this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : imagePath });
         }
+
+        //--- Refresh library
+        this.props.getPageRef().current.refresh();
       } catch (err) {
         log.error(err);
       }

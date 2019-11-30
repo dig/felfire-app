@@ -137,16 +137,16 @@ class Capture extends React.Component {
 
         try {
           let imagePath = await this.screenshot(this.state.x, this.state.y, event.x, event.y);
-          await imageUtil.handleUpload(imagePath);
-
-          //--- Refresh library
-          this.props.getPageRef().current.refresh();
           
           if (this.props.getUserMode() === MODE.INSTANT) {
+            await imageUtil.handleUpload(imagePath);
             this.props.setOverlay(false);
           } else {
             this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : imagePath });
           }
+
+          //--- Refresh library
+          this.props.getPageRef().current.refresh();
         } catch (err) {
           log.error(err);
         }

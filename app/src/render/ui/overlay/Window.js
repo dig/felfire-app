@@ -32,16 +32,16 @@ class Window extends React.Component {
     if (window != null) {
       try {
         let imagePath = await this.screenshot(window);
-        await imageUtil.handleUpload(imagePath);
-  
-        //--- Refresh library
-        this.props.getPageRef().current.refresh();
         
         if (this.props.getUserMode() === MODE.INSTANT) {
+          await imageUtil.handleUpload(imagePath);
           this.props.setOverlay(false);
         } else {
           this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : imagePath });
         }
+
+        //--- Refresh library
+        this.props.getPageRef().current.refresh();
       } catch (err) {
         log.error(err);
       }
