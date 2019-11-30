@@ -1,7 +1,9 @@
 const { ipcRenderer, remote } = require('electron'),
       authService = remote.require('./common/services/auth.service'),
       storage = require('electron-json-storage'),
-      Store = require('electron-store');
+      Store = require('electron-store'),
+      jwtDecode = require('jwt-decode'),
+      moment = require('moment');
 
 const store = new Store();
 
@@ -38,6 +40,7 @@ class App extends React.Component {
     this.setCapture = this.setCapture.bind(this);
 
     this.requestUserData = this.requestUserData.bind(this);
+    this.checkAccessToken = this.checkAccessToken.bind(this);
     this.getUserMode = this.getUserMode.bind(this);
 
     this.pageRef = React.createRef();
@@ -90,6 +93,29 @@ class App extends React.Component {
     });
   }
 
+  async checkAccessToken() {
+    let accessToken = authService.getAccessToken();
+
+    if (accessToken != null) {
+      let decoded = jwtDecode(accessToken);
+      let now = moment().add(5, 'minutes').unix();
+
+      if (typeof decoded.exp !== 'undefined' && decoded.exp < now) {
+        try {
+          await authService.refreshAccessToken();
+        } catch (err) {
+          this.setState({
+            captureActive : false,
+            overlayActive : false,
+            page : PAGES.LOGIN
+          });
+
+          ipcRenderer.send('logout');
+        }
+      }
+    }
+  }
+
   getUserMode() {
     return store.get('mode', MODE.PREVIEW);
   }
@@ -101,9 +127,8 @@ class App extends React.Component {
       }});
     }, 25);
 
-    setTimeout(this.requestUserData, 600);
-
-    //--- TODO: Check if accessToken has expired and refresh
+    this.requestTimeoutID = setTimeout(this.requestUserData, 600);
+    this.accessIntervalID = setInterval(this.checkAccessToken, 60 * 1000);
 
     //--- Check if new version was downloaded
     storage.get('version', (error, data) => {
@@ -123,6 +148,9 @@ class App extends React.Component {
   componentWillUnmount() {
     clearInterval(this.timerID);
     clearInterval(this.versionID);
+
+    clearTimeout(this.requestTimeoutID);
+    clearInterval(this.accessIntervalID);
   }
 
   render() {
