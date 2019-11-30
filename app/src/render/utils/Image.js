@@ -19,7 +19,8 @@ exports.handleUpload = async (imagePath) => {
 exports.handleImageOnUpload = (uploadData) => {
   new Notification('Upload complete!', {
     body: uploadData.url,
-    icon: 'https://cdn.felfire.app/notification.png'
+    icon: 'https://cdn.felfire.app/notification.png',
+    tag: 'FelFire'
   });
 
   clipboard.writeText(uploadData.cdn_url, 'selection');
@@ -29,6 +30,7 @@ exports.handleImageOnUpload = (uploadData) => {
 exports.handleImageError = (error) => {
   new Notification('An error has occurred.', {
     body: error,
-    icon: 'https://cdn.felfire.app/notification.png'
+    icon: 'https://cdn.felfire.app/notification.png',
+    tag: 'FelFire'
   });
 };

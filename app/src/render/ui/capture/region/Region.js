@@ -36,6 +36,7 @@ class Capture extends React.Component {
     this.destroySnipWindows = this.destroySnipWindows.bind(this);
     this.sendToAllSnipWindows = this.sendToAllSnipWindows.bind(this);
     this.screenshot = this.screenshot.bind(this);
+    this.getLowestPosition = this.getLowestPosition.bind(this);
 
     ipcRenderer.on('mouse-click', (event, args) => {
       if (this._isMounted) this.handleMouseClick(args);
@@ -117,6 +118,21 @@ class Capture extends React.Component {
     }
   }
 
+  getLowestPosition() {
+    let lowX = 0;
+    let lowY = 0;
+    
+    screen.getAllDisplays().forEach((display) => {
+      if (display.bounds.x < lowX) lowX = display.bounds.x;
+      if (display.bounds.y < lowY) lowY = display.bounds.y;
+    });
+
+    return {
+      x : lowX,
+      y : lowY
+    }
+  }
+
   async handleMouseClick(event) {
     switch (this.state.state) {
       case REGION_STATE.SET:
@@ -136,7 +152,8 @@ class Capture extends React.Component {
         this.destroySnipWindows();
 
         try {
-          let imagePath = await this.screenshot(this.state.x, this.state.y, event.x, event.y);
+          let lowestPos = this.getLowestPosition();
+          let imagePath = await this.screenshot(this.state.x - lowestPos.x, this.state.y - lowestPos.y, event.x - lowestPos.x, event.y - lowestPos.y);
           
           if (this.props.getUserMode() === MODE.INSTANT) {
             await imageUtil.handleUpload(imagePath);
