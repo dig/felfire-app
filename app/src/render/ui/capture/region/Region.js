@@ -87,12 +87,12 @@ class Capture extends React.Component {
         window.loadURL(url.format({
           protocol: 'http:',
           host: 'localhost:8080',
-          pathname: 'region.html',
+          pathname: 'public/region/selection.html',
           slashes: true
         }));
       } else {
         window.loadURL(url.format({
-          pathname: path.join(dirname, 'region.html'),
+          pathname: path.join(dirname, 'public/region/selection.html'),
           protocol: 'file:',
           slashes: true
         }));

@@ -91,4 +91,4 @@ function tick() {
   }
 }
 
-setInterval(() => tick(), 10);
+setInterval(() => tick(), 1);

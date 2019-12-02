@@ -3,6 +3,13 @@ const REGION_STATE = {
   DRAG: 'DRAG'
 };
 
+const VIDEO_STATE = {
+  SET: 'SET',
+  DRAG: 'DRAG',
+  RECORD: 'RECORD'
+};
+
 export {
-  REGION_STATE
+  REGION_STATE,
+  VIDEO_STATE
 };

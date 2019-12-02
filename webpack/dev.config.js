@@ -51,20 +51,28 @@ module.exports = {
         to: path.join(__dirname, '../app/build'),
       },
       {
-        from: './app/src/render/ui/capture/region/front.html',
-        to: path.join(__dirname, '../app/build/region.html'),
+        from: './app/src/render/ui/capture/region/selection.html',
+        to: path.join(__dirname, '../app/build/public/region/selection.html'),
       },
       {
-        from: './app/src/render/ui/capture/region/front.js',
-        to: path.join(__dirname, '../app/build/region.js'),
+        from: './app/src/render/ui/capture/region/selection.js',
+        to: path.join(__dirname, '../app/build/public/region/selection.js'),
       },
       {
-        from: './app/src/render/ui/capture/video/front.html',
-        to: path.join(__dirname, '../app/build/video.html'),
+        from: './app/src/render/ui/capture/video/selection.html',
+        to: path.join(__dirname, '../app/build/public/video/selection.html'),
       },
       {
-        from: './app/src/render/ui/capture/video/front.js',
-        to: path.join(__dirname, '../app/build/video.js'),
+        from: './app/src/render/ui/capture/video/selection.js',
+        to: path.join(__dirname, '../app/build/public/video/selection.js'),
+      },
+      {
+        from: './app/src/render/ui/capture/video/controls.html',
+        to: path.join(__dirname, '../app/build/public/video/controls.html'),
+      },
+      {
+        from: './app/src/render/ui/capture/video/controls.js',
+        to: path.join(__dirname, '../app/build/public/video/controls.js'),
       },
     ]),
     new webpack.DefinePlugin({

@@ -6,9 +6,14 @@ const { ipcRenderer, remote, desktopCapturer } = require('electron'),
 
 import React from 'react';
 
-import { REGION_STATE } from '../../../constants/capture.constants';
+import Play from '../../../assets/img/play-control.png';
+import Tick from '../../../assets/img/tick-control.png';
+import Close from '../../../assets/img/close.png';
+
+import { VIDEO_STATE } from '../../../constants/capture.constants';
 
 let snipWindows = [],
+    controlsWindow = null,
     mainWindow = null;
 
 class Video extends React.Component {
@@ -17,7 +22,7 @@ class Video extends React.Component {
 
     this.state = {
       registered : false,
-      state : REGION_STATE.SET,
+      state : VIDEO_STATE.SET,
 
       x : 0,
       y : 0,
@@ -28,8 +33,10 @@ class Video extends React.Component {
 
     this.handleMouseClick = this.handleMouseClick.bind(this);
     this.createSnipWindows = this.createSnipWindows.bind(this);
+    this.createControlsWindow = this.createControlsWindow.bind(this);
     this.destroySnipWindows = this.destroySnipWindows.bind(this);
     this.sendToAllSnipWindows = this.sendToAllSnipWindows.bind(this);
+    this.setIgnoreMouseEvents = this.setIgnoreMouseEvents.bind(this);
 
     ipcRenderer.on('mouse-click', (event, args) => {
       if (this._isMounted) this.handleMouseClick(args);
@@ -79,18 +86,61 @@ class Video extends React.Component {
         window.loadURL(url.format({
           protocol: 'http:',
           host: 'localhost:8080',
-          pathname: 'video.html',
+          pathname: 'public/video/selection.html',
           slashes: true
         }));
       } else {
         window.loadURL(url.format({
-          pathname: path.join(dirname, 'video.html'),
+          pathname: path.join(dirname, 'public/video/selection.html'),
           protocol: 'file:',
           slashes: true
         }));
       }
   
       snipWindows.push(window);
+    }
+  }
+
+  createControlsWindow(x, y) {
+    if (controlsWindow) return;
+
+    controlsWindow = new BrowserWindow({
+      x: x,
+      y: y,
+      width: 200,
+      height: 66,
+      frame : false,
+      closable : false,
+      alwaysOnTop : true,
+      skipTaskbar : true,
+      backgroundColor: '#202225',
+      enableLargerThanScreen : true,
+      titleBarStyle : 'hidden',
+      resizable : false,
+      webPreferences : {
+        nodeIntegration : true
+      }
+    });
+
+    controlsWindow.webContents.once('did-finish-load', () => controlsWindow.webContents.send('images', {
+      play : Play,
+      tick : Tick,
+      close : Close
+    }));
+
+    if (process.env.NODE_ENV === 'development') {
+      controlsWindow.loadURL(url.format({
+        protocol: 'http:',
+        host: 'localhost:8080',
+        pathname: 'public/video/controls.html',
+        slashes: true
+      }));
+    } else {
+      controlsWindow.loadURL(url.format({
+        pathname: path.join(dirname, 'public/video/controls.html'),
+        protocol: 'file:',
+        slashes: true
+      }));
     }
   }
 
@@ -103,41 +153,69 @@ class Video extends React.Component {
     snipWindows = [];
   }
 
-  sendToAllSnipWindows(data) {
+  sendToAllSnipWindows(channel, data) {
     for (let i = 0; i < snipWindows.length; i++) {
       let window = snipWindows[i];
-      window.webContents.send('snip-start', data);
+      window.webContents.send(channel, data);
+    }
+  }
+
+  setIgnoreMouseEvents(enabled) {
+    for (let i = 0; i < snipWindows.length; i++) {
+      let window = snipWindows[i];
+      window.setIgnoreMouseEvents(enabled);
     }
   }
 
   async handleMouseClick(event) {
     switch (this.state.state) {
-      case REGION_STATE.SET:
-        this.sendToAllSnipWindows({
+      case VIDEO_STATE.SET:
+        this.sendToAllSnipWindows('snip-start', {
           x : event.x,
           y : event.y
         });
 
         this.setState({
-          state : REGION_STATE.DRAG,
+          state : VIDEO_STATE.DRAG,
           x : event.x,
           y : event.y
         });
         break;
-      case REGION_STATE.DRAG:
+      case VIDEO_STATE.DRAG:
+        this.setIgnoreMouseEvents(true);
+        this.sendToAllSnipWindows('snip-end', {
+          x : event.x,
+          y : event.y
+        });
+
+        this.createControlsWindow(event.x, event.y);
+
+        this.setState({
+          state : VIDEO_STATE.RECORD,
+          x2 : event.x,
+          y2 : event.y
+        });
+        break;
+      /* case VIDEO_STATE.RECORD:
         ipcRenderer.send('mouse-unregister');
+
+        //--- Windows
         this.destroySnipWindows();
+        controlsWindow.destroy();
+        controlsWindow = null;
 
         this.props.setCapture(false);
-        break;
+        break; */
     }
   }
 
   componentWillUnmount() {
     this._isMounted = false;
-
     ipcRenderer.send('mouse-unregister');
+
     this.destroySnipWindows();
+    if (controlsWindow) controlsWindow.destroy();
+    controlsWindow = null;
   }
 
   render() {
