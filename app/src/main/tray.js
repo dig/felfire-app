@@ -68,10 +68,11 @@ ipcMain.on('login', () => {
     for (let menuItem of contextMenu.items) {
       if (menuItem.id == itemId) {
         menuItem.enabled = true;
-        tray.setContextMenu(contextMenu);
       }
     }
   }
+
+  tray.setContextMenu(contextMenu);
 });
 
 ipcMain.on('logout', () => {
@@ -79,8 +80,9 @@ ipcMain.on('logout', () => {
     for (let menuItem of contextMenu.items) {
       if (menuItem.id == itemId) {
         menuItem.enabled = false;
-        tray.setContextMenu(contextMenu);
       }
     }
   }
+
+  tray.setContextMenu(contextMenu);
 });

@@ -3,7 +3,6 @@ const { ipcRenderer, remote, desktopCapturer } = require('electron'),
       log = require('electron-log'),
       path = require('path'),
       url = require('url'),
-      Jimp = require('jimp'),
       imageUtil = require('../../../utils/Image'),
       dirname = remote.getGlobal('dir') || '/';
 

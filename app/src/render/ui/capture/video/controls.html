@@ -27,7 +27,7 @@
 
       .controls > .content {
         width: calc(100% - 10px);
-        height: 100%;
+        height: calc(100% - 5px);
         float: left;
       }
 
@@ -52,11 +52,26 @@
       .controls > .content > .button:not(:last-child) {
         border-right: 1px solid rgba(255, 255, 255, 0.1);
       }
+
+      .controls > .progress {
+        height: 5px;
+        width: 100%;
+      }
+
+      .controls > .progress > .inner {
+        background: #c7493a;
+        height: 100%;
+        width: 0%;
+      }
     </style>
   </head>
 
   <body>
     <div id="controls" class="controls">
+      <div class="progress">
+        <div id="progress" class="inner"></div>
+      </div>
+
       <div class="side">
         
       </div>

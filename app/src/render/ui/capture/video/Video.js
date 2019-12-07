@@ -1,16 +1,21 @@
-const { ipcRenderer, remote, desktopCapturer } = require('electron'),
+const { ipcRenderer, remote } = require('electron'),
       { BrowserWindow, screen } = remote,
+      log = require('electron-log'),
       path = require('path'),
       url = require('url'),
+      imageUtil = require('../../../utils/Image'),
       dirname = remote.getGlobal('dir') || '/';
 
 import React from 'react';
 
 import Play from '../../../assets/img/play-control.png';
+import Pause from '../../../assets/img/pause-control.png';
 import Tick from '../../../assets/img/tick-control.png';
 import Close from '../../../assets/img/close.png';
 
+import { OVERLAY } from '../../../constants/app.constants';
 import { VIDEO_STATE } from '../../../constants/capture.constants';
+import { MODE } from '../../../constants/login.constants';
 
 let snipWindows = [],
     controlsWindow = null,
@@ -25,10 +30,7 @@ class Video extends React.Component {
       state : VIDEO_STATE.SET,
 
       x : 0,
-      y : 0,
-
-      minX : 0,
-      minY : 0
+      y : 0
     };
 
     this.handleMouseClick = this.handleMouseClick.bind(this);
@@ -38,8 +40,22 @@ class Video extends React.Component {
     this.sendToAllSnipWindows = this.sendToAllSnipWindows.bind(this);
     this.setIgnoreMouseEvents = this.setIgnoreMouseEvents.bind(this);
 
+    this.handleControlsClose = this.handleControlsClose.bind(this);
+    this.handleControlsComplete = this.handleControlsComplete.bind(this);
+
     ipcRenderer.on('mouse-click', (event, args) => {
       if (this._isMounted) this.handleMouseClick(args);
+    });
+
+    ipcRenderer.on('controls-close', (event, args) => {
+      if (this._isMounted) this.handleControlsClose();
+    });
+
+    ipcRenderer.on('controls-complete', (event, args) => {
+      if (this._isMounted) {
+        this.handleControlsComplete(args);
+        this.handleControlsClose();
+      }
     });
   }
 
@@ -122,10 +138,20 @@ class Video extends React.Component {
       }
     });
 
-    controlsWindow.webContents.once('did-finish-load', () => controlsWindow.webContents.send('images', {
+    controlsWindow.webContents.once('did-finish-load', () => controlsWindow.webContents.send('controls-setup', {
+      parentId : remote.getCurrentWindow().webContents.id,
+
+      pause : Pause,
       play : Play,
       tick : Tick,
-      close : Close
+      close : Close,
+
+      region : {
+        minX : Math.min(this.state.x, x),
+        minY : Math.min(this.state.y, y),
+        maxX : Math.max(this.state.x, x),
+        maxY : Math.max(this.state.y, y)
+      }
     }));
 
     if (process.env.NODE_ENV === 'development') {
@@ -196,17 +222,42 @@ class Video extends React.Component {
           y2 : event.y
         });
         break;
-      /* case VIDEO_STATE.RECORD:
-        ipcRenderer.send('mouse-unregister');
-
-        //--- Windows
-        this.destroySnipWindows();
-        controlsWindow.destroy();
-        controlsWindow = null;
-
-        this.props.setCapture(false);
-        break; */
     }
+  }
+
+  handleControlsClose() {
+    ipcRenderer.send('mouse-unregister');
+
+    this.destroySnipWindows();
+    controlsWindow.destroy();
+    controlsWindow = null;
+
+    this.props.setCapture(false);
+  }
+
+  async handleControlsComplete(output) {
+    if (output == null) return;
+
+    try {
+      if (this.props.getUserMode() === MODE.INSTANT) {
+        await imageUtil.handleUpload(output);
+        this.props.setOverlay(false);
+      } else {
+        this.props.setOverlay(true, OVERLAY.PICTURE, { imageUrl : imagePath });
+      }
+
+      //--- Refresh library
+      this.props.getPageRef().current.refresh();
+    } catch (err) {
+      log.error(err);
+    }
+
+    if (this.props.getUserMode() === MODE.PREVIEW) {
+      mainWindow.restore();
+      mainWindow.focus();
+    }
+
+    this.props.setCapture(false);
   }
 
   componentWillUnmount() {
