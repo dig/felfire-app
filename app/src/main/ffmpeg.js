@@ -16,8 +16,9 @@ ipcMain.on('record-start', (event, key, x, y, width, height, output = true, leng
   let command;
 
   let _respond = (status) => {
-    if (respondWindowId > -1)
-      webContents.fromId(respondWindowId).send('record-response', key, status)
+    let windowContent = webContents.fromId(respondWindowId);
+    if (respondWindowId > -1 && windowContent != null)
+      windowContent.send('record-response', key, status)
   };
 
   if (output instanceof Boolean) {
@@ -73,8 +74,9 @@ ipcMain.on('record-start', (event, key, x, y, width, height, output = true, leng
 
 ipcMain.on('record-render', (event, input, output, respondWindowId = -1) => {
   let _respond = (status) => {
-    if (respondWindowId > -1)
-      webContents.fromId(respondWindowId).send('record-render-response', status)
+    let windowContent = webContents.fromId(respondWindowId);
+    if (respondWindowId > -1 && windowContent != null)
+      windowContent.send('record-render-response', status)
   };
 
   ffmpeg()
@@ -83,7 +85,7 @@ ipcMain.on('record-render', (event, input, output, respondWindowId = -1) => {
     .videoCodec('libx264')
     .outputOptions([
       '-crf 23',
-      '-preset medium'
+      '-preset slow'
     ])
     .on('end', () => _respond(false))
     .on('error', (err) => _respond(true))

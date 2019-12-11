@@ -41,7 +41,12 @@
         align-items: center;
       }
 
-      .controls > .content > .button:hover {
+      .controls > .content > .button.disabled {
+        cursor: not-allowed;
+        opacity: 0.65; 
+      }
+
+      .controls > .content > .button:hover:not(.disabled) {
         background: #303134;
       }
 
@@ -85,7 +90,7 @@
           <img id="play" />
         </div>
 
-        <div class="button">
+        <div class="button disabled">
           <img id="done" />
         </div>
       </div>
@@ -98,7 +103,7 @@
         document.body.appendChild(js);
       } else {
         const js = document.createElement('script');
-        js.src = 'public/video/controls.js';
+        js.src = 'controls.js';
         document.body.appendChild(js);
       }
     </script>

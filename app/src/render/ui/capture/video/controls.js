@@ -1,5 +1,4 @@
 const { ipcRenderer, remote } = require('electron'),
-      log = require('electron-log'),
       { app } = remote,
       windowId = remote.getCurrentWebContents().id;
 
@@ -31,7 +30,7 @@ let state = {
 };
 
 ipcRenderer.on('controls-setup', (channel, args) => {
-  let prefix = (process.env.NODE_ENV ? 'http://localhost:8080/' : '');
+  let prefix = (process.env.NODE_ENV ? 'http://localhost:8080/' : '../../');
 
   region = args.region;
   state.parentWindowId = args.parentId;
@@ -79,7 +78,9 @@ function setState(to) {
         output = `${app.getPath('temp')}/${key}.mp4`;
 
         state.recordId = key;
-        ipcRenderer.send('record-start', state.recordId, region.minX, region.minY, region.maxX - region.minX, region.maxY - region.minY, path, '0:07', windowId);
+        ipcRenderer.send('record-start', state.recordId, region.minX, region.minY, region.maxX - region.minX, region.maxY - region.minY, path, '0:20', windowId);
+        
+        finish.parentNode.classList.remove('disabled');
         play.src = pauseSrc;
       }
       break;
@@ -107,7 +108,7 @@ function handlePlay() {
   if (!loaded) return;
 
   if (state.state === STATE.RECORDING) {
-    setState(STATE.PAUSED);
+    // setState(STATE.PAUSED);
   } else {
     setState(STATE.RECORDING);
   }
@@ -125,7 +126,7 @@ function handleProgress() {
 
     progress.style.background = '#c7493a';
   } else if (state.state === STATE.RENDER) {
-    if (state.timeInMillis >= (7 * 1000)) {
+    if (state.timeInMillis >= (20 * 1000)) {
       state.timeInMillis = 0;
     } else {
       state.timeInMillis += 500;
@@ -134,11 +135,11 @@ function handleProgress() {
     progress.style.background = '#77dd77';
   }
 
-  progress.style.width = `${(state.timeInMillis / (7 * 1000)) * 100}%`;
+  progress.style.width = `${(state.timeInMillis / (20 * 1000)) * 100}%`;
 }
 
-close.onclick = handleClose;
-play.onclick = handlePlay;
-finish.onclick = handleFinish;
+close.parentNode.onclick = handleClose;
+play.parentNode.onclick = handlePlay;
+finish.parentNode.onclick = handleFinish;
 
 setInterval(() => handleProgress(), 50);
