@@ -43,10 +43,36 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       {
-        from: './app/src/main/app.js',
+        from: './app/src/main',
+        to: path.join(__dirname, '../app/build'),
       },
       {
         from: './app/src/render/index.html',
+        to: path.join(__dirname, '../app/build'),
+      },
+      {
+        from: './app/src/render/ui/capture/region/selection.html',
+        to: path.join(__dirname, '../app/build/public/region/selection.html'),
+      },
+      {
+        from: './app/src/render/ui/capture/region/selection.js',
+        to: path.join(__dirname, '../app/build/public/region/selection.js'),
+      },
+      {
+        from: './app/src/render/ui/capture/video/selection.html',
+        to: path.join(__dirname, '../app/build/public/video/selection.html'),
+      },
+      {
+        from: './app/src/render/ui/capture/video/selection.js',
+        to: path.join(__dirname, '../app/build/public/video/selection.js'),
+      },
+      {
+        from: './app/src/render/ui/capture/video/controls.html',
+        to: path.join(__dirname, '../app/build/public/video/controls.html'),
+      },
+      {
+        from: './app/src/render/ui/capture/video/controls.js',
+        to: path.join(__dirname, '../app/build/public/video/controls.js'),
       },
     ]),
     new webpack.DefinePlugin({

@@ -1,73 +1,97 @@
+const { remote } = require('electron'),
+      userService = remote.require('./common/services/user.service');
+
 import React from 'react';
 
-import RegisterCSS from '../assets/style/register.css';
-import Picture from '../assets/img/register.svg'; 
-import Plus from '../assets/img/plus.png';
-import Square from '../assets/img/square.png';
-import Mark from '../assets/img/danger.png';
+import RegisterCSS from '../../assets/style/register.css';
+import Picture from '../../assets/img/register.svg'; 
+import Tick from '../../assets/img/done-tick.png'; 
+import Square from '../../assets/img/square.png';
+import Mark from '../../assets/img/danger.png';
+import Reload from '../../assets/img/spin.png';
 
-import User from '../utils/User';
+import CaptchaSlider from '../../components/CaptchaSlider';
 
-const registerErrorParam = {
-  USERNAME: 'username',
-  EMAIL: 'email',
-  PASSWORD: 'password',
-  CONFIRMPASSWORD: 'confirmPassword'
-};
+import { PAGES } from '../../constants/app.constants';
 
 class Register extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      username : '',
+      email : '',
       password : '',
       confirmPassword : '',
+      code : '',
 
       strength : 0,
       strengthColor : '',
       strengthText : '',
 
       errorMessage : '',
-      shake : false
+      shake : false,
+      formDisabled : false,
+      captcha : ''
     };
     
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
+    this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(this);
+    this.handleShake = this.handleShake.bind(this);
+    this.handleCaptchaComplete = this.handleCaptchaComplete.bind(this);
+    this.handleCodeChange = this.handleCodeChange.bind(this);
+
     this.updateStrengthMeter = this.updateStrengthMeter.bind(this);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
+    this.setState({formDisabled : true});
 
-    let email = event.target.email.value;
     let password = event.target.password.value;
-
-    if (this.state.confirmPassword === password) {
-      User.createUser(event.target.username.value, event.target.email.value, password).then(() => {
-        this.props.changePage('EMAILVERIFICATION', { email :  email});
-      }).catch(errors => {
-        if (errors[0] && registerErrorParam[errors[0].param.toUpperCase()]) {
+    if (this.state.confirmPassword === password && this.state.captcha != '') {
+      try {
+        await userService.createUser(this.state.username, this.state.email, this.state.password, this.state.captcha, this.state.code);
+        this.props.changePage(PAGES.EMAILVERIFICATION, { email :  this.state.email});
+      } catch (err) {
+        this.setState({formDisabled : false});
+        
+        if (typeof err === 'string' || err[0]) {
           this.setState({
-            errorMessage : errors[0].msg,
+            errorMessage : (typeof err === 'string' ? err : err[0].msg),
             shake : true
           });
-          this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
+
+          this.handleShake();
         }
-      });
+      }
     } else {
       this.setState({
-        errorMessage : 'Passwords do not match.',
+        errorMessage : (this.state.captcha === '' ? 'Captcha failed, please try again.' : 'Passwords do not match.'),
         shake : true
       });
-      this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
+      
+      this.handleShake();
     }
   }
 
   handleLogin(event) {
     event.preventDefault();
-    this.props.changePage('LOGIN');
+    this.props.changePage(PAGES.LOGIN);
+  }
+
+  handleUsernameChange(event) {
+    let value = event.target.value;
+    this.setState({username : value});
+  }
+
+  handleEmailChange(event) {
+    let value = event.target.value;
+    this.setState({email : value});
   }
 
   handlePasswordChange(event) {
@@ -128,6 +152,18 @@ class Register extends React.Component {
     };
   }
 
+  handleShake() {
+    this.shakeID = setTimeout(() => this.setState({shake : false}), 900);
+  }
+
+  handleCaptchaComplete(token) {
+    this.setState({captcha : token});
+  }
+
+  handleCodeChange(event) {
+    this.setState({code : event.target.value});
+  }
+
   componentWillUnmount() {
     clearTimeout(this.shakeID);
   }
@@ -160,17 +196,17 @@ class Register extends React.Component {
 
               <div className="group">
                 <label>Username</label>
-                <input type="text" title="Enter your username" required name="username"></input>
+                <input type="text" title="Enter your username" required name="username" value={this.state.username} onChange={this.handleUsernameChange} />
               </div>
 
               <div className="group">
                 <label>Email</label>
-                <input type="text" title="Enter your email" required name="email"></input>
+                <input type="text" title="Enter your email" required name="email" value={this.state.email} onChange={this.handleEmailChange} />
               </div>
 
               <div className="group">
                 <label>Password</label>
-                <input type="password" title="Enter your password" required name="password" value={this.state.password} onChange={this.handlePasswordChange}></input>
+                <input type="password" title="Enter your password" required name="password" value={this.state.password} onChange={this.handlePasswordChange} />
                 
                 {this.state.strength > 0 &&
                   <div className="progress">
@@ -185,19 +221,34 @@ class Register extends React.Component {
 
               <div className="group">
                 <label>Confirm Password</label>
-                <input type="password" title="Confirm your password" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange}></input>
+                <input type="password" title="Confirm your password" required name="confirmpassword" value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
               </div>
+
+              <div className="group">
+                <label>Invite Code</label>
+                <input type="text" title="Enter invite code" required name="code" value={this.state.code} onChange={this.handleCodeChange} />
+              </div>
+
+              {this.state.captcha === '' &&
+                <div className="captcha">
+                  <CaptchaSlider onComplete={this.handleCaptchaComplete} />
+                </div>
+              }
+
+              {this.state.captcha != '' &&
+                <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
+                  <input type="submit" value="SIGN UP" disabled={this.state.formDisabled} />
+
+                  <div className="caption">
+                    <img className={(this.state.formDisabled ? 'spinning' : '')} src={(this.state.formDisabled ? Reload : Tick)} />
+                  </div>
+                </div>
+              }
 
               <div className="link">
-                <small onClick={this.handleLogin}>Already have an account?</small>
-              </div>
-
-              <div className={'submit ' + (this.state.shake ? 'shake' : '')}>
-               <input type="submit" value="SIGN UP" />
-
-               <div className="caption">
-                 <img src={Plus} />
-               </div>
+                <div className="box" onClick={this.handleLogin}>
+                  <small>Have an <b>account</b>?</small>
+                </div>
               </div>
             </form>
           </div>

@@ -1,17 +1,15 @@
 import React from 'react';
-import Icon from '../assets/img/icon.png'; 
+
+import LoadCSS from '../../assets/style/load.css';
+import Icon from '../../assets/img/icon.png'; 
 
 class Load extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      percent : 0
-    };
   }
 
   render() {
-    let grayscale = 1 - this.props.percent;
+    let grayscale = 1 - this.props.overlayData.percent;
 
     return (
       <div className="loading">
@@ -20,7 +18,7 @@ class Load extends React.Component {
         }} src={Icon} />
 
         <div className="progress">
-          <div className="inner" style={{ width : `${this.props.percent * 100}%` }}></div>
+          <div className="inner" style={{ width : `${this.props.overlayData.percent * 100}%` }}></div>
         </div>
       </div>
     )

@@ -1,0 +1,55 @@
+.monitor {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.monitor > .background {
+  height: 100%;
+  width: 100%;
+  opacity: 0.7;
+  background: #171717;
+  position: fixed;
+}
+
+.monitor > .grid {
+  height: 350px;
+  width: 300px;
+  background: #202225;
+  position: relative;
+  overflow-y: auto;
+}
+
+.monitor > .grid > .cell {
+  height: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  transition: 0.2s;
+}
+
+.monitor > .grid > .cell:hover {
+  background: #303134;
+  -webkit-filter: grayscale(0%);
+  filter: grayscale(0%);
+}
+
+.monitor > .grid > .cell:not(:first-child) {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.monitor > .grid > .cell > img {
+  position: relative;
+  top: 5px;
+}

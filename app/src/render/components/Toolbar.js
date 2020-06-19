@@ -17,22 +17,22 @@ class Toolbar extends React.Component {
 
   handleMinimize(event) {
     event.preventDefault();
-    ipcRenderer.send('toolbar-minimize', {});
+    ipcRenderer.send('toolbar-minimize');
   }
 
   handleMaximize(event) {
     event.preventDefault();
-    ipcRenderer.send('toolbar-maximize', {});
+    ipcRenderer.send('toolbar-maximize');
   }
 
   handleClose(event) {
     event.preventDefault();
-    ipcRenderer.send('toolbar-close', {});
+    ipcRenderer.send('toolbar-close');
   }
 
   render() {
     return (
-      <div className={"toolbar noselect " + (this.props.background == "on" ? 'background' : '')}>
+      <div className={"toolbar " + (this.props.background == "on" ? 'background' : '')}>
         <div className="drag">
           <img className="icon" src={Icon} />
           <img className="text" src={Text} />
@@ -40,7 +40,7 @@ class Toolbar extends React.Component {
 
         <div className="toolset">
           <div className="tool" onClick={this.handleMinimize}>
-           <svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect x="0" y="50%" width="10.2" height="1" /></svg>
+            <svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect x="0" y="50%" width="10.2" height="1" /></svg>
           </div>
 
           <div className="tool" onClick={this.handleMaximize}>

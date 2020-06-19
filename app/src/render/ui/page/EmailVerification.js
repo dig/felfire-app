@@ -1,8 +1,10 @@
 import React from 'react';
 
-import EmailVerificationCSS from '../assets/style/emailverification.css';
-import Mail from '../assets/img/mail.png'; 
-import Tick from '../assets/img/done-tick.png';
+import EmailVerificationCSS from '../../assets/style/emailverification.css';
+import Mail from '../../assets/img/mail.png'; 
+import Tick from '../../assets/img/done-tick.png';
+
+import { PAGES } from '../../constants/app.constants';
 
 class EmailVerification extends React.Component {
   constructor(props) {
@@ -18,7 +20,7 @@ class EmailVerification extends React.Component {
 
   handleLogin(event) {
     event.preventDefault();
-    this.props.changePage('LOGIN');
+    this.props.changePage(PAGES.LOGIN);
   }
 
   componentDidMount() {

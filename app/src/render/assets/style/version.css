@@ -4,6 +4,11 @@
   bottom: 3px;
   color: #5f5e5e;
   font-size: 0.7rem;
+  z-index: 10;
+}
+
+.footer-version > .latest {
+  cursor: pointer;
 }
 
 .footer-version > .update-check > img {
@@ -34,4 +39,12 @@
   font-weight: 700;
   cursor: pointer;
   float: right;
+}
+
+.footer-version > .update-downloading .progress {
+  background: #343434;
+}
+
+.footer-version > .update-downloading .inner {
+  background: #259d58;
 }

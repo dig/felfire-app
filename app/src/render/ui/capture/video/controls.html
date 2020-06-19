@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" class="crosshair">
+  <head>
+    <style>
+      *, html, body {
+        overflow: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .controls {
+        background: #202225;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+
+      .controls > .side {
+        width: 10px;
+        height: 100%;
+        float: left;
+        background: #18191c;
+        cursor: grab;
+        -webkit-app-region: drag;
+      }
+
+      .controls > .content {
+        width: calc(100% - 10px);
+        height: calc(100% - 5px);
+        float: left;
+      }
+
+      .controls > .content > .button {
+        width: 32.9%;
+        height: 100%;
+        float: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .controls > .content > .button.disabled {
+        cursor: not-allowed;
+        opacity: 0.65; 
+      }
+
+      .controls > .content > .button:hover:not(.disabled) {
+        background: #303134;
+      }
+
+      .controls > .content > .button > img {
+        width: 24px;
+      }
+
+      .controls > .content > .button:not(:last-child) {
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .controls > .progress {
+        height: 5px;
+        width: 100%;
+      }
+
+      .controls > .progress > .inner {
+        background: #c7493a;
+        height: 100%;
+        width: 0%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="controls" class="controls">
+      <div class="progress">
+        <div id="progress" class="inner"></div>
+      </div>
+
+      <div class="side">
+        
+      </div>
+
+      <div class="content">
+        <div class="button">
+          <img id="close" />
+        </div>
+
+        <div class="button">
+          <img id="play" />
+        </div>
+
+        <div class="button disabled">
+          <img id="done" />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      if (process.env.NODE_ENV) {
+        const js = document.createElement('script');
+        js.src = 'http://localhost:8080/public/video/controls.js';
+        document.body.appendChild(js);
+      } else {
+        const js = document.createElement('script');
+        js.src = 'controls.js';
+        document.body.appendChild(js);
+      }
+    </script>
+  </body>
+
+</html>

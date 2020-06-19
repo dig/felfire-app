@@ -1,0 +1,145 @@
+.changelog {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.changelog > .background {
+  height: 100%;
+  width: 100%;
+  opacity: 0.7;
+  background: #171717;
+  position: fixed;
+}
+
+.changelog > .container {
+  height: 400px;
+  width: 350px;
+  background: #202225;
+  /* #171717 */
+  position: relative;
+}
+
+.changelog > .container > .tool {
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.changelog > .container > .tool svg path, 
+.changelog > .container > .tool svg rect, 
+.changelog > .container > .tool svg polygon {
+	fill: #fff;
+}
+.changelog > .container > .tool svg {
+  height: 12px;
+  width: 12px;
+  color: #fff;
+}
+
+.changelog > .container > .button {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+.changelog > .container > .button input[type=submit] {
+  position: relative;
+  width: calc(100% - 34px);
+  height: 34px;
+  background: #c7493a;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  outline: none;
+  float: left;
+  cursor: pointer;
+}
+
+.changelog > .container > .button .caption {
+  position: relative;
+  width: 34px;
+  background: #a33327;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.changelog > .container > .button .caption img {
+  width: 15px;
+}
+
+.changelog > .container > .header {
+  position: relative;
+  width: 100%;
+  height: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+}
+
+.changelog > .container > .header > .outer {
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.changelog > .container > .header > .outer > .box {
+  background: #343434;
+  height: 7px;
+  width: 7px;
+  cursor: pointer;
+}
+
+.changelog > .container > .header > .outer > .box.active {
+  background: #828282;
+}
+
+.changelog > .container > .picture {
+  position: relative;
+  height: 35%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.changelog > .container > .picture > .circle {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  height: 130px;
+  width: 130px;
+  opacity: 0.12;
+}
+
+.changelog > .container > .content {
+  position: relative;
+  top: 25px;
+  height: 30%;
+  text-align: center;
+  padding: 0 25px;
+}
+
+.changelog > .container > .content p {
+  position: relative;
+  top: 15px;
+  font-size: 0.95rem;
+}
+
+.changelog > .container > .picture img {
+  position: absolute;
+  height: 60px;
+}

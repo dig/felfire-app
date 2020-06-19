@@ -102,7 +102,7 @@
   font-size: 0.9rem;
 }
 
-.register .content .group, .register .content .link, .register .content .error {
+.register .content .group, .register .content .link, .register .content .error, .register .content .captcha {
   padding: 0 20px;
 }
 
@@ -112,23 +112,31 @@
 
 .register .content .link {
   position: relative;
-  height: 16px;
-  font-weight: 600;
+  width: 100%;
+  height: 28px;
   top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register .content .link .box {
+  cursor: pointer;
 }
 
 .register .content .link small {
   cursor: pointer;
-  float: left;
+  color: #828282;
 }
 
-.register .content .link small:not(:first-child) {
-  float: right;
+.register .content .captcha {
+  position: relative;
+  top: 10px;
 }
 
 .register .content > .submit {
   position: relative;
-  top: 20px;
+  top: 10px;
   width: calc(100% - 40px);
 }
 
@@ -140,7 +148,8 @@
   background: #c7493a;
   border: none;
   color: #fff;
-  font-weight: 900;
+  font-weight: 600;
+  font-size: 0.9rem;
   outline: none;
   float: left;
   cursor: pointer;

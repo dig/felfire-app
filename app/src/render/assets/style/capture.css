@@ -1,0 +1,72 @@
+.capture {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.capture > .background {
+  height: 100%;
+  width: 100%;
+  opacity: 0.7;
+  background: #171717;
+  position: fixed;
+}
+
+.capture > .container {
+  height: 350px;
+  width: 650px;
+  background: #202225;
+  position: relative;
+}
+
+.capture > .container > .top, .capture > .container > .bottom {
+  width: 100%;
+  height: 50%;
+}
+
+.capture > .container .button {
+  width: 33.333333%;
+  height: 100%;
+  float: left;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.capture > .container > .bottom > .button {
+  border-bottom: none;
+}
+
+.capture > .container .button:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.capture > .container .button:hover {
+  background: #303134;
+}
+
+.capture > .container .button img {
+  width: 40px;
+}
+
+.capture > .container .button h4 {
+  position: relative;
+  top: 10px;
+}
+
+.capture > .container .button.select {
+  width: 66.6666%;
+}
+
+.capture > .container .button.select img {
+  width: 50px;
+}

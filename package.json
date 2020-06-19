@@ -1,6 +1,6 @@
 {
   "name": "FelFire",
-  "version": "0.1.1",
+  "version": "0.4.0",
   "description": "FelFire image sharing service.",
   "homepage": "https://felfire.app",
   "engines": {
@@ -15,30 +15,49 @@
     "build": "webpack --config webpack/prod.config.js --mode production",
     "pack": "electron-builder --dir",
     "dist": "npm run build && electron-builder --win --x64",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "rebuild": "./node_modules/.bin/electron-rebuild -f -w keytar"
   },
-  "author": "Joseph Ali",
+  "author": "FelFire Limited",
   "build": {
     "appId": "felfire.app",
     "productName": "FelFire",
     "copyright": "Copyright © 2019 ${author}",
+    "files": [
+      "node_modules/ffmpeg-static-electron/bin/${os}/${arch}/ffmpeg",
+      "node_modules/ffmpeg-static-electron/index.js",
+      "node_modules/ffmpeg-static-electron/package.json"
+    ],
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "files": [
+        "!node_modules/ffmpeg-static-electron/bin/mac${/*}",
+        "!node_modules/ffmpeg-static-electron/bin/linux${/*}"
+      ]
     },
     "nsis": {
       "installerIcon": "build/icon.ico",
-      "perMachine": true
+      "perMachine": true,
+      "artifactName": "${productName}Setup.${ext}"
     },
     "linux": {
       "target": [
         "deb",
         "AppImage"
+      ],
+      "files": [
+        "!node_modules/ffmpeg-static-electron/bin/win${/*}",
+        "!node_modules/ffmpeg-static-electron/bin/mac${/*}"
       ]
     },
     "mac": {
       "icon": "build/icon.icns",
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.productivity",
+      "files": [
+        "!node_modules/ffmpeg-static-electron/bin/win${/*}",
+        "!node_modules/ffmpeg-static-electron/bin/linux${/*}"
+      ]
     },
     "directories": {
       "output": "release"
@@ -46,17 +65,27 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://localhost:3000"
+        "url": "https://api.felfire.app/"
       }
     ]
   },
   "dependencies": {
     "electron-json-storage": "^4.1.8",
-    "electron-updater": "^4.2.0",
     "electron-log": "^3.0.9",
+    "electron-main-window": "^1.0.4",
+    "electron-store": "^5.1.0",
+    "electron-updater": "^4.2.0",
+    "ffmpeg-static-electron": "^2.0.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "iohook": "^0.6.1",
+    "jimp": "^0.8.5",
     "jwt-decode": "^2.2.0",
+    "keytar": "^5.0.0",
+    "memory-stream": "^1.0.0",
+    "moment": "^2.24.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "readable-stream": "^3.4.0",
     "request": "^2.88.0"
   },
   "devDependencies": {
@@ -70,9 +99,11 @@
     "electron": "^6.0.7",
     "electron-builder": "^22.1.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-rebuild": "^1.8.8",
     "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
+    "node-abi": "^2.12.0",
     "postcss-cssnext": "^3.1.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
@@ -82,5 +113,20 @@
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.0"
+  },
+  "iohook": {
+    "targets": [
+      "node-72",
+      "electron-73"
+    ],
+    "platforms": [
+      "win32",
+      "darwin",
+      "linux"
+    ],
+    "arches": [
+      "x64",
+      "ia32"
+    ]
   }
 }
